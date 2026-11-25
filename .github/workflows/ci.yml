@@ -89,6 +89,7 @@ jobs:
       - name: Tests
         run: |
           cd ~/bench
+          ./env/bin/pip install -q coverage
           bench --site test.localhost run-tests --app frappe_rental --coverage
 
   frontend:
