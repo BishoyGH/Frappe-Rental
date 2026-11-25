@@ -5,33 +5,160 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "type_name", "mode", "time_unit", "identification_mode", "column_break_1",
-  "min_duration", "max_duration", "buffer_before", "buffer_after", "allow_quantity",
-  "steps_section", "requires_deposit", "requires_contract", "requires_hold", "requires_checkin", "requires_return_inspection",
-  "accounting_section", "tax_template",
-  "custom_fields_section", "custom_fields"
+  "type_name",
+  "mode",
+  "time_unit",
+  "identification_mode",
+  "column_break_1",
+  "min_duration",
+  "max_duration",
+  "buffer_before",
+  "buffer_after",
+  "allow_quantity",
+  "steps_section",
+  "requires_deposit",
+  "requires_contract",
+  "requires_hold",
+  "requires_checkin",
+  "requires_return_inspection",
+  "accounting_section",
+  "tax_template",
+  "income_account",
+  "custom_fields_section",
+  "custom_fields"
  ],
  "fields": [
-  {"fieldname": "type_name", "fieldtype": "Data", "in_list_view": 1, "label": "Type Name", "reqd": 1, "unique": 1},
-  {"default": "Resource", "fieldname": "mode", "fieldtype": "Select", "in_list_view": 1, "label": "Mode", "options": "Resource\nService\nContract", "reqd": 1},
-  {"default": "Day", "fieldname": "time_unit", "fieldtype": "Select", "in_list_view": 1, "label": "Billing Unit", "options": "Hour\nDay\nNight\nWeek\nMonth", "reqd": 1},
-  {"default": "None", "fieldname": "identification_mode", "fieldtype": "Select", "label": "Identification Mode", "options": "None\nAsset\nSerial\nBatch\nPooled"},
-  {"fieldname": "column_break_1", "fieldtype": "Column Break"},
-  {"default": "1", "fieldname": "min_duration", "fieldtype": "Float", "label": "Min Duration (billing units)"},
-  {"default": "0", "fieldname": "max_duration", "fieldtype": "Float", "label": "Max Duration (0 = unlimited)"},
-  {"default": "0", "fieldname": "buffer_before", "fieldtype": "Int", "label": "Buffer Before (minutes)"},
-  {"default": "0", "fieldname": "buffer_after", "fieldtype": "Int", "label": "Buffer After (minutes)"},
-  {"default": "0", "fieldname": "allow_quantity", "fieldtype": "Check", "label": "Allow Quantity"},
-  {"fieldname": "steps_section", "fieldtype": "Section Break", "label": "Required Steps"},
-  {"default": "0", "fieldname": "requires_deposit", "fieldtype": "Check", "label": "Requires Deposit"},
-  {"default": "0", "fieldname": "requires_contract", "fieldtype": "Check", "label": "Requires Contract"},
-  {"default": "1", "fieldname": "requires_hold", "fieldtype": "Check", "label": "Use Hold Step"},
-  {"default": "0", "fieldname": "requires_checkin", "fieldtype": "Check", "label": "Requires Check-in / Handover"},
-  {"default": "0", "fieldname": "requires_return_inspection", "fieldtype": "Check", "label": "Requires Return Inspection"},
-  {"fieldname": "accounting_section", "fieldtype": "Section Break", "label": "Accounting"},
-  {"fieldname": "tax_template", "fieldtype": "Link", "label": "Sales Taxes Template", "options": "Sales Taxes and Charges Template"},
-  {"fieldname": "custom_fields_section", "fieldtype": "Section Break", "label": "Custom Fields"},
-  {"fieldname": "custom_fields", "fieldtype": "Table", "label": "Custom Fields", "options": "Rental Type Custom Field"}
+  {
+   "fieldname": "type_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Type Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "default": "Resource",
+   "fieldname": "mode",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Mode",
+   "options": "Resource\nService\nContract",
+   "reqd": 1
+  },
+  {
+   "default": "Day",
+   "fieldname": "time_unit",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Billing Unit",
+   "options": "Hour\nDay\nNight\nWeek\nMonth",
+   "reqd": 1
+  },
+  {
+   "default": "None",
+   "fieldname": "identification_mode",
+   "fieldtype": "Select",
+   "label": "Identification Mode",
+   "options": "None\nAsset\nSerial\nBatch\nPooled"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "min_duration",
+   "fieldtype": "Float",
+   "label": "Min Duration (billing units)"
+  },
+  {
+   "default": "0",
+   "fieldname": "max_duration",
+   "fieldtype": "Float",
+   "label": "Max Duration (0 = unlimited)"
+  },
+  {
+   "default": "0",
+   "fieldname": "buffer_before",
+   "fieldtype": "Int",
+   "label": "Buffer Before (minutes)"
+  },
+  {
+   "default": "0",
+   "fieldname": "buffer_after",
+   "fieldtype": "Int",
+   "label": "Buffer After (minutes)"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_quantity",
+   "fieldtype": "Check",
+   "label": "Allow Quantity"
+  },
+  {
+   "fieldname": "steps_section",
+   "fieldtype": "Section Break",
+   "label": "Required Steps"
+  },
+  {
+   "default": "0",
+   "fieldname": "requires_deposit",
+   "fieldtype": "Check",
+   "label": "Requires Deposit"
+  },
+  {
+   "default": "0",
+   "fieldname": "requires_contract",
+   "fieldtype": "Check",
+   "label": "Requires Contract"
+  },
+  {
+   "default": "1",
+   "fieldname": "requires_hold",
+   "fieldtype": "Check",
+   "label": "Use Hold Step"
+  },
+  {
+   "default": "0",
+   "fieldname": "requires_checkin",
+   "fieldtype": "Check",
+   "label": "Requires Check-in / Handover"
+  },
+  {
+   "default": "0",
+   "fieldname": "requires_return_inspection",
+   "fieldtype": "Check",
+   "label": "Requires Return Inspection"
+  },
+  {
+   "fieldname": "accounting_section",
+   "fieldtype": "Section Break",
+   "label": "Accounting"
+  },
+  {
+   "fieldname": "tax_template",
+   "fieldtype": "Link",
+   "label": "Sales Taxes Template",
+   "options": "Sales Taxes and Charges Template"
+  },
+  {
+   "fieldname": "income_account",
+   "fieldtype": "Link",
+   "label": "Income Account",
+   "options": "Account",
+   "description": "Overrides Rental Settings rental income account for items of this type"
+  },
+  {
+   "fieldname": "custom_fields_section",
+   "fieldtype": "Section Break",
+   "label": "Custom Fields"
+  },
+  {
+   "fieldname": "custom_fields",
+   "fieldtype": "Table",
+   "label": "Custom Fields",
+   "options": "Rental Type Custom Field"
+  }
  ],
  "links": [],
  "modified": "2026-11-25 00:00:00.000000",
@@ -41,10 +168,25 @@
  "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
-  {"create": 1, "delete": 1, "read": 1, "role": "Rental Admin", "write": 1},
-  {"read": 1, "role": "Rental Manager"},
-  {"read": 1, "role": "Rental Agent"},
-  {"read": 1, "role": "Rental Accountant"}
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "role": "Rental Admin",
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Rental Manager"
+  },
+  {
+   "read": 1,
+   "role": "Rental Agent"
+  },
+  {
+   "read": 1,
+   "role": "Rental Accountant"
+  }
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
