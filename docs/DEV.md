@@ -30,4 +30,11 @@ scripts/test-both.sh        # run the app tests on both, non-zero if either fail
 
 The script reads branches, Python and Node from `ci/versions.yml`. Optional env: `SITE`, `ADMIN_PASSWORD`, `DB_ROOT_PASSWORD`, `BENCH_DIR_V15`, `BENCH_DIR_V16` (for the test helper). Prerequisites: `bench` CLI, git, running MariaDB (10.6 for v15, 11.8 for v16; use separate servers or ports, or one 10.6-compatible server for dev) and Redis, plus `nvm` and the required Python. The app is installed once `pyproject.toml` exists (T01). `.devcontainer/` is a minimal starting point.
 
-Status: scripts are syntax-checked only; they have not been run end to end in this sandbox (no MariaDB or bench here). Run them on a real machine before relying on them.
+Verified 2026-11-25 in a Linux sandbox (Ubuntu 24.04, MariaDB 10.11 for both, Redis, Python 3.11/3.14, Node 18/24 from nodejs.org): Frappe/ERPNext v15.128/15.127 and v16.61, `install-app frappe_rental`, `migrate` and `run-tests --app frappe_rental` all pass on both. Gotchas found:
+- Run `bench` as a non-root user; it refuses root.
+- `bench get-app erpnext` needs the full URL (`https://github.com/frappe/erpnext`); the bare name failed behind the proxy.
+- Each Node version needs its own `yarn` (`npm i -g yarn@1`). Set `SKIP_ASSETS=1` to skip the JS build when only backend tests matter.
+- Install `cron` (bench calls `crontab`), `mariadb-server`, `libmariadb-dev`, `build-essential`, `pkg-config`.
+- Set the utf8mb4 settings in the MariaDB config (`character-set-server=utf8mb4`, `collation-server=utf8mb4_unicode_ci`, `character-set-client-handshake=FALSE`).
+- v15 `yarn install` could not fetch a GitHub tarball through the sandbox proxy (not an app issue); the sandbox used a no-op yarn shim, so JS assets were not built on v15 there.
+- Not yet verified: MariaDB 10.6 / 11.8 exact versions, and the JS asset build on v15.

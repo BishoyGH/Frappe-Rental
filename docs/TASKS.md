@@ -95,4 +95,4 @@ Work top to bottom. One task = one PR. Each task lists what to build (**Build**)
 - Review the next-major (v17) CI job weekly once it exists; open a task for each new break.
 - Remove compat shims when their removal condition is met.
 
-> Note (2026-11-25): T00B, T01 and T00C were written without a bench in the authoring sandbox. They are ticked but **unverified on real v15 and v16 benches** (install, `bench migrate`, `run-tests`). Run `scripts/bench-setup.sh 15|16` and `scripts/test-both.sh` once and fix anything found. `develop` branch not yet created; deferred to the maintainer.
+> Note (2026-11-25): T00B, T01 and T00C were verified in a sandbox with MariaDB 10.11 on v15.128 and v16.61: install, `migrate` and `run-tests` pass on both. Still unverified: exact MariaDB 10.6/11.8, the v15 JS asset build, and CI. `develop` branch not yet created; deferred to the maintainer.
