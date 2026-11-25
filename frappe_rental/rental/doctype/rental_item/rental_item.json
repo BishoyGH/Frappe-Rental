@@ -7,6 +7,7 @@
   "item_name",
   "rental_type",
   "location",
+  "rate_card",
   "capacity_people",
   "column_break_1",
   "item_code",
@@ -44,6 +45,12 @@
    "label": "Location",
    "options": "Rental Location",
    "in_standard_filter": 1
+  },
+  {
+   "fieldname": "rate_card",
+   "fieldtype": "Link",
+   "label": "Rate Card",
+   "options": "Rental Rate Card"
   },
   {
    "fieldname": "capacity_people",

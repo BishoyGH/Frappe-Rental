@@ -52,5 +52,5 @@ class TestPermissionMatrix(FrappeTestCase):
 		self.assertTrue(frappe.db.exists("Workspace", "Rental"))
 		for card in ("Available Units", "Published Rental Items"):
 			self.assertTrue(frappe.db.exists("Number Card", card))
-		shortcuts = {s.link_to for s in frappe.get_doc("Workspace", "Rental").shortcuts}
-		self.assertTrue(set(MATRIX) <= shortcuts)
+		links = {link.link_to for link in frappe.get_doc("Workspace", "Rental").links if link.type == "Link"}
+		self.assertTrue(set(MATRIX) <= links, set(MATRIX) - links)

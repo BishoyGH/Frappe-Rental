@@ -24,6 +24,8 @@
   "accounting_section",
   "tax_template",
   "income_account",
+  "deposit_rule",
+  "cancellation_policy",
   "custom_fields_section",
   "custom_fields"
  ],
@@ -147,6 +149,18 @@
    "label": "Income Account",
    "options": "Account",
    "description": "Overrides Rental Settings rental income account for items of this type"
+  },
+  {
+   "fieldname": "deposit_rule",
+   "fieldtype": "Link",
+   "label": "Deposit Rule",
+   "options": "Rental Deposit Rule"
+  },
+  {
+   "fieldname": "cancellation_policy",
+   "fieldtype": "Link",
+   "label": "Cancellation Policy",
+   "options": "Rental Cancellation Policy"
   },
   {
    "fieldname": "custom_fields_section",
