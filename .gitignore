@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+node_modules/
+frontend/dist/
+.venv/
+.DS_Store
+.env
+frappe_rental/public/frontend/
