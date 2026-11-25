@@ -50,3 +50,14 @@ class TestCompat(FrappeTestCase):
 			(root / "compat").mkdir()
 			(root / "compat" / "ok.py").write_text("import frappe\nx = frappe.__version__\n")
 			self.assertEqual(len(find_violations(root)), 1)
+
+
+class TestErpnextShim(FrappeTestCase):
+	def test_ensure_setup_complete_returns_existing_company(self):
+		import frappe
+
+		from frappe_rental.compat.erpnext import ensure_setup_complete
+
+		company = ensure_setup_complete()
+		self.assertTrue(frappe.db.exists("Company", company))
+		self.assertEqual(ensure_setup_complete(), company)  # idempotent
