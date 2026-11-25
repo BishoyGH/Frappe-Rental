@@ -1,0 +1,30 @@
+[project]
+name = "frappe_rental"
+authors = [{ name = "Frappe Rental contributors", email = "noreply@example.com" }]
+description = "Generic rental engine for ERPNext"
+requires-python = ">=3.11"
+readme = "README.md"
+dynamic = ["version"]
+license = { text = "GPL-3.0-or-later" }
+dependencies = []
+
+[build-system]
+requires = ["flit_core >=3.4,<4"]
+build-backend = "flit_core.buildapi"
+
+# Bounds come from ci/versions.yml (app_dependency_bounds).
+[tool.bench.frappe-dependencies]
+frappe = ">=15.0.0,<17.0.0"
+erpnext = ">=15.0.0,<17.0.0"
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+indent-width = 4
+
+[tool.ruff.lint]
+select = ["F", "E", "W", "I", "UP", "B", "TID"]
+ignore = ["E501", "W191"]
+
+[tool.ruff.format]
+indent-style = "tab"
