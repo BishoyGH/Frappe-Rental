@@ -46,16 +46,17 @@ def create_roles() -> None:
 
 
 def create_item_group() -> None:
+	"""Create the Rentals item group. On a bare site (setup wizard not run) there is no root Item Group
+	yet, so this is skipped and retried from the setup_wizard_complete and after_migrate hooks."""
 	if frappe.db.exists("Item Group", ITEM_GROUP):
 		return
-	parent = frappe.db.get_value("Item Group", {"is_group": 1, "parent_item_group": ""}, "name")
+	parent = frappe.db.get_value(
+		"Item Group", {"is_group": 1, "parent_item_group": ["is", "not set"]}, "name"
+	)
+	if not parent:
+		return
 	frappe.get_doc(
-		{
-			"doctype": "Item Group",
-			"item_group_name": ITEM_GROUP,
-			"parent_item_group": parent or "All Item Groups",
-			"is_group": 0,
-		}
+		{"doctype": "Item Group", "item_group_name": ITEM_GROUP, "parent_item_group": parent, "is_group": 0}
 	).insert(ignore_permissions=True)  # install-time bootstrap
 
 

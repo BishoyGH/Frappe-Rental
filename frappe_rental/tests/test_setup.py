@@ -44,3 +44,15 @@ class TestInstallDefaults(FrappeTestCase):
 		settings.save()
 		setup.create_defaults()
 		self.assertEqual(frappe.get_single("Rental Settings").hold_expiry_minutes, 30)
+
+
+class TestBareSite(FrappeTestCase):
+	def test_item_group_skipped_without_root(self):
+		"""A bare site has no root Item Group; create_defaults must not fail (CI regression)."""
+		from unittest import mock
+
+		with (
+			mock.patch.object(frappe.db, "get_value", return_value=None),
+			mock.patch.object(frappe.db, "exists", return_value=False),
+		):
+			setup.create_item_group()  # no exception
