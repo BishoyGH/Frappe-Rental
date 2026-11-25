@@ -7,6 +7,36 @@ rights on master data yet; their portal access arrives with the portal tasks.
 PERMS = {"r": "read", "w": "write", "c": "create", "d": "delete"}
 
 MATRIX = {
+	"Rental Season": {
+		"Rental Admin": "rwcd",
+		"Rental Manager": "r",
+		"Rental Agent": "r",
+		"Rental Accountant": "r",
+	},
+	"Rental Rate Card": {
+		"Rental Admin": "rwcd",
+		"Rental Manager": "r",
+		"Rental Agent": "r",
+		"Rental Accountant": "r",
+	},
+	"Rental Charge": {
+		"Rental Admin": "rwcd",
+		"Rental Manager": "r",
+		"Rental Agent": "r",
+		"Rental Accountant": "r",
+	},
+	"Rental Deposit Rule": {
+		"Rental Admin": "rwcd",
+		"Rental Manager": "r",
+		"Rental Agent": "r",
+		"Rental Accountant": "r",
+	},
+	"Rental Cancellation Policy": {
+		"Rental Admin": "rwcd",
+		"Rental Manager": "r",
+		"Rental Agent": "r",
+		"Rental Accountant": "r",
+	},
 	"Rental Item": {
 		"Rental Admin": "rwcd",
 		"Rental Manager": "rwc",
