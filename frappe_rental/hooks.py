@@ -14,3 +14,5 @@ doc_events = {
 	"Item": {"on_update": "frappe_rental.services.rental_item.item_on_update"},
 }
 setup_wizard_complete = "frappe_rental.install.setup_wizard_complete"
+
+jinja = {"methods": ["frappe_rental.services.unit.qr_data_uri"]}
