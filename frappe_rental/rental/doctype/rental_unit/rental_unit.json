@@ -1,0 +1,246 @@
+{
+ "actions": [],
+ "creation": "2026-11-25 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "unit_name",
+  "rental_item",
+  "rental_type",
+  "identification_mode",
+  "unit_type",
+  "column_break_1",
+  "status",
+  "location",
+  "parent_rental_unit",
+  "is_group",
+  "identity_section",
+  "barcode",
+  "serial_no",
+  "batch_no",
+  "asset",
+  "column_break_2",
+  "quantity_available",
+  "warehouse",
+  "employee",
+  "supplier",
+  "external_ids_section",
+  "external_ids",
+  "lft",
+  "rgt",
+  "old_parent"
+ ],
+ "fields": [
+  {
+   "fieldname": "unit_name",
+   "fieldtype": "Data",
+   "label": "Unit Name",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "rental_item",
+   "fieldtype": "Link",
+   "label": "Rental Item",
+   "options": "Rental Item",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "rental_type",
+   "fieldtype": "Link",
+   "label": "Rental Type",
+   "options": "Rental Type",
+   "fetch_from": "rental_item.rental_type",
+   "read_only": 1
+  },
+  {
+   "fieldname": "identification_mode",
+   "fieldtype": "Data",
+   "label": "Identification Mode",
+   "read_only": 1
+  },
+  {
+   "fieldname": "unit_type",
+   "fieldtype": "Select",
+   "label": "Unit Type",
+   "options": "Asset\nStock Pool\nProvider\nSpace",
+   "default": "Space"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Available\nOccupied\nMaintenance\nBlocked\nRetired",
+   "default": "Available",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Link",
+   "label": "Location",
+   "options": "Rental Location",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "parent_rental_unit",
+   "fieldtype": "Link",
+   "label": "Parent Unit",
+   "options": "Rental Unit"
+  },
+  {
+   "fieldname": "is_group",
+   "fieldtype": "Check",
+   "label": "Is Group"
+  },
+  {
+   "fieldname": "identity_section",
+   "fieldtype": "Section Break",
+   "label": "Identification"
+  },
+  {
+   "fieldname": "barcode",
+   "fieldtype": "Data",
+   "label": "Barcode",
+   "unique": 1,
+   "no_copy": 1,
+   "description": "Defaults to the unit code"
+  },
+  {
+   "fieldname": "serial_no",
+   "fieldtype": "Link",
+   "label": "Serial No",
+   "options": "Serial No",
+   "no_copy": 1
+  },
+  {
+   "fieldname": "batch_no",
+   "fieldtype": "Link",
+   "label": "Batch",
+   "options": "Batch"
+  },
+  {
+   "fieldname": "asset",
+   "fieldtype": "Link",
+   "label": "Asset",
+   "options": "Asset",
+   "no_copy": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "quantity_available",
+   "fieldtype": "Int",
+   "label": "Quantity Available",
+   "description": "Pooled mode only"
+  },
+  {
+   "fieldname": "warehouse",
+   "fieldtype": "Link",
+   "label": "Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "external_ids_section",
+   "fieldtype": "Section Break",
+   "label": "External Identifiers"
+  },
+  {
+   "fieldname": "external_ids",
+   "fieldtype": "Table",
+   "label": "External IDs",
+   "options": "Rental Unit Identifier"
+  },
+  {
+   "fieldname": "lft",
+   "fieldtype": "Int",
+   "label": "Left",
+   "hidden": 1,
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "rgt",
+   "fieldtype": "Int",
+   "label": "Right",
+   "hidden": 1,
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "old_parent",
+   "fieldtype": "Link",
+   "label": "Old Parent",
+   "options": "Rental Unit",
+   "hidden": 1,
+   "read_only": 1
+  }
+ ],
+ "links": [],
+ "modified": "2026-11-25 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "name": "Rental Unit",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "role": "Rental Admin",
+   "write": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "Rental Manager",
+   "write": 1,
+   "report": 1,
+   "print": 1
+  },
+  {
+   "read": 1,
+   "role": "Rental Agent",
+   "write": 1,
+   "print": 1
+  },
+  {
+   "read": 1,
+   "role": "Rental Accountant",
+   "report": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "autoname": "RU-.#####",
+ "naming_rule": "Expression (old style)",
+ "title_field": "unit_name",
+ "show_title_field_in_link": 1,
+ "search_fields": "unit_name,barcode,serial_no,asset",
+ "is_tree": 1,
+ "nsm_parent_field": "parent_rental_unit"
+}

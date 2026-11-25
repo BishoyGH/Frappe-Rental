@@ -6,7 +6,7 @@ requires-python = ">=3.11"
 readme = "README.md"
 dynamic = ["version"]
 license = { text = "GPL-3.0-or-later" }
-dependencies = []
+dependencies = ["pyqrcode~=1.2"]  # also a Frappe dependency on v15 and v16
 
 [build-system]
 requires = ["flit_core >=3.4,<4"]
