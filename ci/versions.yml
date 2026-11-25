@@ -1,0 +1,48 @@
+# Single source of truth for toolchain versions per supported Frappe major.
+# Verified 2026-11-25 against the official Frappe/ERPNext repositories (branch files cited per value).
+# Do not hard-code these values anywhere else; read this file (CI, scripts, docs, devcontainer).
+#
+# Raw sources (replace <v> with 15 or 16):
+#   F  = https://github.com/frappe/frappe/blob/version-<v>/pyproject.toml
+#   FP = https://github.com/frappe/frappe/blob/version-<v>/package.json
+#   FC = https://github.com/frappe/frappe/blob/version-<v>/.github/workflows/ (server-tests.yml, _base-server-tests.yml)
+#   FM = https://github.com/frappe/frappe/blob/version-<v>/frappe/database/mariadb/setup_db.py (check_compatible_versions)
+#   E  = https://github.com/frappe/erpnext/blob/version-<v>/pyproject.toml
+#   D  = https://github.com/frappe/frappe_docker/blob/main/pwd.yml (redis, mariadb images)
+
+versions:
+  "15":
+    frappe_branch: version-15            # F
+    erpnext_branch: version-15           # E
+    frappe_pin_checked: "15.128.0"       # frappe/__init__.py __version__ at check time
+    erpnext_pin_checked: "15.127.0"      # erpnext/__init__.py __version__ at check time
+    python: "3.11"                       # FC server-tests.yml python-version "3.11"; F requires-python >=3.11,<3.15
+    python_min: "3.11"                   # F
+    python_max_exclusive: "3.15"         # F
+    node: "18"                           # FC node-version 18; FP engines.node >=18
+    mariadb: "10.6"                      # FC image mariadb:10.6.24; FM warns below 10.6 and from 10.9
+    mariadb_image: "mariadb:10.6.24"     # FC
+    redis: "6.2"                         # D redis:6.2-alpine
+    erpnext_requires_frappe: ">=15.111.0,<16.0.0"   # E [tool.bench.frappe-dependencies]
+  "16":
+    frappe_branch: version-16            # F
+    erpnext_branch: version-16           # E
+    frappe_pin_checked: "16.61.0"        # frappe/__init__.py __version__ at check time
+    erpnext_pin_checked: "16.61.0"       # erpnext/__init__.py __version__ at check time
+    python: "3.14"                       # FC server-tests.yml python-version '3.14'; F requires-python >=3.14,<3.15
+    python_min: "3.14"                   # F
+    python_max_exclusive: "3.15"         # F
+    node: "24"                           # FC node-version 24; FP engines.node >=24
+    mariadb: "11.8"                      # FC _base-server-tests.yml image mariadb:11.8; FM warns above 11.8
+    mariadb_image: "mariadb:11.8"        # FC
+    redis: "6.2"                         # D redis:6.2-alpine (frappe_docker); Python client redis~=7.1 in F
+    erpnext_requires_frappe: ">=16.60.0,<17.0.0"    # E [tool.bench.frappe-dependencies]
+
+# Dependency bounds for this app's pyproject.toml (T01). Frappe apps declare frappe/erpnext
+# through [tool.bench.frappe-dependencies], not as pip requirements (same mechanism ERPNext uses, see E).
+app_dependency_bounds:
+  frappe: ">=15.0.0,<17.0.0"
+  erpnext: ">=15.0.0,<17.0.0"
+# App python floor = lowest supported Python across majors (v15: 3.11). Code and ruff target it.
+app_requires_python: ">=3.11"
+ruff_target: "py311"
