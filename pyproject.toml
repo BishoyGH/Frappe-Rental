@@ -24,7 +24,7 @@ indent-width = 4
 
 [tool.ruff.lint]
 select = ["F", "E", "W", "I", "UP", "B", "TID"]
-ignore = ["E501"]
+ignore = ["E501", "W191"]
 
 [tool.ruff.format]
 indent-style = "tab"
