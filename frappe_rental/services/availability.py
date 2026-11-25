@@ -120,6 +120,26 @@ def reserve_booking(doc) -> None:
 	Idempotent: the booking's previous rows are replaced. Raises UnavailableError on a clash.
 	"""
 	source = ("Rental Booking", doc.name)
+	# Lock before any plain read: MariaDB 11.8 (innodb_snapshot_isolation) rejects a locking read of
+	# rows changed after the transaction's snapshot, so the snapshot must start after the lock.
+	lock_units_for(doc.lines)
+	try:
+		_reserve_lines(doc, source)
+	except frappe.QueryDeadlockError as e:
+		raise UnavailableError(_("Units changed while booking; please try again")) from e
+
+
+def lock_units_for(lines) -> None:
+	"""Lock the assigned units, or every unit of the item when a line has none, in name order."""
+	units = {line.rental_unit for line in lines if line.rental_unit}
+	items = [line.rental_item for line in lines if not line.rental_unit and line.rental_item]
+	if items:
+		units.update(frappe.get_all("Rental Unit", filters={"rental_item": ["in", items]}, pluck="name"))
+	for unit in sorted(units):
+		lock_unit(unit)
+
+
+def _reserve_lines(doc, source) -> None:
 	release(*source)
 	for line in doc.lines:
 		start = line.from_datetime or doc.from_datetime
