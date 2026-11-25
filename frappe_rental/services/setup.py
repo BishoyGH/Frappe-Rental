@@ -31,6 +31,9 @@ def create_defaults() -> None:
 	"""Create global defaults and, if a company exists, its accounts and warehouse."""
 	create_roles()
 	create_item_group()
+	from frappe_rental.services.rental_type import ensure_accounting_dimension
+
+	ensure_accounting_dimension()
 	company = frappe.db.get_value("Company", {}, "name", order_by="creation asc")
 	if company:
 		create_company_defaults(company)

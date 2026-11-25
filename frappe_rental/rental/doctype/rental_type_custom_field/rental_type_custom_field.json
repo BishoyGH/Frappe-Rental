@@ -1,0 +1,27 @@
+{
+ "actions": [],
+ "creation": "2026-11-25 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": ["applies_to", "label", "fieldname", "fieldtype", "options", "reqd"],
+ "fields": [
+  {"default": "Rental Item", "fieldname": "applies_to", "fieldtype": "Select", "in_list_view": 1, "label": "Applies To", "options": "Rental Item\nRental Unit\nRental Booking", "reqd": 1},
+  {"fieldname": "label", "fieldtype": "Data", "in_list_view": 1, "label": "Label", "reqd": 1},
+  {"fieldname": "fieldname", "fieldtype": "Data", "in_list_view": 1, "label": "Field Name", "reqd": 1, "description": "Lowercase letters, digits and underscores"},
+  {"default": "Data", "fieldname": "fieldtype", "fieldtype": "Select", "in_list_view": 1, "label": "Field Type", "options": "Data\nSmall Text\nInt\nFloat\nCheck\nSelect\nDate\nLink", "reqd": 1},
+  {"fieldname": "options", "fieldtype": "Small Text", "label": "Options", "description": "Newline separated values for Select, DocType name for Link"},
+  {"default": "0", "fieldname": "reqd", "fieldtype": "Check", "label": "Mandatory"}
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-25 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "name": "Rental Type Custom Field",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
