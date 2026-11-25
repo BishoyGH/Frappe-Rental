@@ -1,0 +1,14 @@
+# Nightly extras (T02). Fill in when the oldest supported minors and v17 are defined.
+name: Nightly
+on:
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+
+jobs:
+  next-major:
+    # Allowed failure: Frappe develop (future v17) until promoted by a triage task.
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - run: echo "Placeholder - next-major run is added once oldest-minor pins exist in ci/versions.yml"
