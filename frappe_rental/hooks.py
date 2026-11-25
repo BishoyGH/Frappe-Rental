@@ -5,3 +5,9 @@ app_description = "Generic rental engine for ERPNext: rent resources and service
 app_email = "noreply@example.com"
 app_license = "gpl-3.0"
 required_apps = ["erpnext"]
+
+after_install = "frappe_rental.install.after_install"
+after_migrate = ["frappe_rental.install.after_install"]
+
+doc_events = {"Company": {"after_insert": "frappe_rental.install.company_after_insert"}}
+setup_wizard_complete = "frappe_rental.install.setup_wizard_complete"

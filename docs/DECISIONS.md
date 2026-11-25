@@ -46,3 +46,6 @@ Mockups: https://claude.ai/artifact/GWrCpQ4YQmxYKq34oEZmjY
 
 ## D-branching (2026-11-25)
 Foundation tasks T00A to T00C are stacked as one commit per task on a single branch with one PR, because no `develop` branch exists yet and push access is limited to that branch. Per-task PRs resume once `develop` exists (T01).
+
+## D-accounting-dimension (2026-11-25)
+The `Rental Item Type` Accounting Dimension is created in T06 together with the Rental Type DocType it points to, not in T04.
