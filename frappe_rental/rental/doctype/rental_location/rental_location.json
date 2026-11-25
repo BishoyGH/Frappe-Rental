@@ -17,16 +17,78 @@
   "old_parent"
  ],
  "fields": [
-  {"fieldname": "location_name", "fieldtype": "Data", "in_list_view": 1, "label": "Location Name", "reqd": 1, "unique": 1},
-  {"fieldname": "parent_rental_location", "fieldtype": "Link", "ignore_user_permissions": 1, "label": "Parent Location", "options": "Rental Location"},
-  {"default": "0", "fieldname": "is_group", "fieldtype": "Check", "label": "Is Group"},
-  {"fieldname": "company", "fieldtype": "Link", "in_list_view": 1, "label": "Company", "options": "Company", "reqd": 1},
-  {"fieldname": "address", "fieldtype": "Link", "label": "Address", "options": "Address"},
-  {"fieldname": "timezone", "fieldtype": "Autocomplete", "label": "Timezone"},
-  {"fieldname": "cost_center", "fieldtype": "Link", "label": "Cost Center", "options": "Cost Center", "read_only": 1},
-  {"fieldname": "lft", "fieldtype": "Int", "hidden": 1, "label": "Left", "no_copy": 1, "read_only": 1},
-  {"fieldname": "rgt", "fieldtype": "Int", "hidden": 1, "label": "Right", "no_copy": 1, "read_only": 1},
-  {"fieldname": "old_parent", "fieldtype": "Link", "hidden": 1, "label": "Old Parent", "options": "Rental Location", "no_copy": 1, "read_only": 1}
+  {
+   "fieldname": "location_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Location Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "parent_rental_location",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "label": "Parent Location",
+   "options": "Rental Location"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_group",
+   "fieldtype": "Check",
+   "label": "Is Group"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Link",
+   "label": "Address",
+   "options": "Address"
+  },
+  {
+   "fieldname": "timezone",
+   "fieldtype": "Autocomplete",
+   "label": "Timezone"
+  },
+  {
+   "fieldname": "cost_center",
+   "fieldtype": "Link",
+   "label": "Cost Center",
+   "options": "Cost Center",
+   "read_only": 1
+  },
+  {
+   "fieldname": "lft",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Left",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "rgt",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Right",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "old_parent",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Old Parent",
+   "options": "Rental Location",
+   "no_copy": 1,
+   "read_only": 1
+  }
  ],
  "is_tree": 1,
  "links": [],
@@ -38,10 +100,47 @@
  "nsm_parent_field": "parent_rental_location",
  "owner": "Administrator",
  "permissions": [
-  {"create": 1, "delete": 1, "read": 1, "role": "Rental Admin", "write": 1},
-  {"create": 1, "read": 1, "role": "Rental Manager", "write": 1},
-  {"read": 1, "role": "Rental Agent"},
-  {"read": 1, "role": "Rental Accountant"}
+  {
+   "role": "Rental Admin",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Rental Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Rental Agent",
+   "read": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Rental Accountant",
+   "read": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  }
  ],
  "sort_field": "modified",
  "sort_order": "DESC",

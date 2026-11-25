@@ -169,23 +169,43 @@
  "owner": "Administrator",
  "permissions": [
   {
+   "role": "Rental Admin",
+   "read": 1,
+   "write": 1,
    "create": 1,
    "delete": 1,
-   "read": 1,
-   "role": "Rental Admin",
-   "write": 1
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
   },
   {
+   "role": "Rental Manager",
    "read": 1,
-   "role": "Rental Manager"
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
   },
   {
+   "role": "Rental Agent",
    "read": 1,
-   "role": "Rental Agent"
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
   },
   {
+   "role": "Rental Accountant",
    "read": 1,
-   "role": "Rental Accountant"
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
   }
  ],
  "sort_field": "modified",
