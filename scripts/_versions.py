@@ -1,4 +1,5 @@
 """Print a value from ci/versions.yml: _versions.py <major> <key>. Single reader of the version file."""
+
 import pathlib
 import sys
 
