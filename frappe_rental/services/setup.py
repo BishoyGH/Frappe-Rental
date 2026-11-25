@@ -5,7 +5,6 @@ are stored in Rental Settings and read from there by the rest of the app.
 """
 
 import frappe
-from frappe import _
 
 ROLES = (
 	"Rental Admin",
@@ -62,6 +61,9 @@ def create_item_group() -> None:
 
 def create_company_defaults(company: str) -> None:
 	"""Accounts and warehouse for one company; fill Rental Settings blanks (never overwrite)."""
+	if not frappe.db.exists("Account", {"company": company}):
+		# Chart of accounts not created yet; the setup_wizard_complete and after_migrate hooks retry.
+		return
 	settings = frappe.get_single("Rental Settings")
 	if not settings.default_company:
 		settings.default_company = company
@@ -69,13 +71,16 @@ def create_company_defaults(company: str) -> None:
 		return
 	for field, (name, root_type) in ACCOUNTS.items():
 		if not settings.get(field):
-			settings.set(field, _ensure_account(company, name, root_type))
+			account = _ensure_account(company, name, root_type)
+			if account:
+				settings.set(field, account)
 	if not settings.rented_out_warehouse:
 		settings.rented_out_warehouse = _ensure_warehouse(company)
 	settings.save(ignore_permissions=True)  # install-time bootstrap
 
 
-def _ensure_account(company: str, name: str, root_type: str) -> str:
+def _ensure_account(company: str, name: str, root_type: str) -> str | None:
+	"""Create the account under a group of root_type; None if the chart is not there yet."""
 	abbr = frappe.get_cached_value("Company", company, "abbr")
 	full = f"{name} - {abbr}"
 	if frappe.db.exists("Account", full):
@@ -90,7 +95,8 @@ def _ensure_account(company: str, name: str, root_type: str) -> str:
 		"Account", {"company": company, "root_type": root_type, "is_group": 1}, "name", order_by="lft asc"
 	)
 	if not parent:
-		frappe.throw(_("No {0} account group found for company {1}").format(root_type, company))
+		# Chart not created yet (Company insert runs before it); after_migrate or the wizard hook retries.
+		return None
 	frappe.get_doc(
 		{
 			"doctype": "Account",
