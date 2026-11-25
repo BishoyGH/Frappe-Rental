@@ -21,21 +21,93 @@
   "rented_out_warehouse"
  ],
  "fields": [
-  {"fieldname": "general_section", "fieldtype": "Section Break", "label": "General"},
-  {"fieldname": "default_company", "fieldtype": "Link", "label": "Default Company", "options": "Company"},
-  {"fieldname": "default_price_list", "fieldtype": "Link", "label": "Default Price List", "options": "Price List"},
-  {"default": "15", "fieldname": "hold_expiry_minutes", "fieldtype": "Int", "label": "Hold Expiry (minutes)"},
-  {"default": "0", "fieldname": "auto_invoice", "fieldtype": "Check", "label": "Auto Invoice"},
-  {"fieldname": "late_return_section", "fieldtype": "Section Break", "label": "Late Return"},
-  {"default": "0", "fieldname": "grace_period_minutes", "fieldtype": "Int", "label": "Grace Period (minutes)"},
-  {"default": "0", "fieldname": "late_fee_rate", "fieldtype": "Percent", "label": "Late Fee Rate (%)"},
-  {"fieldname": "accounts_section", "fieldtype": "Section Break", "label": "Accounts"},
-  {"fieldname": "rental_income_account", "fieldtype": "Link", "label": "Rental Income", "options": "Account"},
-  {"fieldname": "deposit_liability_account", "fieldtype": "Link", "label": "Customer Deposits (Rental)", "options": "Account"},
-  {"fieldname": "late_fee_income_account", "fieldtype": "Link", "label": "Late Fee Income", "options": "Account"},
-  {"fieldname": "damage_recovery_account", "fieldtype": "Link", "label": "Damage Recovery", "options": "Account"},
-  {"fieldname": "deposit_forfeiture_income_account", "fieldtype": "Link", "label": "Deposit Forfeiture Income", "options": "Account"},
-  {"fieldname": "rented_out_warehouse", "fieldtype": "Link", "label": "Rented Out Warehouse", "options": "Warehouse"}
+  {
+   "fieldname": "general_section",
+   "fieldtype": "Section Break",
+   "label": "General"
+  },
+  {
+   "fieldname": "default_company",
+   "fieldtype": "Link",
+   "label": "Default Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "default_price_list",
+   "fieldtype": "Link",
+   "label": "Default Price List",
+   "options": "Price List"
+  },
+  {
+   "default": "15",
+   "fieldname": "hold_expiry_minutes",
+   "fieldtype": "Int",
+   "label": "Hold Expiry (minutes)"
+  },
+  {
+   "default": "0",
+   "fieldname": "auto_invoice",
+   "fieldtype": "Check",
+   "label": "Auto Invoice"
+  },
+  {
+   "fieldname": "late_return_section",
+   "fieldtype": "Section Break",
+   "label": "Late Return"
+  },
+  {
+   "default": "0",
+   "fieldname": "grace_period_minutes",
+   "fieldtype": "Int",
+   "label": "Grace Period (minutes)"
+  },
+  {
+   "default": "0",
+   "fieldname": "late_fee_rate",
+   "fieldtype": "Percent",
+   "label": "Late Fee Rate (%)"
+  },
+  {
+   "fieldname": "accounts_section",
+   "fieldtype": "Section Break",
+   "label": "Accounts"
+  },
+  {
+   "fieldname": "rental_income_account",
+   "fieldtype": "Link",
+   "label": "Rental Income",
+   "options": "Account"
+  },
+  {
+   "fieldname": "deposit_liability_account",
+   "fieldtype": "Link",
+   "label": "Customer Deposits (Rental)",
+   "options": "Account"
+  },
+  {
+   "fieldname": "late_fee_income_account",
+   "fieldtype": "Link",
+   "label": "Late Fee Income",
+   "options": "Account"
+  },
+  {
+   "fieldname": "damage_recovery_account",
+   "fieldtype": "Link",
+   "label": "Damage Recovery",
+   "options": "Account"
+  },
+  {
+   "fieldname": "deposit_forfeiture_income_account",
+   "fieldtype": "Link",
+   "label": "Deposit Forfeiture Income",
+   "options": "Account"
+  },
+  {
+   "fieldname": "rented_out_warehouse",
+   "fieldtype": "Link",
+   "label": "Rented Out Warehouse",
+   "options": "Warehouse"
+  }
  ],
  "issingle": 1,
  "links": [],
@@ -45,8 +117,38 @@
  "name": "Rental Settings",
  "owner": "Administrator",
  "permissions": [
-  {"create": 1, "read": 1, "role": "System Manager", "write": 1},
-  {"create": 1, "read": 1, "role": "Rental Admin", "write": 1}
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Rental Admin",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Rental Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Rental Accountant",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  }
  ],
  "sort_field": "modified",
  "sort_order": "DESC",

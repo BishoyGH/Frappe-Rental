@@ -1,0 +1,144 @@
+{
+ "charts": [],
+ "content": "[{\"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Rental</b></span>\", \"col\": 12}}, {\"type\": \"number_card\", \"data\": {\"number_card_name\": \"Available Units\", \"col\": 4}}, {\"type\": \"number_card\", \"data\": {\"number_card_name\": \"Published Rental Items\", \"col\": 4}}, {\"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Rental Item\", \"col\": 3}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Rental Unit\", \"col\": 3}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Rental Type\", \"col\": 3}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Rental Location\", \"col\": 3}}, {\"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Rental Settings\", \"col\": 3}}]",
+ "creation": "2026-11-25 00:00:00.000000",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "tag",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Rental",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Setup",
+   "link_count": 5,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Rental Item",
+   "link_count": 0,
+   "link_to": "Rental Item",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Rental Unit",
+   "link_count": 0,
+   "link_to": "Rental Unit",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Rental Type",
+   "link_count": 0,
+   "link_to": "Rental Type",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Rental Location",
+   "link_count": 0,
+   "link_to": "Rental Location",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Rental Settings",
+   "link_count": 0,
+   "link_to": "Rental Settings",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-11-25 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "name": "Rental",
+ "number_cards": [
+  {
+   "label": "Available Units",
+   "number_card_name": "Available Units"
+  },
+  {
+   "label": "Published Rental Items",
+   "number_card_name": "Published Rental Items"
+  }
+ ],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "restrict_to_domain": "",
+ "roles": [
+  {
+   "role": "Rental Admin"
+  },
+  {
+   "role": "Rental Manager"
+  },
+  {
+   "role": "Rental Agent"
+  },
+  {
+   "role": "Rental Accountant"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "sequence_id": 30.0,
+ "shortcuts": [
+  {
+   "label": "Rental Item",
+   "link_to": "Rental Item",
+   "type": "DocType"
+  },
+  {
+   "label": "Rental Unit",
+   "link_to": "Rental Unit",
+   "type": "DocType"
+  },
+  {
+   "label": "Rental Type",
+   "link_to": "Rental Type",
+   "type": "DocType"
+  },
+  {
+   "label": "Rental Location",
+   "link_to": "Rental Location",
+   "type": "DocType"
+  },
+  {
+   "label": "Rental Settings",
+   "link_to": "Rental Settings",
+   "type": "DocType"
+  }
+ ],
+ "title": "Rental"
+}
