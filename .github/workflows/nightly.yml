@@ -11,4 +11,4 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
-      - run: echo "TODO(T02-follow-up): run the test job against frappe/erpnext develop. Needs oldest-minor pins in ci/versions.yml."
+      - run: echo "Placeholder - next-major run is added once oldest-minor pins exist in ci/versions.yml"

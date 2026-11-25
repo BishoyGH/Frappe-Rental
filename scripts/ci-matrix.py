@@ -1,4 +1,5 @@
 """Emit the CI matrix as JSON from ci/versions.yml (single source of truth)."""
+
 import json
 import pathlib
 
