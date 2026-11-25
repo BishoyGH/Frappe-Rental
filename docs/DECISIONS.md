@@ -43,3 +43,6 @@ Chosen to stay inside standard ERPNext accounting and avoid custom ledger logic.
 14. **Defaults created at install** (editable): accounts above, Item Group `Rentals`, Warehouse `Rented Out`, Accounting Dimension, Cost Center per Location, tax templates.
 
 Mockups: https://claude.ai/artifact/GWrCpQ4YQmxYKq34oEZmjY
+
+## D-branching (2026-11-25)
+Foundation tasks T00A to T00C are stacked as one commit per task on a single branch with one PR, because no `develop` branch exists yet and push access is limited to that branch. Per-task PRs resume once `develop` exists (T01).

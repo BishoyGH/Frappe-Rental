@@ -19,3 +19,15 @@ Notes:
 - The app targets the lowest Python (3.11), so ruff uses `py311`.
 
 Dev environment setup (two benches) is added by T00B.
+
+## Two benches side by side
+
+```
+scripts/bench-setup.sh 15   # ~/bench-v15, site rental15.localhost
+scripts/bench-setup.sh 16   # ~/bench-v16, site rental16.localhost
+scripts/test-both.sh        # run the app tests on both, non-zero if either fails
+```
+
+The script reads branches, Python and Node from `ci/versions.yml`. Optional env: `SITE`, `ADMIN_PASSWORD`, `DB_ROOT_PASSWORD`, `BENCH_DIR_V15`, `BENCH_DIR_V16` (for the test helper). Prerequisites: `bench` CLI, git, running MariaDB (10.6 for v15, 11.8 for v16; use separate servers or ports, or one 10.6-compatible server for dev) and Redis, plus `nvm` and the required Python. The app is installed once `pyproject.toml` exists (T01). `.devcontainer/` is a minimal starting point.
+
+Status: scripts are syntax-checked only; they have not been run end to end in this sandbox (no MariaDB or bench here). Run them on a real machine before relying on them.

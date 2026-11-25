@@ -1,0 +1,6 @@
+{
+  "name": "frappe-rental",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "postCreateCommand": "echo 'Install bench, MariaDB and Redis, then run scripts/bench-setup.sh 15 and 16 (see docs/DEV.md)'",
+  "forwardPorts": [8000, 8001]
+}
