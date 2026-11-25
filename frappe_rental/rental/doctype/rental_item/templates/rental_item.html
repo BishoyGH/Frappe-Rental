@@ -1,0 +1,17 @@
+{% extends "templates/web.html" %}
+
+{% block page_content %}
+<div class="rental-item">
+	<h1>{{ doc.item_name }}</h1>
+	{% if doc.image %}<img src="{{ doc.image }}" alt="{{ doc.item_name }}" class="img-fluid mb-4">{% endif %}
+	<div class="mb-4">{{ doc.description or "" }}</div>
+	{% if doc.capacity_people %}<p>{{ _("Capacity") }}: {{ doc.capacity_people }}</p>{% endif %}
+	{% if doc.amenities %}
+	<h3>{{ _("Amenities") }}</h3>
+	<ul>{% for row in doc.amenities %}<li>{{ row.amenity }}</li>{% endfor %}</ul>
+	{% endif %}
+	{% if doc.attributes %}
+	<dl>{% for row in doc.attributes %}<dt>{{ row.attribute }}</dt><dd>{{ row.value }}</dd>{% endfor %}</dl>
+	{% endif %}
+</div>
+{% endblock %}

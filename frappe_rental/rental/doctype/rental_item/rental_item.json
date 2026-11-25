@@ -1,0 +1,171 @@
+{
+ "actions": [],
+ "creation": "2026-11-25 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "item_name",
+  "rental_type",
+  "location",
+  "capacity_people",
+  "column_break_1",
+  "item_code",
+  "image",
+  "is_published",
+  "route",
+  "description_section",
+  "description",
+  "media_section",
+  "images",
+  "details_section",
+  "amenities",
+  "attributes"
+ ],
+ "fields": [
+  {
+   "fieldname": "item_name",
+   "fieldtype": "Data",
+   "label": "Item Name",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "rental_type",
+   "fieldtype": "Link",
+   "label": "Rental Type",
+   "options": "Rental Type",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Link",
+   "label": "Location",
+   "options": "Rental Location",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "capacity_people",
+   "fieldtype": "Int",
+   "label": "Capacity (people)"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "label": "ERPNext Item",
+   "options": "Item",
+   "read_only": 1,
+   "no_copy": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "image",
+   "fieldtype": "Attach Image",
+   "label": "Image",
+   "hidden": 1
+  },
+  {
+   "fieldname": "is_published",
+   "fieldtype": "Check",
+   "label": "Published",
+   "default": "0",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Data",
+   "label": "Route",
+   "no_copy": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "description_section",
+   "fieldtype": "Section Break",
+   "label": "Description"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Description"
+  },
+  {
+   "fieldname": "media_section",
+   "fieldtype": "Section Break",
+   "label": "Images"
+  },
+  {
+   "fieldname": "images",
+   "fieldtype": "Table",
+   "label": "Images",
+   "options": "Rental Item Image"
+  },
+  {
+   "fieldname": "details_section",
+   "fieldtype": "Section Break",
+   "label": "Details"
+  },
+  {
+   "fieldname": "amenities",
+   "fieldtype": "Table",
+   "label": "Amenities",
+   "options": "Rental Item Amenity"
+  },
+  {
+   "fieldname": "attributes",
+   "fieldtype": "Table",
+   "label": "Attributes",
+   "options": "Rental Attribute Value"
+  }
+ ],
+ "links": [],
+ "modified": "2026-11-25 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "name": "Rental Item",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "role": "Rental Admin",
+   "write": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "Rental Manager",
+   "write": 1,
+   "report": 1
+  },
+  {
+   "read": 1,
+   "role": "Rental Agent"
+  },
+  {
+   "read": 1,
+   "role": "Rental Accountant",
+   "report": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "autoname": "RI-.#####",
+ "naming_rule": "Expression (old style)",
+ "title_field": "item_name",
+ "show_title_field_in_link": 1,
+ "search_fields": "item_name,rental_type",
+ "image_field": "image",
+ "has_web_view": 1,
+ "is_published_field": "is_published",
+ "allow_guest_to_view": 1,
+ "route": "rentals"
+}
