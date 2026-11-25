@@ -1,0 +1,54 @@
+{
+ "actions": [],
+ "creation": "2026-11-25 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "charge",
+  "description",
+  "amount",
+  "is_manual"
+ ],
+ "fields": [
+  {
+   "fieldname": "charge",
+   "fieldtype": "Link",
+   "label": "Charge",
+   "options": "Rental Charge",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "label": "Description",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Amount",
+   "options": "currency",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "is_manual",
+   "fieldtype": "Check",
+   "label": "Manual",
+   "default": "0",
+   "in_list_view": 1,
+   "description": "Kept when prices are recalculated"
+  }
+ ],
+ "links": [],
+ "modified": "2026-11-25 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "name": "Rental Booking Charge",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "istable": 1,
+ "editable_grid": 1
+}

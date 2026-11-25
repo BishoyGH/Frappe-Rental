@@ -1,12 +1,18 @@
 """Role permission matrix (T09). The single source of truth for desk permissions on our doctypes.
 
-Letters: r=read, w=write, c=create, d=delete. Customer and Provider are portal roles and get no desk
+Letters: r=read, w=write, c=create, d=delete, s=submit, x=cancel (submittable doctypes only). Customer and Provider are portal roles and get no desk
 rights on master data yet; their portal access arrives with the portal tasks.
 """
 
-PERMS = {"r": "read", "w": "write", "c": "create", "d": "delete"}
+PERMS = {"r": "read", "w": "write", "c": "create", "d": "delete", "s": "submit", "x": "cancel"}
 
 MATRIX = {
+	"Rental Booking": {
+		"Rental Admin": "rwcdsx",
+		"Rental Manager": "rwcsx",
+		"Rental Agent": "rwcs",
+		"Rental Accountant": "r",
+	},
 	"Rental Season": {
 		"Rental Admin": "rwcd",
 		"Rental Manager": "r",

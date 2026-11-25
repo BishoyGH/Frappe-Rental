@@ -1,0 +1,117 @@
+{
+ "actions": [],
+ "creation": "2026-11-25 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "rental_item",
+  "rental_unit",
+  "qty",
+  "from_datetime",
+  "to_datetime",
+  "column_break_1",
+  "time_unit",
+  "units",
+  "rate",
+  "discount_pct",
+  "discount_amount",
+  "amount",
+  "applied_rule"
+ ],
+ "fields": [
+  {
+   "fieldname": "rental_item",
+   "fieldtype": "Link",
+   "label": "Rental Item",
+   "options": "Rental Item",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "rental_unit",
+   "fieldtype": "Link",
+   "label": "Unit",
+   "options": "Rental Unit",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "label": "Qty",
+   "default": "1",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "from_datetime",
+   "fieldtype": "Datetime",
+   "label": "From (override)"
+  },
+  {
+   "fieldname": "to_datetime",
+   "fieldtype": "Datetime",
+   "label": "To (override)"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "time_unit",
+   "fieldtype": "Data",
+   "label": "Time Unit",
+   "read_only": 1
+  },
+  {
+   "fieldname": "units",
+   "fieldtype": "Float",
+   "label": "Units",
+   "read_only": 1
+  },
+  {
+   "fieldname": "rate",
+   "fieldtype": "Currency",
+   "label": "Rate",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "discount_pct",
+   "fieldtype": "Percent",
+   "label": "Discount %",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "discount_amount",
+   "fieldtype": "Currency",
+   "label": "Discount",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Amount",
+   "in_list_view": 1,
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "applied_rule",
+   "fieldtype": "Small Text",
+   "label": "Applied Rule",
+   "read_only": 1
+  }
+ ],
+ "links": [],
+ "modified": "2026-11-25 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "name": "Rental Booking Line",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "istable": 1,
+ "editable_grid": 1
+}
