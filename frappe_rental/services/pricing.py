@@ -212,4 +212,6 @@ def _utc(dt: datetime) -> datetime:
 	return dt.astimezone(UTC)
 
 
-__all__ = ["PricingError", "billable_units", "quote", "quote_with_hooks"]
+local_range = _local_range
+
+__all__ = ["PricingError", "billable_units", "local_range", "quote", "quote_with_hooks"]
