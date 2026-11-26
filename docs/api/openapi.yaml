@@ -241,6 +241,21 @@ paths:
         - {name: from_date, in: query, schema: {type: string, format: date}}
         - {name: to_date, in: query, schema: {type: string, format: date}}
       responses: {"200": {description: "[{name, customer, customer_name, from_datetime, to_datetime, status, rental_unit, project}]"}, "403": {description: Guest}}
+  /frappe_rental.api.contract.request_service:
+    post:
+      summary: Ask for an unplanned maintenance visit; SLA deadlines come from the contract
+      requestBody: {content: {application/json: {schema: {type: object, required: [name, notes], properties: {name: {type: string}, notes: {type: string}}}}}}
+      responses: {"200": {description: "{visit}"}, "403": {description: Not permitted}, "417": {description: Contract not running}}
+  /frappe_rental.api.contract.assign_visit:
+    post:
+      summary: Staff books a technician (Provider unit) for a visit
+      requestBody: {content: {application/json: {schema: {type: object, required: [name, visit, technician, start], properties: {name: {type: string}, visit: {type: string}, technician: {type: string}, start: {type: string, format: date-time}, hours: {type: number, default: 2}}}}}}
+      responses: {"200": {description: "{booking}"}, "403": {description: Not permitted}, "417": {description: Not a provider, outside working hours, or visit closed}}
+  /frappe_rental.api.contract.complete_visit:
+    post:
+      summary: Staff marks a visit done; a finish after the resolution deadline flags an SLA breach
+      requestBody: {content: {application/json: {schema: {type: object, required: [name, visit], properties: {name: {type: string}, visit: {type: string}, notes: {type: string}}}}}}
+      responses: {"200": {description: "{status: Done}"}, "403": {description: Not permitted}}
   /frappe_rental.api.waitlist.add:
     post:
       summary: Put a customer on the waitlist

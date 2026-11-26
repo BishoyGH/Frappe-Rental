@@ -34,7 +34,10 @@ scheduler_events = {
 		"frappe_rental.services.esign.remind_unsigned",
 		"frappe_rental.services.renewal.run",
 	],
-	"hourly": ["frappe_rental.services.handover.check_overdue"],
+	"hourly": [
+		"frappe_rental.services.handover.check_overdue",
+		"frappe_rental.services.visits.check_sla",
+	],
 }
 
 website_route_rules = [{"from_route": "/rental/<path:app_path>", "to_route": "rental"}]
