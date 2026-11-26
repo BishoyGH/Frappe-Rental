@@ -18,12 +18,12 @@ class TestAllocations(FrappeTestCase):
 		super().setUpClass()
 		cls.make_fixtures()
 
-	def unit(self, **kw):
+	def unit(self, rtype="T16 Device", **kw):
 		item = frappe.get_doc(
 			{
 				"doctype": "Rental Item",
 				"item_name": f"T42 {random_string(6)}",
-				"rental_type": "T16 Device",
+				"rental_type": rtype,
 				"rate_card": "T16 Card",
 			}
 		).insert()

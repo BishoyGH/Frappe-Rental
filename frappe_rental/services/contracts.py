@@ -12,10 +12,11 @@ Terminated | Renewed. Moves go through `transition()`, which checks the allowed 
 """
 
 import json
+from decimal import Decimal
 
 import frappe
 from frappe import _
-from frappe.utils import getdate, now_datetime, nowdate
+from frappe.utils import flt, getdate, now_datetime, nowdate
 
 from frappe_rental.compat import erpnext as compat
 from frappe_rental.services import terms
@@ -75,16 +76,26 @@ def validate(doc) -> None:
 	if not doc.terms_template and doc.rental_type:
 		doc.terms_template = terms.template_for(doc.rental_type, doc.language)
 	before = doc.get_doc_before_save()
+	# one-shot flags: they cover this save only, never a later save of the same object
+	activating, amending = doc.flags.activating, doc.flags.amending
+	doc.flags.activating = doc.flags.amending = False
 	if before and before.signed_on:
 		for f in ("signed_by", "signature", "signature_type", "signer_ip", "signed_on"):
-			if str(before.get(f) or "") != str(doc.get(f) or "") and not doc.flags.activating:
+			if _norm(before.get(f)) != _norm(doc.get(f)) and not activating:
 				frappe.throw(_("Signature details cannot change"))
-	if before and before.status in SIGNED and not doc.flags.amending:
-		changed = [f for f in FROZEN if str(before.get(f) or "") != str(doc.get(f) or "")]
+	if before and before.status in SIGNED and not amending:
+		changed = [f for f in FROZEN if _norm(before.get(f)) != _norm(doc.get(f))]
 		if changed or before.rendered_terms != doc.rendered_terms:
 			frappe.throw(
 				_("A signed contract changes only by amendment ({0})").format(", ".join(changed) or "terms")
 			)
+
+
+def _norm(value) -> str:
+	"""Compare field values across a save: 300 and 300.0 are equal, None and "" are equal."""
+	if isinstance(value, int | float | Decimal):
+		return f"{flt(value):.6f}"
+	return str(value or "")
 
 
 def transition(doc, status: str) -> None:

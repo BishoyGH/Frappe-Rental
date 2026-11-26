@@ -57,7 +57,7 @@ class TestTerms(FrappeTestCase):
 		tpl = self.template([fixed, free])
 		out = terms.render(
 			tpl.name,
-			{},
+			terms.sample_context(),
 			clauses=[{"clause": fixed, "body": "<p>Hacked</p>"}, {"clause": free, "body": "<p>Custom</p>"}],
 		)
 		self.assertIn("Original", out["html"])

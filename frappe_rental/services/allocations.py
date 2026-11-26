@@ -19,6 +19,7 @@ from frappe_rental.services import availability
 
 SOURCE = "Rental Contract"
 LIVE = ("Reserved", "Active")
+ENDED = ("Swapped", "Released")  # still hold the unit up to their to_date
 CACHED_TYPES = ("Specific unit", "Quantity")
 
 
@@ -48,7 +49,9 @@ def reserve(contract) -> None:
 	rows = [
 		r
 		for r in contract.allocations
-		if r.status in LIVE and r.exclusive and r.allocation_type in CACHED_TYPES
+		if (r.status in LIVE or (r.status in ENDED and r.to_date))
+		and r.exclusive
+		and r.allocation_type in CACHED_TYPES
 	]
 	for unit in sorted({r.rental_unit for r in rows}):
 		availability.lock_unit(unit)
