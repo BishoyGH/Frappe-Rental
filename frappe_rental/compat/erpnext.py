@@ -104,3 +104,17 @@ def create_dimension_fields(dimension: str) -> None:
 	accounting_dimension.make_dimension_in_accounting_doctypes(
 		doc=frappe.get_doc("Accounting Dimension", dimension)
 	)
+
+
+def enable_serial_numbers() -> None:
+	"""Allow serialised items.
+
+	ERPNext v16 adds Stock Settings `enable_serial_and_batch_no_for_item`, off by default, which blocks
+	`has_serial_no`; v15 has no such switch. Feature-detected; remove when v15 support ends and set the
+	field directly.
+	"""
+	field = "enable_serial_and_batch_no_for_item"
+	if frappe.get_meta("Stock Settings").has_field(field) and not frappe.db.get_single_value(
+		"Stock Settings", field
+	):
+		frappe.db.set_single_value("Stock Settings", field, 1)

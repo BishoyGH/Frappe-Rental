@@ -53,3 +53,15 @@ cd ../e2e && yarn install && BASE_URL=http://127.0.0.1:8000 yarn test   # Playwr
 
 `bench build` runs the root `package.json` build script, so a normal bench build also builds the app.
 The built files are not committed. Guests are redirected to `/login`; users need a Rental role (or System Manager).
+
+## Demo data and acceptance scenarios
+
+```
+bench --site <site> rental-demo [--with-bookings]
+```
+
+This installs the type presets and creates a demo location, rate cards, a Device item with three serialised units, an Apartment item with two units and two customers. Running it again creates nothing new. The Phase 1 acceptance scenarios live in `frappe_rental/tests/test_scenarios.py`:
+- a 3-day Device rental, booked, confirmed, Sales Order and invoice;
+- a 1-month Apartment that needs a signed contract, then is invoiced and cancelled.
+
+They run in the normal test suite on both versions.

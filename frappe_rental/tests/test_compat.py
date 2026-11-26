@@ -4,6 +4,7 @@ import re
 import tempfile
 from pathlib import Path
 
+import frappe
 from frappe.tests.utils import FrappeTestCase  # path valid on v15 and v16
 
 import frappe_rental
@@ -61,3 +62,14 @@ class TestErpnextShim(FrappeTestCase):
 		company = ensure_setup_complete()
 		self.assertTrue(frappe.db.exists("Company", company))
 		self.assertEqual(ensure_setup_complete(), company)  # idempotent
+
+
+class TestSerialSwitch(FrappeTestCase):
+	def test_enable_serial_numbers(self):
+		from frappe_rental.compat.erpnext import enable_serial_numbers
+
+		enable_serial_numbers()
+		field = "enable_serial_and_batch_no_for_item"
+		if frappe.get_meta("Stock Settings").has_field(field):
+			self.assertEqual(frappe.db.get_single_value("Stock Settings", field), 1)
+		enable_serial_numbers()  # idempotent

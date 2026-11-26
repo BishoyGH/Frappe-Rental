@@ -28,7 +28,7 @@ bench get-app https://github.com/BishoyGH/Frappe-Rental --branch claude/project-
 bench new-site rental.localhost --admin-password admin --install-app erpnext
 bench --site rental.localhost install-app frappe_rental
 bench build --app frappe_rental        # builds the staff app (needs Node and yarn)
-bench --site rental.localhost execute frappe_rental.tests.e2e_fixtures.setup   # optional sample data
+bench --site rental.localhost rental-demo --with-bookings   # optional demo data (Device and Apartment)
 bench start
 ```
 
@@ -48,7 +48,7 @@ cd apps/frappe_rental/e2e && yarn install && npx playwright install chromium
 BASE_URL=http://rental.localhost:8000 yarn test
 ```
 
-The sample data must be loaded first.
+The tests need their own fixtures first: `bench --site rental.localhost execute frappe_rental.tests.e2e_fixtures.setup`.
 
 ## Licence
 

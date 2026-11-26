@@ -104,6 +104,8 @@ jobs:
           cd ~/bench
           mkdir -p sites/assets && ln -sfn ~/bench/apps/frappe_rental/frappe_rental/public sites/assets/frappe_rental
           bench --site test.localhost execute frappe_rental.tests.e2e_fixtures.setup
+          bench --site test.localhost rental-demo --with-bookings
+          bench --site test.localhost rental-demo   # second run must be a no-op
           nohup bench --site test.localhost serve --port 8000 > ~/serve.log 2>&1 &
           for i in $(seq 1 30); do curl -sf -o /dev/null http://127.0.0.1:8000/api/method/ping && break; sleep 2; done
       - id: e2e
