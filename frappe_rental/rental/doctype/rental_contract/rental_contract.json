@@ -51,6 +51,14 @@
   "signature_section",
   "signed_by",
   "signed_on",
+  "require_otp",
+  "signature_type",
+  "signature",
+  "signer_ip",
+  "signer_user_agent",
+  "otp_hash",
+  "otp_expires_on",
+  "signed_pdf",
   "column_break_5",
   "countersigned_by",
   "countersigned_on",
@@ -399,6 +407,64 @@
    "label": "Amendments",
    "options": "Rental Contract Amendment",
    "read_only": 1
+  },
+  {
+   "fieldname": "require_otp",
+   "fieldtype": "Check",
+   "label": "Require a one-time code to sign"
+  },
+  {
+   "fieldname": "signature_type",
+   "fieldtype": "Select",
+   "label": "Signature type",
+   "options": "\nTyped\nDrawn",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "signature",
+   "fieldtype": "Long Text",
+   "label": "Signature",
+   "description": "Typed name or drawn image (data URI)",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "signer_ip",
+   "fieldtype": "Data",
+   "label": "Signer IP",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "signer_user_agent",
+   "fieldtype": "Small Text",
+   "label": "Signer browser",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "otp_hash",
+   "fieldtype": "Data",
+   "label": "OTP hash",
+   "hidden": 1,
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "otp_expires_on",
+   "fieldtype": "Datetime",
+   "label": "OTP expires",
+   "hidden": 1,
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "signed_pdf",
+   "fieldtype": "Attach",
+   "label": "Signed PDF",
+   "read_only": 1,
+   "no_copy": 1
   }
  ],
  "links": [],

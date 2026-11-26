@@ -72,6 +72,10 @@ def validate(doc) -> None:
 	if not doc.terms_template and doc.rental_type:
 		doc.terms_template = terms.template_for(doc.rental_type, doc.language)
 	before = doc.get_doc_before_save()
+	if before and before.signed_on:
+		for f in ("signed_by", "signature", "signature_type", "signer_ip", "signed_on"):
+			if str(before.get(f) or "") != str(doc.get(f) or "") and not doc.flags.activating:
+				frappe.throw(_("Signature details cannot change"))
 	if before and before.status in SIGNED and not doc.flags.amending:
 		changed = [f for f in FROZEN if str(before.get(f) or "") != str(doc.get(f) or "")]
 		if changed or before.rendered_terms != doc.rendered_terms:
@@ -124,7 +128,9 @@ def activate(doc, signed_by: str, countersigned_by: str | None = None) -> str:
 	if not doc.rendered_terms:
 		frappe.throw(_("The contract has no rendered terms"))
 	now = now_datetime()
-	doc.signed_by, doc.signed_on = signed_by, now
+	doc.signed_by = signed_by
+	doc.signed_on = doc.signed_on or now
+	doc.flags.activating = True
 	if countersigned_by:
 		doc.countersigned_by, doc.countersigned_on = countersigned_by, now
 	if not doc.erpnext_contract:

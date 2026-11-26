@@ -27,6 +27,9 @@ EVENTS = (
 	"returned",
 	"overdue",
 	"waitlist_available",
+	"contract_signature_requested",
+	"contract_signature_reminder",
+	"contract_signed",
 )
 
 
