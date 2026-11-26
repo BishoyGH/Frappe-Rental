@@ -62,6 +62,7 @@ CUSTOM_FIELDS = {
 	"Asset Movement": [_link("rental_handover", "Rental Handover", "Rental Handover", "purpose")],
 	"Asset": [_link("rental_unit", "Rental Unit", "Rental Unit", "item_name")],
 	"Item": [_link("rental_item", "Rental Item", "Rental Item", "item_name")],
+	"Project": [_link("rental_booking", "Rental Booking", "Rental Booking", "customer", search_index=1)],
 }
 
 

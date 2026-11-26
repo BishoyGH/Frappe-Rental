@@ -136,6 +136,13 @@ MATRIX = {
 		"Rental Accountant": "r",
 		"Rental Provider": "r",
 	},
+	"Rental Schedule": {
+		"Rental Admin": "rwcd",
+		"Rental Manager": "rwc",
+		"Rental Agent": "r",
+		"Rental Accountant": "r",
+		"Rental Provider": "r",
+	},
 	"Rental Settings": {
 		"System Manager": "rwc",
 		"Rental Admin": "rwc",

@@ -24,6 +24,7 @@
   "warehouse",
   "employee",
   "supplier",
+  "working_hours",
   "external_ids_section",
   "external_ids",
   "lft",
@@ -159,6 +160,14 @@
    "fieldtype": "Link",
    "label": "Supplier",
    "options": "Supplier"
+  },
+  {
+   "fieldname": "working_hours",
+   "fieldtype": "Link",
+   "label": "Working Hours",
+   "options": "Rental Schedule",
+   "depends_on": "eval:doc.unit_type==\"Provider\"",
+   "description": "Bookings must fall inside these hours"
   },
   {
    "fieldname": "external_ids_section",

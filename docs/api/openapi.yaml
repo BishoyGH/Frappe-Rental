@@ -225,6 +225,22 @@ paths:
       summary: Customer signs the contract (typed or drawn signature, OTP when required)
       requestBody: {content: {application/json: {schema: {type: object, required: [name, signer_name, signature], properties: {name: {type: string}, signer_name: {type: string}, signature: {type: string}, signature_type: {type: string, enum: [Typed, Drawn]}, otp: {type: string}}}}}}
       responses: {"200": {description: "{signed_on}"}, "403": {description: Not permitted}, "417": {description: Wrong or expired code, or not awaiting signature}}
+  /frappe_rental.api.provider.slots:
+    get:
+      summary: Free start times of a Provider unit, from its working hours minus holidays and bookings
+      parameters:
+        - {name: unit, in: query, required: true, schema: {type: string}}
+        - {name: from_date, in: query, required: true, schema: {type: string, format: date}}
+        - {name: to_date, in: query, schema: {type: string, format: date}}
+        - {name: minutes, in: query, schema: {type: integer, default: 60}}
+      responses: {"200": {description: "[{from_datetime, to_datetime}]"}, "403": {description: Not permitted}, "417": {description: No working hours or range over 62 days}}
+  /frappe_rental.api.provider.my_schedule:
+    get:
+      summary: Bookings of the signed-in provider's own units (next 14 days by default)
+      parameters:
+        - {name: from_date, in: query, schema: {type: string, format: date}}
+        - {name: to_date, in: query, schema: {type: string, format: date}}
+      responses: {"200": {description: "[{name, customer, customer_name, from_datetime, to_datetime, status, rental_unit, project}]"}, "403": {description: Guest}}
   /frappe_rental.api.waitlist.add:
     post:
       summary: Put a customer on the waitlist
