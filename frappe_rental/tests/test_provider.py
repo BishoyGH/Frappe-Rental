@@ -5,7 +5,6 @@ from frappe.tests.utils import FrappeTestCase
 from frappe.utils import flt, random_string
 
 from frappe_rental.services import availability, provider
-from frappe_rental.tests import test_allocations as t42
 from frappe_rental.tests import test_erpnext_sync as t16
 
 MONDAY = "2026-03-02"  # a Monday
@@ -45,13 +44,74 @@ def make_schedule(holidays=()):
 class TestProvider(FrappeTestCase):
 	_tax_template = t16.TestErpnextSync.__dict__["_tax_template"]
 	make_fixtures = t16.TestErpnextSync.__dict__["make_fixtures"]
-	_unit = t42.TestAllocations.__dict__["unit"]
-	booking = t42.TestAllocations.__dict__["booking"]
 
 	@classmethod
 	def setUpClass(cls):
 		super().setUpClass()
 		cls.make_fixtures()
+		currency = frappe.db.get_value("Company", cls.company, "default_currency")
+		if not frappe.db.exists("Rental Rate Card", "T45 Hourly"):
+			frappe.get_doc(
+				{
+					"doctype": "Rental Rate Card",
+					"card_name": "T45 Hourly",
+					"currency": currency,
+					"rates": [{"time_unit": "Hour", "rate": 50}],
+				}
+			).insert()
+		if not frappe.db.exists("Rental Type", "T45 Shoot"):
+			frappe.get_doc(
+				{
+					"doctype": "Rental Type",
+					"type_name": "T45 Shoot",
+					"mode": "Resource",
+					"time_unit": "Hour",
+					"requires_hold": 0,
+				}
+			).insert()
+		if not frappe.db.exists("Gender", "Female"):
+			frappe.get_doc({"doctype": "Gender", "gender": "Female"}).insert()
+
+	def _unit(self, **kw):
+		item = frappe.get_doc(
+			{
+				"doctype": "Rental Item",
+				"item_name": f"T45 {random_string(6)}",
+				"rental_type": "T45 Shoot",
+				"rate_card": "T45 Hourly",
+			}
+		).insert()
+		return (
+			frappe.get_doc(
+				{
+					"doctype": "Rental Unit",
+					"unit_name": f"T45 {random_string(6)}",
+					"rental_item": item.name,
+					**kw,
+				}
+			)
+			.insert()
+			.name
+		)
+
+	def booking(self, unit, start=f"{MONDAY} 09:00", end=f"{MONDAY} 10:00"):
+		return frappe.get_doc(
+			{
+				"doctype": "Rental Booking",
+				"customer": self.customer,
+				"rental_type": "T45 Shoot",
+				"company": self.company,
+				"from_datetime": start,
+				"to_datetime": end,
+				"lines": [
+					{
+						"rental_item": frappe.db.get_value("Rental Unit", unit, "rental_item"),
+						"rental_unit": unit,
+						"qty": 1,
+					}
+				],
+			}
+		).insert()
 
 	def provider_unit(self, holidays=(), employee=None):
 		schedule = make_schedule(holidays)
@@ -148,7 +208,7 @@ class TestProvider(FrappeTestCase):
 			{
 				"doctype": "Employee",
 				"first_name": "Pat",
-				"gender": frappe.db.get_value("Gender", {}, "name") or "Male",
+				"gender": "Female",
 				"date_of_birth": "1990-01-01",
 				"date_of_joining": "2020-01-01",
 				"company": self.company,
