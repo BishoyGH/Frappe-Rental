@@ -5,6 +5,7 @@ from frappe.utils import random_string
 from frappe_rental.api.booking import quote as api_quote
 from frappe_rental.compat.erpnext import ensure_setup_complete
 from frappe_rental.services import booking as svc
+from frappe_rental.services import lifecycle
 from frappe_rental.services.setup import create_defaults
 from frappe_rental.tests.utils import make_customer
 
@@ -209,6 +210,7 @@ class TestRentalBooking(FrappeTestCase):
 
 	def test_submit(self):
 		doc = self.booking().insert()
+		lifecycle.place_hold(doc)  # Rental Types use the hold step by default
 		doc.submit()
 		self.assertEqual(doc.docstatus, 1)
 

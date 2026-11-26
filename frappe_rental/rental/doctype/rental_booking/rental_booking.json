@@ -14,6 +14,8 @@
   "status",
   "from_datetime",
   "to_datetime",
+  "hold_expires_on",
+  "contract",
   "all_day",
   "accounting_section",
   "company",
@@ -111,6 +113,23 @@
    "fieldtype": "Datetime",
    "label": "To",
    "reqd": 1
+  },
+  {
+   "fieldname": "hold_expires_on",
+   "fieldtype": "Datetime",
+   "label": "Hold Expires On",
+   "read_only": 1,
+   "no_copy": 1,
+   "allow_on_submit": 1,
+   "depends_on": "eval:doc.status=='Hold'"
+  },
+  {
+   "fieldname": "contract",
+   "fieldtype": "Link",
+   "label": "Contract",
+   "options": "Contract",
+   "no_copy": 1,
+   "description": "Required before confirming when the Rental Type requires a contract; it must be signed."
   },
   {
    "fieldname": "all_day",
@@ -254,7 +273,7 @@
   }
  ],
  "links": [],
- "modified": "2026-11-25 00:00:00.000000",
+ "modified": "2026-11-26 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Rental Booking",
