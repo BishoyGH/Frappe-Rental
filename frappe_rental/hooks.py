@@ -31,6 +31,7 @@ scheduler_events = {
 		"frappe_rental.services.invoicing.run_due_invoices",
 		"frappe_rental.services.waitlist.expire",
 		"frappe_rental.services.esign.remind_unsigned",
+		"frappe_rental.services.renewal.run",
 	],
 	"hourly": ["frappe_rental.services.handover.check_overdue"],
 }

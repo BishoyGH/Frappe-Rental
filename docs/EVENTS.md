@@ -14,6 +14,7 @@ Business events are recorded as **Rental Event Log** rows. The unique `event_key
 | `overdue` | hourly overdue check (T27) | Rental Booking |
 | `waitlist_available` | units freed by a cancel or an expired hold (T52) | Rental Waitlist Entry |
 | `contract_signature_requested`, `contract_signature_reminder`, `contract_signed` | e-signature (T41); the reminder fires every 3 days while unsigned | Rental Contract |
+| `contract_notice`, `contract_renewed`, `contract_ended` | renewal job (T44): notice period starts, auto-renewal, end without renewal | Rental Contract |
 
 ## Hooking in
 

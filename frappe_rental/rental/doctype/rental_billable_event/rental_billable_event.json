@@ -6,6 +6,7 @@
  "engine": "InnoDB",
  "field_order": [
   "rental_booking",
+  "rental_contract",
   "event_type",
   "event_date",
   "description",
@@ -25,9 +26,9 @@
    "fieldtype": "Link",
    "label": "Booking",
    "options": "Rental Booking",
-   "reqd": 1,
    "in_list_view": 1,
-   "in_standard_filter": 1
+   "in_standard_filter": 1,
+   "description": "Empty for contract-level charges"
   },
   {
    "fieldname": "event_type",
@@ -117,6 +118,13 @@
    "label": "Source",
    "options": "source_doctype",
    "read_only": 1
+  },
+  {
+   "fieldname": "rental_contract",
+   "fieldtype": "Link",
+   "label": "Contract",
+   "options": "Rental Contract",
+   "in_standard_filter": 1
   }
  ],
  "links": [],

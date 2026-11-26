@@ -30,6 +30,9 @@ EVENTS = (
 	"contract_signature_requested",
 	"contract_signature_reminder",
 	"contract_signed",
+	"contract_notice",
+	"contract_renewed",
+	"contract_ended",
 )
 
 

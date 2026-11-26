@@ -54,11 +54,31 @@ def _bill_leftover_events(today) -> list[str]:
 	"""Pending events on confirmed bookings with no planned row left get an invoice of their own."""
 	bookings = frappe.get_all(
 		"Rental Billable Event",
-		filters={"status": "Pending", "event_date": ["<=", today]},
+		filters={"status": "Pending", "event_date": ["<=", today], "rental_booking": ["is", "set"]},
 		pluck="rental_booking",
 		distinct=True,
 	)
 	made = []
+	for name in frappe.get_all(
+		"Rental Billable Event",
+		filters={
+			"status": "Pending",
+			"event_date": ["<=", today],
+			"rental_booking": ["is", "not set"],
+			"rental_contract": ["is", "set"],
+		},
+		pluck="rental_contract",
+		distinct=True,
+	):
+		frappe.db.savepoint("rental_invoice_contract")
+		try:
+			si = invoice_contract_events(name, today)
+		except Exception:
+			frappe.db.rollback(save_point="rental_invoice_contract")
+			frappe.log_error(title=_("Rental contract charges failed for {0}").format(name))
+			continue
+		if si:
+			made.append(si)
 	for name in bookings:
 		if frappe.db.get_value("Rental Booking", name, "docstatus") != 1:
 			continue
@@ -91,6 +111,40 @@ def invoice_events(booking, today=None) -> str | None:
 	if _submit():
 		si.submit()
 		events.emit("invoice_created", si, extra={"rental_booking": booking.name})
+	return si.name
+
+
+def invoice_contract_events(contract: str, today=None) -> str | None:
+	"""Bill a contract's own Pending charges (termination fees) on one invoice."""
+	today = getdate(today or nowdate())
+	names = [
+		r[0]
+		for r in frappe.db.sql(
+			"""select name from `tabRental Billable Event` where rental_contract=%s and status='Pending'
+			and ifnull(rental_booking, '')='' and event_date<=%s order by event_date for update""",
+			(contract, today),
+		)
+	]
+	if not names:
+		return None
+	doc = frappe.get_doc("Rental Contract", contract)
+	holder = frappe._dict(
+		name=None,
+		customer=doc.customer,
+		company=doc.company,
+		currency=doc.currency,
+		cost_center=None,
+		taxes_and_charges=None,
+	)
+	si = _new_invoice(holder, today)
+	si.rental_booking = None
+	billable_events.append_to_invoice(si, holder, names)
+	si.flags.ignore_permissions = True  # contract charges queued by a permitted termination
+	si.insert()
+	billable_events.mark_invoiced(names, si.name)
+	if _submit():
+		si.submit()
+		events.emit("invoice_created", si, extra={"rental_contract": contract})
 	return si.name
 
 

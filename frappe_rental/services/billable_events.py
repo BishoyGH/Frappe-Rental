@@ -26,11 +26,28 @@ def validate(doc) -> None:
 		frappe.throw(_("Amount must be more than zero"))
 	if doc.status == "Invoiced" and not doc.sales_invoice:
 		frappe.throw(_("An invoiced event needs its Sales Invoice"))
-	if doc.is_new() and frappe.db.get_value("Rental Booking", doc.rental_booking, "docstatus") == 2:
+	if not doc.rental_booking and not doc.rental_contract:
+		frappe.throw(_("A billable event needs a booking or a contract"))
+	if not doc.rental_booking:
+		doc.customer = doc.customer or frappe.db.get_value("Rental Contract", doc.rental_contract, "customer")
+		doc.currency = doc.currency or frappe.db.get_value("Rental Contract", doc.rental_contract, "currency")
+	if (
+		doc.is_new()
+		and doc.rental_booking
+		and frappe.db.get_value("Rental Booking", doc.rental_booking, "docstatus") == 2
+	):
 		frappe.throw(_("Booking {0} is cancelled").format(doc.rental_booking))
 
 
-def add(booking: str, event_type: str, amount, description=None, source=None, event_date=None) -> str:
+def add(
+	booking: str | None,
+	event_type: str,
+	amount,
+	description=None,
+	source=None,
+	event_date=None,
+	contract=None,
+) -> str:
 	"""Queue a charge. With `source` (a document), the same source never queues twice."""
 	if source is not None:
 		existing = frappe.db.get_value(
@@ -43,6 +60,7 @@ def add(booking: str, event_type: str, amount, description=None, source=None, ev
 		{
 			"doctype": DOCTYPE,
 			"rental_booking": booking,
+			"rental_contract": contract,
 			"event_type": event_type,
 			"amount": flt(amount),
 			"description": description or _(event_type),
