@@ -12,6 +12,7 @@ after_migrate = ["frappe_rental.install.after_install"]
 doc_events = {
 	"Company": {"after_insert": "frappe_rental.install.company_after_insert"},
 	"Item": {"on_update": "frappe_rental.services.rental_item.item_on_update"},
+	"Timesheet": {"on_submit": "frappe_rental.services.provider.on_timesheet_submit"},
 }
 setup_wizard_complete = "frappe_rental.install.setup_wizard_complete"
 
