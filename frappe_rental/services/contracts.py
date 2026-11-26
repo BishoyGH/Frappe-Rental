@@ -92,9 +92,9 @@ def validate(doc) -> None:
 
 
 def _norm(value) -> str:
-	"""Compare field values across a save: 300 and 300.0 are equal, None and "" are equal."""
+	"""Compare field values across a save: 300 and 300.0 are equal; None, "" and 0 are equal."""
 	if isinstance(value, int | float | Decimal):
-		return f"{flt(value):.6f}"
+		return f"{flt(value):.6f}" if flt(value) else ""
 	return str(value or "")
 
 

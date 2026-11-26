@@ -81,3 +81,9 @@ All remaining tasks go into one pull request, so Bishoy can run and debug the ap
 
 ## D-deposit-journal (2026-11-26, T25)
 Deposits move by **Journal Entry**, not Payment Entry. A Payment Entry for a Customer needs a receivable account, and its advance-account options differ between ERPNext v15 and v16. A Journal Entry posts straight to the `Customer Deposits (Rental)` liability on both versions. Each entry carries `rental_deposit` and is listed on the Rental Deposit. Applying a deposit to an invoice credits the customer's receivable against that invoice, so its outstanding amount drops as it would after a payment. VAT on applied or forfeited amounts (D5.6) is not posted automatically yet.
+
+## T33 REST API v1 (2026-11-26)
+- Endpoints stay whitelisted methods under `frappe_rental.api.*` (PLAN section 8); the OpenAPI file documents them by hand, since Frappe does not generate one.
+- Idempotency keys live in Redis for 24 hours, scoped by user, method and key; a reused key with other arguments returns 409. No new doctype: a lost key only means a retry runs again.
+- Rate limits use `frappe.rate_limiter.rate_limit` (same signature on v15 and v16), 60 create calls per minute per IP.
+- Payments go through ERPNext Payment Request (`compat.erpnext.make_payment_request`); the gateway's callback is handled by ERPNext and the gateway app, so there is no rental callback endpoint.

@@ -51,7 +51,7 @@ Work top to bottom. One task = one PR. Each task lists what to build (**Build**)
 
 ## Phase 3: Customer website and payments
 
-- [ ] **T33 REST API v1.** Build: `api/booking`, `pricing`, `payment`, `contract` endpoints per P section 8, idempotency keys, rate limiting, OpenAPI spec file. Done when: contract tests for every endpoint including permission failures. Needs: T26.
+- [x] **T33 REST API v1.** Build: `api/booking`, `pricing`, `payment`, `contract` endpoints per P section 8, idempotency keys, rate limiting, OpenAPI spec file. Done when: contract tests for every endpoint including permission failures. Needs: T26. Note: spec at `docs/api/openapi.yaml`; idempotency via `Idempotency-Key` (24 h, Redis); create calls rate limited to 60/min per IP. `contract.get` and `contract.sign` ship with T40–T41 (api/contract.py) and join the spec when that track merges. The gateway callback stays with the ERPNext Payment Request and gateway app. Pricing fix: a rate for a parent Customer Group (such as the root, which ERPNext sets by default) now applies to its sub-groups.
 - [ ] **T34 Public item pages.** Build: server-rendered `/rentals` and `/rentals/<item>` with SEO metadata, filters, gallery, price calculator, availability calendar; template features limited to what both versions support. Done when: Lighthouse performance 90+ on item page on both versions; tests. Needs: T33.
 - [ ] **T35 Customer booking flow.** Build: Vue flow (select, dates, extras, details, sign, pay), guest checkout creating Customer and User. Done when: Playwright end-to-end booking as guest and as returning customer on both versions. Needs: T34.
 - [ ] **T36 Payments.** Build: Payment Request integration, Stripe adapter, webhook handler, deposit collection, failure and retry paths; verify payment-gateway behaviour on both versions. Done when: sandbox payment test; webhook replay is safe. Needs: T35, T25.
@@ -77,7 +77,7 @@ Work top to bottom. One task = one PR. Each task lists what to build (**Build**)
 - [ ] **T50 Consolidated invoices.** Build: per-customer per-period grouping with per-line references. Done when: totals tests. Needs: T23.
 - [ ] **T51 Housekeeping and turnaround.** Build: tasks on check-out, unit status automation, buffer integration. Needs: T27.
 - [x] **T52 Waitlist and substitutions.** Build: waitlist notify, substitute suggestions on conflict. Needs: T15. Note: backend, API and events only (`api.waitlist.add`, `substitutes`, `get_list`; event `waitlist_available`). The SPA waitlist screen and the substitute panel in New Booking come with the frontend phases.
-- [ ] **T53 Additional presets and import.** Build: CSV import for items/units/customers with identifiers; more presets. Needs: T08.
+- [x] **T53 Additional presets and import.** Build: CSV import for items/units/customers with identifiers; more presets. Needs: T08. Note: `api.setup.import_csv` (with dry-run preview) and `import_template`; presets Boat Charter, Bicycle, Meeting Room, Tool, Tour Guide. The SPA upload screen comes with the frontend phases.
 - [ ] **T54 Gateway adapter 2 and pre-authorisation (optional).** Build: regional gateway adapter, card hold/capture for deposits. Needs: T36.
 - [ ] **T54b Postgres support (optional).** Build: enable the Postgres CI leg, fix SQL portability issues. Done when: tests pass on Postgres for both versions. Needs: T38.
 

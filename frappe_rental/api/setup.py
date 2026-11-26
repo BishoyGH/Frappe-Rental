@@ -64,3 +64,24 @@ def type_fields(doctype: str, rental_type: str | None = None, rental_item: str |
 			frappe.throw(_("Not permitted"), frappe.PermissionError)
 		rental_type = frappe.db.get_value("Rental Item", rental_item, "rental_type")
 	return setup_ui.custom_fields(doctype, rental_type)
+
+
+@frappe.whitelist(methods=["POST"])
+def import_csv(doctype: str, content: str, dry_run: int | bool = 0) -> dict:
+	"""Import items, units or customers from CSV text. ``dry_run`` previews without saving."""
+	from frappe_rental.services import importer
+
+	if doctype not in importer.DOCTYPES:
+		frappe.throw(_("{0} cannot be imported").format(doctype))
+	if not frappe.has_permission(doctype, "create"):
+		frappe.throw(_("Not permitted"), frappe.PermissionError)
+	return importer.import_csv(doctype, content, dry_run=bool(int(dry_run or 0)))
+
+
+@frappe.whitelist()
+def import_template(doctype: str) -> str:
+	from frappe_rental.services import importer
+
+	if not frappe.has_permission(doctype, "read"):
+		frappe.throw(_("Not permitted"), frappe.PermissionError)
+	return importer.template(doctype)
