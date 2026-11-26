@@ -30,7 +30,7 @@ jobs:
         with:
           args: format --check
       - name: Frontend build
-        run: if [ -f frontend/package.json ]; then cd frontend && yarn && yarn build; else echo "no frontend yet"; fi
+        run: cd frontend && yarn install --frozen-lockfile && yarn build
       - run: pip install pyyaml
       - id: m
         run: echo "matrix=$(python scripts/ci-matrix.py)" >> "$GITHUB_OUTPUT"
@@ -97,3 +97,25 @@ jobs:
           cd ~/bench
           bench pip install coverage
           bench --site test.localhost run-tests --app frappe_rental --coverage
+      - name: Frontend build (matrix Node)
+        run: cd ~/bench/apps/frappe_rental/frontend && yarn install --frozen-lockfile && yarn build
+      - name: Serve site
+        run: |
+          cd ~/bench
+          mkdir -p sites/assets && ln -sfn ~/bench/apps/frappe_rental/frappe_rental/public sites/assets/frappe_rental
+          nohup bench --site test.localhost serve --port 8000 > ~/serve.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf -o /dev/null http://127.0.0.1:8000/api/method/ping && break; sleep 2; done
+      - id: e2e
+        run: echo "node=$(python -c "import yaml; print(yaml.safe_load(open('ci/versions.yml'))['e2e_node'])")" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.e2e.outputs.node }}
+      - name: Playwright smoke
+        run: |
+          cd e2e
+          yarn install --frozen-lockfile
+          npx playwright install --with-deps chromium
+          BASE_URL=http://127.0.0.1:8000 npx playwright test
+      - name: Server log on failure
+        if: failure()
+        run: tail -100 ~/serve.log || true

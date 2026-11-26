@@ -21,3 +21,5 @@ jinja = {"methods": ["frappe_rental.services.unit.qr_data_uri"]}
 rental_pricing_hooks = []
 
 scheduler_events = {"cron": {"*/5 * * * *": ["frappe_rental.services.lifecycle.expire_holds"]}}
+
+website_route_rules = [{"from_route": "/rental/<path:app_path>", "to_route": "rental"}]
