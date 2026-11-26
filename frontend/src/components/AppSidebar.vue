@@ -19,7 +19,7 @@
         :key="item.route"
         :to="{ name: item.route }"
         class="flex items-center gap-2 rounded px-2 py-1.5 text-base text-ink-gray-7 hover:bg-surface-gray-2"
-        active-class="bg-surface-white font-medium text-ink-gray-9 shadow-sm"
+        :class="isActive(item) && 'bg-surface-white font-medium text-ink-gray-9 shadow-sm'"
       >
         <component :is="icons[item.icon]" class="h-4 w-4 text-ink-gray-6" />
         {{ item.label }}
@@ -47,8 +47,12 @@ import LucideSettings from '~icons/lucide/settings'
 import LucideSettings2 from '~icons/lucide/settings-2'
 import LucideTag from '~icons/lucide/tag'
 import LucideUsers from '~icons/lucide/users'
+import { useRoute } from 'vue-router'
 import { boot } from '../boot'
 import { sections } from '../nav'
+
+const route = useRoute()
+const isActive = (item) => route.name === item.route || route.meta.section === item.route
 
 const icons = {
   'badge-dollar-sign': LucideBadgeDollarSign,

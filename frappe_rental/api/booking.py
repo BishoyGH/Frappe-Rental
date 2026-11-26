@@ -4,7 +4,7 @@ import frappe
 from frappe import _
 
 from frappe_rental.services import booking as booking_service
-from frappe_rental.services import erpnext_sync, lifecycle
+from frappe_rental.services import booking_views, erpnext_sync, lifecycle
 
 
 @frappe.whitelist()
@@ -89,3 +89,88 @@ def make_invoice(name: str, submit: int = 1) -> dict:
 		frappe.throw(_("Not permitted"), frappe.PermissionError)
 	invoice = erpnext_sync.make_sales_invoice(doc, submit=bool(int(submit)))
 	return {"name": doc.name, "sales_order": doc.sales_order, "sales_invoice": invoice}
+
+
+def _dict_arg(value, label: str) -> dict:
+	data = json.loads(value) if isinstance(value, str) and value else (value or {})
+	if not isinstance(data, dict):
+		frappe.throw(_("{0} must be an object").format(label))
+	return data
+
+
+def _require_read() -> None:
+	if not frappe.has_permission("Rental Booking", "read"):
+		frappe.throw(_("Not permitted"), frappe.PermissionError)
+
+
+@frappe.whitelist()
+def get_list(
+	filters: str | dict | None = None,
+	order_by: str = "creation",
+	order: str = "desc",
+	start: int = 0,
+	page_length: int = 20,
+	group_by: str | None = None,
+) -> dict:
+	"""Bookings list for the staff app: one page of rows, the total, and group counts when asked."""
+	_require_read()
+	f = _dict_arg(filters, _("Filters"))
+	out = booking_views.list_bookings(f, order_by, order, start, page_length)
+	if group_by:
+		out["groups"] = booking_views.group_counts(group_by, f)
+	return out
+
+
+@frappe.whitelist()
+def get_detail(name: str) -> dict:
+	"""Everything the booking page shows: fields, lines, totals, linked documents, activity and allowed actions."""
+	return booking_views.get_detail(_get(name, "read"))
+
+
+@frappe.whitelist()
+def list_options() -> dict:
+	"""Filter and form choices for the staff app."""
+	_require_read()
+	return booking_views.options()
+
+
+@frappe.whitelist(methods=["POST"])
+def create(booking: str | dict, hold: int = 0) -> dict:
+	"""Create a draft booking from the staff app, and optionally hold it straight away."""
+	if not frappe.has_permission("Rental Booking", "create"):
+		frappe.throw(_("Not permitted"), frappe.PermissionError)
+	name = booking_views.create_booking(_dict_arg(booking, _("Booking")))
+	doc = frappe.get_doc("Rental Booking", name)
+	if int(hold):
+		lifecycle.place_hold(doc)
+	return _state(doc)
+
+
+LINK_SEARCH = {
+	"Customer": ("customer_name", {"disabled": 0}),
+	"Rental Item": ("item_name", {}),
+	"Rental Unit": ("unit_name", {}),
+}
+
+
+@frappe.whitelist()
+def search_link(doctype: str, txt: str = "", rental_item: str | None = None) -> list[dict]:
+	"""Options for the create form's pickers. Only the doctypes the form uses, through permission-aware get_list."""
+	if doctype not in LINK_SEARCH:
+		frappe.throw(_("Search on {0} is not allowed").format(doctype))
+	if not frappe.has_permission(doctype, "read"):
+		frappe.throw(_("Not permitted"), frappe.PermissionError)
+	title, filters = LINK_SEARCH[doctype]
+	filters = dict(filters)
+	if doctype == "Rental Unit" and rental_item:
+		filters["rental_item"] = rental_item
+	like = f"%{txt or ''}%"
+	rows = frappe.get_list(
+		doctype,
+		fields=["name", f"{title} as title"],
+		filters=filters,
+		or_filters=[[doctype, "name", "like", like], [doctype, title, "like", like]],
+		order_by="modified desc",
+		limit_page_length=20,
+	)
+	return [{"value": r.name, "label": r.title or r.name} for r in rows]
