@@ -16,6 +16,7 @@
   "to_datetime",
   "hold_expires_on",
   "rental_contract",
+  "contract_allocation",
   "contract",
   "all_day",
   "accounting_section",
@@ -329,6 +330,13 @@
    "label": "Rental Contract",
    "options": "Rental Contract",
    "in_standard_filter": 1
+  },
+  {
+   "fieldname": "contract_allocation",
+   "fieldtype": "Data",
+   "label": "Contract allocation",
+   "depends_on": "rental_contract",
+   "description": "Allocation row this booking draws on"
   }
  ],
  "links": [],

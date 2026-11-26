@@ -14,6 +14,7 @@ from frappe.utils import add_to_date, flt, get_datetime, now_datetime
 
 from frappe_rental.services import (
 	availability,
+	calloff,
 	cancellation,
 	deposits,
 	erpnext_sync,
@@ -63,6 +64,7 @@ def before_submit(doc) -> None:
 			frappe.throw(_("{0} bookings need a contract before they are confirmed").format(doc.rental_type))
 		if not frappe.db.get_value("Contract", doc.contract, "is_signed"):
 			frappe.throw(_("Contract {0} is not signed").format(doc.contract))
+	calloff.before_submit(doc)
 	availability.reserve_booking(doc)
 	doc.status = "Confirmed"
 	doc.hold_expires_on = None
@@ -72,12 +74,14 @@ def on_submit(doc) -> None:
 	"""Mirror the confirmed booking in ERPNext; invoice now when Rental Settings auto-invoices."""
 	erpnext_sync.make_sales_order(doc)
 	events.emit("booking_confirmed", doc)
+	calloff.on_submit(doc)
 	deposits.request(doc)
 	invoicing.on_confirm(doc)
 
 
 def on_cancel(doc) -> None:
 	availability.release(SOURCE, doc.name)
+	calloff.on_cancel(doc)
 	if doc.flags.get("cancellation"):
 		cancellation.settle(doc, doc.flags.cancellation)
 	else:
