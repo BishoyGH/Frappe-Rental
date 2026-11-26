@@ -164,12 +164,13 @@ def my_schedule(user: str, from_date, to_date) -> list[dict]:
 			"from_datetime": ["<", get_datetime(add_days(to_date, 1))],
 			"to_datetime": [">", get_datetime(from_date)],
 		},
-		fields=["name", "customer", "customer_name", "from_datetime", "to_datetime", "status"],
+		fields=["name", "customer", "from_datetime", "to_datetime", "status"],
 		order_by="from_datetime asc",
 	)
 	unit_of = {line.parent: line.rental_unit for line in lines}
 	for row in rows:
 		row["rental_unit"] = unit_of.get(row.name)
+		row["customer_name"] = frappe.db.get_value("Customer", row.customer, "customer_name") or row.customer
 		row["project"] = frappe.db.get_value("Project", {"rental_booking": row.name})
 	return rows
 
