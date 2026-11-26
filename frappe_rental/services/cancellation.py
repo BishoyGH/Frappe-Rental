@@ -168,7 +168,7 @@ def _partial_credit(booking, si: str, amount: float, grand_total: float) -> str:
 	note = compat.make_credit_note(si)
 	factor = amount / grand_total if grand_total else 1
 	for item in note.items:
-		item.qty = flt(item.qty) * factor
+		item.rate = flt(item.rate) * factor  # whole quantities: scale the price, not the qty
 	note.rental_booking = booking.name
 	note.remarks = _("Cancellation refund for {0}").format(booking.name)
 	note.flags.ignore_permissions = True  # follows the permitted booking cancel

@@ -58,10 +58,10 @@ class TestBillableEvents(FrappeTestCase):
 		doc = self.booking(taxes=False)  # one-off: the whole-booking row leaves no planned row
 		invoicing.run_due_invoices("2027-01-01")
 		ev = billable_events.add(doc.name, "Damage", 70, event_date="2026-06-01")
-		made = invoicing.run_due_invoices("2027-01-01")
+		si = invoicing.invoice_events(doc, "2027-01-01")  # raises, unlike the job, so failures show
 		row = frappe.get_doc("Rental Billable Event", ev)
 		self.assertEqual(row.status, "Invoiced")
-		self.assertIn(row.sales_invoice, made)
+		self.assertEqual(row.sales_invoice, si)
 		self.assertNotEqual(row.sales_invoice, doc.sales_invoice)
 		item = self.items_for(row.sales_invoice, 70)[0]
 		if (

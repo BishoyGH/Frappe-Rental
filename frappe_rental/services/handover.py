@@ -56,7 +56,8 @@ def add_scan(doc, code: str) -> str:
 		booking_line = frappe.db.get_value(
 			"Rental Booking Line", {"parent": doc.rental_booking, "rental_unit": unit}, "qty"
 		)
-		doc.append("lines", {"rental_unit": unit, "qty": flt(booking_line) or 1})
+		ids = frappe.db.get_value("Rental Unit", unit, ["serial_no", "batch_no", "asset"], as_dict=True)
+		doc.append("lines", {"rental_unit": unit, "qty": flt(booking_line) or 1, **ids})
 	return unit
 
 
@@ -82,7 +83,7 @@ def on_submit(doc) -> None:
 	if out and booking.status not in ("Confirmed", "Checked Out"):
 		frappe.throw(_("Booking {0} is {1}; it cannot be checked out").format(booking.name, booking.status))
 	if not out:
-		outstanding = units_out(booking.name)
+		outstanding = units_out(booking.name, exclude=doc.name)
 		for line in doc.lines:
 			if line.rental_unit not in outstanding:
 				frappe.throw(_("Row {0}: {1} was not checked out").format(line.idx, line.rental_unit))
@@ -90,10 +91,11 @@ def on_submit(doc) -> None:
 	_move_assets(doc, booking, out)
 	for line in doc.lines:
 		_set_unit_status(line, out)
-		if line.serial_no:
+		serial = line.serial_no or frappe.db.get_value("Rental Unit", line.rental_unit, "serial_no")
+		if serial:
 			frappe.db.set_value(
 				"Serial No",
-				line.serial_no,
+				serial,
 				{
 					"rental_booking": booking.name if out else None,
 					"rental_customer": booking.customer if out else None,
@@ -137,14 +139,14 @@ def on_cancel(doc) -> None:
 	booking.db_set("status", "Checked Out" if units_out(booking.name) else "Confirmed")
 
 
-def units_out(booking: str) -> set[str]:
-	"""Units checked out and not yet returned on submitted handovers."""
+def units_out(booking: str, exclude: str | None = None) -> set[str]:
+	"""Units checked out and not yet returned on submitted handovers (optionally ignoring one)."""
 	counts: dict[str, int] = {}
 	for row in frappe.db.sql(
 		"""select l.rental_unit, h.handover_type from `tabRental Handover Line` l
 		join `tabRental Handover` h on h.name = l.parent
-		where h.rental_booking = %s and h.docstatus = 1""",
-		booking,
+		where h.rental_booking = %s and h.docstatus = 1 and h.name != %s""",
+		(booking, exclude or ""),
 		as_dict=True,
 	):
 		counts[row.rental_unit] = counts.get(row.rental_unit, 0) + (

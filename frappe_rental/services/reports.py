@@ -182,7 +182,7 @@ def kpis(company=None, now=None) -> dict:
 	"""Dashboard cards: units by status, live bookings, overdue returns, revenue this month, deposits held."""
 	now = get_datetime(now or now_datetime())
 	month_start = now.replace(day=1).date()
-	units = frappe.get_all("Rental Unit", fields=["status", "count(name) as n"], group_by="status")
+	units = frappe.db.sql("select status, count(*) as n from `tabRental Unit` group by status", as_dict=True)
 	deposits = frappe.db.sql("select sum(balance_held) from `tabRental Deposit`")[0][0]
 	return {
 		"units": {r.status: r.n for r in units},

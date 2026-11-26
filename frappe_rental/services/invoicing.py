@@ -37,11 +37,11 @@ def run_due_invoices(today=None) -> list[str]:
 	for row in rows:
 		if frappe.db.get_value("Rental Booking", row.parent, "docstatus") != 1:
 			continue
+		frappe.db.savepoint("rental_invoice_row")
 		try:
 			name = invoice_row(row.name)
-			frappe.db.commit()  # one row, one transaction: a later failure keeps earlier invoices
 		except Exception:
-			frappe.db.rollback()
+			frappe.db.rollback(save_point="rental_invoice_row")  # one bad row never undoes the others
 			frappe.log_error(title=_("Rental invoicing failed for {0}").format(row.parent))
 			continue
 		if name:
@@ -64,11 +64,11 @@ def _bill_leftover_events(today) -> list[str]:
 			continue
 		if frappe.db.exists(ROW, {"parent": name, "parenttype": "Rental Booking", "status": "Planned"}):
 			continue
+		frappe.db.savepoint("rental_invoice_events")
 		try:
 			si = invoice_events(frappe.get_doc("Rental Booking", name), today)
-			frappe.db.commit()
 		except Exception:
-			frappe.db.rollback()
+			frappe.db.rollback(save_point="rental_invoice_events")
 			frappe.log_error(title=_("Rental event invoicing failed for {0}").format(name))
 			continue
 		if si:
