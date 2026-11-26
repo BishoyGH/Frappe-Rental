@@ -7,6 +7,7 @@ const built = {
   Bookings: () => import('./pages/BookingsList.vue'),
   Calendar: () => import('./pages/CalendarPage.vue'),
   Availability: () => import('./pages/AvailabilityPage.vue'),
+  Handovers: () => import('./pages/HandoversPage.vue'),
 }
 const SETUP = ['ItemTypes', 'Items', 'Units', 'Customers']
 
