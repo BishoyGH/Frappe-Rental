@@ -32,7 +32,8 @@ jobs:
       - name: Frontend build
         run: cd frontend && yarn install --frozen-lockfile && yarn build
       - name: Dependency audit (fails on high findings)
-        run: cd frontend && yarn audit --groups dependencies --level high
+        # yarn 1 exit code is a bitmask (4 moderate, 8 high, 16 critical): fail on high or critical only
+        run: cd frontend && { yarn audit --groups dependencies || code=$?; }; exit $(( ${code:-0} & 24 ))
       - name: Customer-facing strings have Arabic translations
         run: python scripts/extract_messages.py --check ar
       - name: Secrets scan
