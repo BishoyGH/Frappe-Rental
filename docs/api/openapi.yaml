@@ -256,6 +256,16 @@ paths:
       summary: Staff marks a visit done; a finish after the resolution deadline flags an SLA breach
       requestBody: {content: {application/json: {schema: {type: object, required: [name, visit], properties: {name: {type: string}, visit: {type: string}, notes: {type: string}}}}}}
       responses: {"200": {description: "{status: Done}"}, "403": {description: Not permitted}}
+  /frappe_rental.api.metering.add_reading:
+    post:
+      summary: Record a meter reading for a unit on a submitted booking (devices, staff app)
+      requestBody: {content: {application/json: {schema: {type: object, required: [booking, unit, reading], properties: {booking: {type: string}, unit: {type: string}, reading: {type: number}, read_on: {type: string, format: date-time}}}}}}
+      responses: {"200": {description: "{name, meter_unit, allowance, rate, units, total, overage, amount}"}, "403": {description: Not permitted}, "417": {description: Reading lower than the last one, or unit not on booking}}
+  /frappe_rental.api.metering.summary:
+    get:
+      summary: Usage, allowance and overage of a booking
+      parameters: [{name: booking, in: query, required: true, schema: {type: string}}]
+      responses: {"200": {description: "{meter_unit, allowance, rate, units, total, overage, amount}"}, "403": {description: Not permitted}}
   /frappe_rental.api.waitlist.add:
     post:
       summary: Put a customer on the waitlist

@@ -12,6 +12,7 @@ from frappe.utils import flt, getdate, nowdate
 
 DOCTYPE = "Rental Billable Event"
 ACCOUNT_SETTING = {
+	"Overage": "rental_income_account",
 	"Timesheet": "rental_income_account",
 	"Late fee": "late_fee_income_account",
 	"Damage": "damage_recovery_account",

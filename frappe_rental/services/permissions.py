@@ -31,6 +31,12 @@ MATRIX = {
 		"Rental Agent": "rwc",
 		"Rental Accountant": "r",
 	},
+	"Rental Meter Reading": {
+		"Rental Admin": "rwcd",
+		"Rental Manager": "rwc",
+		"Rental Agent": "rwc",
+		"Rental Accountant": "r",
+	},
 	"Rental Damage Report": {
 		"Rental Admin": "rwcd",
 		"Rental Manager": "rwc",

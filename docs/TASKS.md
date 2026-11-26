@@ -73,7 +73,7 @@ Work top to bottom. One task = one PR. Each task lists what to build (**Build**)
 
 ## Phase 5: Extensions
 
-- [ ] **T49 Metered usage.** Build: readings at handover/API, allowance and overage billing. Done when: tests. Needs: T24.
+- [x] **T49 Metered usage.** Build: readings at handover/API, allowance and overage billing. Done when: tests. Needs: T24. Note: Rental Meter Reading, `services/metering.py`, `api.metering.add_reading` and `summary`; meter unit, allowance and overage rate on Rental Type (per booking), overridden by the contract's usage terms. The allowance counts per booking, not pooled across a contract period.
 - [ ] **T50 Consolidated invoices.** Build: per-customer per-period grouping with per-line references. Done when: totals tests. Needs: T23.
 - [ ] **T51 Housekeeping and turnaround.** Build: tasks on check-out, unit status automation, buffer integration. Needs: T27.
 - [x] **T52 Waitlist and substitutions.** Build: waitlist notify, substitute suggestions on conflict. Needs: T15. Note: backend, API and events only (`api.waitlist.add`, `substitutes`, `get_list`; event `waitlist_available`). The SPA waitlist screen and the substitute panel in New Booking come with the frontend phases.

@@ -101,8 +101,11 @@ def on_submit(doc) -> None:
 					"rental_customer": booking.customer if out else None,
 				},
 			)
+	from frappe_rental.services import metering
+
 	if out:
 		booking.db_set("status", "Checked Out")
+		metering.from_handover(doc)
 		events.emit("handover_done", doc)
 		return
 	if not units_out(booking.name):
@@ -119,10 +122,14 @@ def on_submit(doc) -> None:
 	from frappe_rental.services import damage
 
 	damage.from_return(doc)
+	metering.from_handover(doc)
 	events.emit("returned", doc)
 
 
 def on_cancel(doc) -> None:
+	from frappe_rental.services import metering
+
+	metering.on_handover_cancel(doc)
 	if doc.stock_entry and frappe.db.get_value("Stock Entry", doc.stock_entry, "docstatus") == 1:
 		se = frappe.get_doc("Stock Entry", doc.stock_entry)
 		se.flags.ignore_permissions = True  # reverses a permitted handover

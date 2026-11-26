@@ -30,7 +30,12 @@
   "custom_fields",
   "billing_section",
   "billing_plan",
-  "enable_deferred_revenue"
+  "enable_deferred_revenue",
+  "metering_section",
+  "meter_unit",
+  "column_break_meter",
+  "included_allowance",
+  "overage_rate"
  ],
  "fields": [
   {
@@ -194,6 +199,36 @@
    "fieldtype": "Check",
    "label": "Deferred revenue",
    "description": "Invoices billed in advance recognise income over the service period (D5.4)"
+  },
+  {
+   "fieldname": "metering_section",
+   "fieldtype": "Section Break",
+   "label": "Metered Usage",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "meter_unit",
+   "fieldtype": "Select",
+   "label": "Meter Unit",
+   "options": "\nHours\nKm\nPages\nkWh"
+  },
+  {
+   "fieldname": "column_break_meter",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "included_allowance",
+   "fieldtype": "Float",
+   "label": "Included per Booking",
+   "depends_on": "meter_unit"
+  },
+  {
+   "fieldname": "overage_rate",
+   "fieldtype": "Currency",
+   "label": "Overage Rate",
+   "depends_on": "meter_unit",
+   "description": "Per meter unit above the allowance"
   }
  ],
  "links": [],
