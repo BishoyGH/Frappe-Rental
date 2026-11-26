@@ -9,7 +9,7 @@ On submit, per identification mode (D4):
   `Rented Out` warehouse (Rental Settings) and back on return. Serial Nos record the booking and
   customer while rented, so each serial's history shows who had it (`serial_history`).
 - None: status only.
-Unit status: Occupied while out; on return Available, or Maintenance when a line is Damaged or
+Unit status: Occupied while out; on return Available (Turnaround with a T51 task), or Maintenance when a line is Damaged or
 Missing. Late returns (after the booking end plus the grace period) queue a late fee as a Billable
 Event: `late_fee_rate` percent of the booking net total per started day late.
 ERPNext calls that differ between versions go through `compat.erpnext`.
@@ -123,6 +123,9 @@ def on_submit(doc) -> None:
 
 	damage.from_return(doc)
 	metering.from_handover(doc)
+	from frappe_rental.services import housekeeping
+
+	housekeeping.on_return(doc, booking)
 	events.emit("returned", doc)
 
 
@@ -130,6 +133,10 @@ def on_cancel(doc) -> None:
 	from frappe_rental.services import metering
 
 	metering.on_handover_cancel(doc)
+	if doc.handover_type == "Return":
+		from frappe_rental.services import housekeeping
+
+		housekeeping.on_return_cancel(doc)
 	if doc.stock_entry and frappe.db.get_value("Stock Entry", doc.stock_entry, "docstatus") == 1:
 		se = frappe.get_doc("Stock Entry", doc.stock_entry)
 		se.flags.ignore_permissions = True  # reverses a permitted handover

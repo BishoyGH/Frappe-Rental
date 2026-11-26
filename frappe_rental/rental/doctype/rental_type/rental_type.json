@@ -21,6 +21,7 @@
   "requires_hold",
   "requires_checkin",
   "requires_return_inspection",
+  "housekeeping_task",
   "accounting_section",
   "tax_template",
   "income_account",
@@ -139,6 +140,12 @@
    "fieldname": "requires_return_inspection",
    "fieldtype": "Check",
    "label": "Requires Return Inspection"
+  },
+  {
+   "fieldname": "housekeeping_task",
+   "fieldtype": "Check",
+   "label": "Turnaround Task on Return",
+   "description": "Each returned unit gets a cleaning task and stays in Turnaround until it is done"
   },
   {
    "fieldname": "accounting_section",

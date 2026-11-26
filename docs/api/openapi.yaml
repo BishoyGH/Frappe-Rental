@@ -266,6 +266,16 @@ paths:
       summary: Usage, allowance and overage of a booking
       parameters: [{name: booking, in: query, required: true, schema: {type: string}}]
       responses: {"200": {description: "{meter_unit, allowance, rate, units, total, overage, amount}"}, "403": {description: Not permitted}}
+  /frappe_rental.api.housekeeping.open_tasks:
+    get:
+      summary: Open turnaround tasks, soonest due first
+      parameters: [{name: location, in: query, schema: {type: string}}]
+      responses: {"200": {description: "[{name, rental_unit, task_type, status, due_by, assigned_to, rental_booking}]"}, "403": {description: Not permitted}}
+  /frappe_rental.api.housekeeping.complete:
+    post:
+      summary: Mark a turnaround task done; the unit becomes Available and any overdue block ends
+      requestBody: {content: {application/json: {schema: {type: object, required: [name], properties: {name: {type: string}, notes: {type: string}}}}}}
+      responses: {"200": {description: "{status: Done}"}, "403": {description: Not permitted}}
   /frappe_rental.api.waitlist.add:
     post:
       summary: Put a customer on the waitlist
