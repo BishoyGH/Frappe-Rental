@@ -59,8 +59,17 @@ def reserve(contract) -> None:
 	for row in rows:
 		start, end = _window(contract, row)
 		qty = row.qty if row.allocation_type == "Quantity" else 1
+		# the row's own call-off bookings sit on the same unit by design and are not a clash
+		own = [
+			("Rental Booking", b)
+			for b in frappe.get_all(
+				"Rental Booking",
+				filters={"contract_allocation": row.name, "docstatus": ["<", 2]},
+				pluck="name",
+			)
+		]
 		if not availability.is_available(
-			row.rental_unit, start, end, qty, exclude=(SOURCE, contract.name), locking=True
+			row.rental_unit, start, end, qty, exclude=[(SOURCE, contract.name), *own], locking=True
 		):
 			frappe.throw(
 				_("Row {0}: {1} is booked, blocked or allocated in that period").format(
