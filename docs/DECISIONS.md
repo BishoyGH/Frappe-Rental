@@ -87,3 +87,12 @@ Deposits move by **Journal Entry**, not Payment Entry. A Payment Entry for a Cus
 - Idempotency keys live in Redis for 24 hours, scoped by user, method and key; a reused key with other arguments returns 409. No new doctype: a lost key only means a retry runs again.
 - Rate limits use `frappe.rate_limiter.rate_limit` (same signature on v15 and v16), 60 create calls per minute per IP.
 - Payments go through ERPNext Payment Request (`compat.erpnext.make_payment_request`); the gateway's callback is handled by ERPNext and the gateway app, so there is no rental callback endpoint.
+
+## T35: customer booking flow runs ERPNext side effects as Administrator
+Customers (Website Users) have no desk permissions on Rental Booking, Sales Order or Contract, and ERPNext
+controllers check the session user's permissions deep inside (item details, price lists). The flow
+therefore checks ownership first (`checkout.own_booking`: the booking's customer must be one the user acts
+for) and then inserts, holds, signs and submits inside `checkout._as_system()`, which restores the session
+user afterwards. Guest sign-up refuses an email that already has an account, so nobody can book as someone
+else by typing their address. The flow lives in the staff SPA bundle as public routes rather than a second
+bundle, to keep one build.

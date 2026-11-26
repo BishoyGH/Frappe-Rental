@@ -5,6 +5,8 @@ test('desk: Install Presets button on the Rental Type list', async ({ page }) =>
   await page.goto('/app/rental-type')
   await page.getByRole('button', { name: 'Install Presets' }).click()
   await expect(page.getByText(/Installed:/)).toBeVisible()
+  // 13 presets plus the e2e types fill more than one list page, so look the preset up by name
+  await page.goto('/app/rental-type?name=Device')
   await expect(page.locator('.list-row').filter({ hasText: 'Device' }).first()).toBeVisible()
 })
 

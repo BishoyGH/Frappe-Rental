@@ -48,7 +48,7 @@
 				<input id="c-qty" name="qty" type="number" min="1" value="1" class="form-control mb-3">
 				<button type="submit" class="btn btn-primary">{{ _("Check price") }}</button>
 				<div class="mt-3" data-testid="calc-result" aria-live="polite"></div>
-				<a class="btn btn-success mt-2 d-none" data-testid="book" href="/book?item={{ doc.name }}">{{ _("Book") }}</a>
+				<a class="btn btn-success mt-2 d-none" data-testid="book" href="/rental/book?item={{ doc.name }}">{{ _("Book") }}</a>
 			</form>
 		</div>
 	</div>
@@ -77,7 +77,7 @@
 				(q.deposit_required ? '<div>' + T.deposit + ': ' + money(q.deposit_required, q.currency) + '</div>' : '') +
 				'<div class="' + (q.available ? 'text-success' : 'text-danger') + '" data-testid="calc-available">' + (q.available ? T.available : T.unavailable) + '</div>'
 			book.classList.toggle('d-none', !q.available)
-			book.href = '/book?' + new URLSearchParams({ item, from: args.from_datetime, to: args.to_datetime, qty: args.qty })
+			book.href = '/rental/book?' + new URLSearchParams({ item, from: args.from_datetime, to: args.to_datetime, qty: args.qty })
 		}, (j) => { out.textContent = err(j); book.classList.add('d-none') })
 	})
 

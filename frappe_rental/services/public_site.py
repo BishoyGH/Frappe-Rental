@@ -97,6 +97,7 @@ def quote(item: str, from_datetime, to_datetime, qty=1) -> dict:
 	)
 	return {
 		"item": row.name,
+		"item_name": row.item_name,
 		"available": bool(free),
 		"currency": doc.currency,
 		"net_total": doc.net_total,
