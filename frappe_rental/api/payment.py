@@ -42,3 +42,14 @@ def create_request(name: str, idempotency_key: str | None = None) -> dict:
 		"Payment Request", pr, ["name", "grand_total", "currency", "status", "payment_url"], as_dict=True
 	)
 	return {**row, "sales_invoice": invoice, "booking": name}
+
+
+@frappe.whitelist(allow_guest=True, methods=["POST"])
+@rate_limit(limit=600, seconds=60)
+def stripe_webhook() -> dict:
+	"""Stripe webhook. Trust comes from the signature checked in ``services.payments``, not the session."""
+	from frappe_rental.services import checkout, payments
+
+	payload = frappe.request.get_data() if frappe.request else b""
+	with checkout._as_system():  # signature verified before anything is posted
+		return payments.handle_webhook("Stripe", payload, frappe.request.headers)

@@ -191,6 +191,17 @@ const Summary = defineComponent({
 
 onMounted(() => {
   if (!item) error.value = __('Choose an item on the rentals page first.')
-  else if (route.query.booking) run(async () => afterState(await api('checkout.summary', { name: route.query.booking })))
+  else if (route.query.booking) resume(route.query.booking)
 })
+
+// Back from the payment page: the provider's webhook may land a moment after the redirect.
+async function resume(name) {
+  if (route.query.cancelled) error.value = __('Payment was cancelled. You can try again.')
+  for (let i = 0; i < (route.query.paid ? 10 : 1); i++) {
+    await run(async () => afterState(await api('checkout.summary', { name })))
+    if (!state.value.needs_deposit) return
+    await new Promise((r) => setTimeout(r, 1500))
+  }
+  if (route.query.paid) error.value = __('We have not received the payment confirmation yet. Refresh in a minute.')
+}
 </script>

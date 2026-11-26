@@ -349,7 +349,11 @@ def finish(name: str) -> dict:
 	return summary(name)
 
 
-def payment(name: str) -> dict:
-	"""Online deposit payment: filled by the payment adapters (T36)."""
-	own_booking(name)
-	frappe.throw(_("Online payment is not set up. Contact us to pay the deposit."))
+def payment(name: str, purpose: str = "Deposit") -> dict:
+	"""A hosted payment page for the customer's own booking (deposit while held, balance once invoiced)."""
+	from frappe_rental.services import payments
+
+	doc = own_booking(name)
+	item = doc.lines[0].rental_item if doc.lines else None
+	success, cancel = payments.urls(doc.name, item)
+	return payments.start(doc, purpose, success, cancel)

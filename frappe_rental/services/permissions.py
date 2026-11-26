@@ -31,6 +31,12 @@ MATRIX = {
 		"Rental Agent": "rwc",
 		"Rental Accountant": "r",
 	},
+	"Rental Payment": {
+		"Rental Admin": "rwc",
+		"Rental Manager": "rwc",
+		"Rental Agent": "r",
+		"Rental Accountant": "r",
+	},
 	"Rental Housekeeping Task": {
 		"Rental Admin": "rwcd",
 		"Rental Manager": "rwc",

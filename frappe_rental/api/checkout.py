@@ -62,6 +62,7 @@ def finish(name: str) -> dict:
 
 
 @frappe.whitelist(methods=["POST"])
-def pay(name: str) -> dict:
-	"""Where to pay the deposit of the customer's own held booking."""
-	return checkout.payment(name)
+@rate_limit(limit=20, seconds=60)
+def pay(name: str, purpose: str = "Deposit") -> dict:
+	"""Where to pay the customer's own booking: the deposit while held, the balance once invoiced."""
+	return checkout.payment(name, purpose)

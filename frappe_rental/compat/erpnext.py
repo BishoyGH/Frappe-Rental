@@ -238,3 +238,25 @@ def make_payment_request(dt: str, dn: str) -> str:
 
 	pr = make(dt=dt, dn=dn, submit_doc=1, mute_email=1, return_doc=1)
 	return pr.name
+
+
+def make_invoice_payment(sales_invoice: str, amount, paid_to: str, reference: str) -> str:
+	"""Submit a Payment Entry receiving ``amount`` against a Sales Invoice into ``paid_to``.
+
+	Versions: ERPNext v15 and v16 both expose
+	``erpnext.accounts.doctype.payment_entry.payment_entry.get_payment_entry(dt, dn, party_amount=,
+	bank_account=)``; the keyword set differs slightly between them, so only the stable positional
+	``dt``/``dn`` and ``party_amount`` are passed and the paid-to account is set afterwards.
+	Remove when v15 support ends.
+	"""
+	from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
+
+	pe = get_payment_entry("Sales Invoice", sales_invoice, party_amount=amount)
+	pe.paid_to = paid_to
+	pe.paid_to_account_currency = frappe.get_cached_value("Account", paid_to, "account_currency")
+	pe.reference_no = reference
+	pe.reference_date = frappe.utils.nowdate()
+	pe.flags.ignore_permissions = True  # posted by the verified payment provider webhook
+	pe.insert()
+	pe.submit()
+	return pe.name

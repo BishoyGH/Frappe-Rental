@@ -96,3 +96,11 @@ for) and then inserts, holds, signs and submits inside `checkout._as_system()`, 
 user afterwards. Guest sign-up refuses an email that already has an account, so nobody can book as someone
 else by typing their address. The flow lives in the staff SPA bundle as public routes rather than a second
 bundle, to keep one build.
+
+## T36: online payments through hosted checkout and signed webhooks
+Payments use the provider's hosted checkout page (Stripe Checkout first), so card data never reaches the
+site. Each attempt is a Rental Payment row with the provider session id (unique). Only a verified webhook
+marks a row Paid and posts accounting: deposits through `deposits.collect`, balances as an ERPNext Payment
+Entry against the booking's invoice. Paid is final, so replays and late duplicates post nothing. Retrying
+after a failure creates a new attempt. ERPNext's own Payment Request path (`api.payment.create_request`)
+stays for sites that already use a payment gateway app.

@@ -9,7 +9,6 @@
   "default_price_list",
   "hold_expiry_minutes",
   "auto_invoice",
-  "submit_scheduled_invoices",
   "late_return_section",
   "grace_period_minutes",
   "late_fee_rate",
@@ -19,7 +18,14 @@
   "late_fee_income_account",
   "damage_recovery_account",
   "deposit_forfeiture_income_account",
-  "rented_out_warehouse"
+  "rented_out_warehouse",
+  "submit_scheduled_invoices",
+  "payments_section",
+  "payment_provider",
+  "payment_account",
+  "column_break_payments",
+  "stripe_secret_key",
+  "stripe_webhook_secret"
  ],
  "fields": [
   {
@@ -115,6 +121,42 @@
    "label": "Submit scheduled invoices",
    "default": "1",
    "description": "Off: the daily billing job leaves invoices in draft for review"
+  },
+  {
+   "fieldname": "payments_section",
+   "fieldtype": "Section Break",
+   "label": "Online payments"
+  },
+  {
+   "fieldname": "payment_provider",
+   "fieldtype": "Select",
+   "label": "Payment provider",
+   "options": "\nStripe",
+   "description": "Customers pay deposits and balances online through this provider."
+  },
+  {
+   "fieldname": "payment_account",
+   "fieldtype": "Link",
+   "label": "Payment clearing account",
+   "options": "Account",
+   "description": "Bank or clearing account the provider settles into."
+  },
+  {
+   "fieldname": "column_break_payments",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "stripe_secret_key",
+   "fieldtype": "Password",
+   "label": "Stripe secret key",
+   "depends_on": "eval:doc.payment_provider=='Stripe'"
+  },
+  {
+   "fieldname": "stripe_webhook_secret",
+   "fieldtype": "Password",
+   "label": "Stripe webhook signing secret",
+   "depends_on": "eval:doc.payment_provider=='Stripe'",
+   "description": "Point a Stripe webhook at /api/method/frappe_rental.api.payment.stripe_webhook for checkout.session.completed, checkout.session.expired and checkout.session.async_payment_failed."
   }
  ],
  "issingle": 1,
