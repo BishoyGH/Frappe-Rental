@@ -2,7 +2,7 @@
 
 import frappe
 from frappe.tests.utils import FrappeTestCase
-from frappe.utils import flt
+from frappe.utils import flt, nowdate
 
 from frappe_rental.services import billable_events, invoicing
 from frappe_rental.tests import test_erpnext_sync as t16
@@ -56,9 +56,9 @@ class TestBillableEvents(FrappeTestCase):
 
 	def test_leftover_events_get_own_invoice(self):
 		doc = self.booking(taxes=False)  # one-off: the whole-booking row leaves no planned row
-		invoicing.run_due_invoices("2027-01-01")
+		invoicing.run_due_invoices(nowdate())
 		ev = billable_events.add(doc.name, "Damage", 70, event_date="2026-06-01")
-		si = invoicing.invoice_events(doc, "2027-01-01")  # raises, unlike the job, so failures show
+		si = invoicing.invoice_events(doc, nowdate())  # raises, unlike the job, so failures show
 		row = frappe.get_doc("Rental Billable Event", ev)
 		self.assertEqual(row.status, "Invoiced")
 		self.assertEqual(row.sales_invoice, si)
@@ -69,7 +69,7 @@ class TestBillableEvents(FrappeTestCase):
 			and frappe.db.get_value("Account", self.damage_account, "company") == self.company
 		):
 			self.assertEqual(item.income_account, self.damage_account)
-		self.assertIsNone(invoicing.invoice_events(doc, "2027-01-01"))
+		self.assertIsNone(invoicing.invoice_events(doc, nowdate()))
 
 	def test_add_is_idempotent_per_source(self):
 		doc = self.booking(taxes=False)
