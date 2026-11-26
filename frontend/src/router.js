@@ -48,6 +48,19 @@ const routes = [
     component: () => import('./pages/BookFlow.vue'),
     meta: { title: 'Book', public: true },
   },
+  {
+    path: '/my-bookings',
+    name: 'MyBookings',
+    component: () => import('./pages/MyBookings.vue'),
+    meta: { title: 'My bookings', public: true },
+  },
+  {
+    path: '/my-bookings/:name',
+    name: 'MyBookingDetail',
+    component: () => import('./pages/MyBookingDetail.vue'),
+    props: true,
+    meta: { title: 'My booking', public: true },
+  },
   { path: '/:pathMatch(.*)*', redirect: { name: 'Bookings' } },
 ]
 

@@ -120,28 +120,34 @@ def adapter(name: str | None = None):
 	return cls() if cls else None
 
 
-def amount_due(booking, purpose: str) -> tuple[float, str | None]:
+def amount_due(booking, purpose: str, invoice: str | None = None) -> tuple[float, str | None]:
 	if purpose == "Deposit":
 		return flt(booking.deposit_required) - flt(booking.deposit_paid), None
-	invoice = booking.get("sales_invoice")
+	invoice = invoice or booking.get("sales_invoice")
 	if not invoice or frappe.db.get_value("Sales Invoice", invoice, "docstatus") != 1:
 		return 0, None
 	return flt(frappe.db.get_value("Sales Invoice", invoice, "outstanding_amount")), invoice
 
 
-def start(booking, purpose: str, success_url: str, cancel_url: str) -> dict:
+def start(booking, purpose: str, success_url: str, cancel_url: str, invoice: str | None = None) -> dict:
 	"""A hosted payment page for what the booking owes now. Reuses an open attempt."""
 	if purpose not in ("Deposit", "Balance"):
 		frappe.throw(_("Unknown payment purpose"))
 	provider = adapter()
 	if not provider:
 		frappe.throw(_("Online payment is not set up. Contact us to pay."))
-	amount, invoice = amount_due(booking, purpose)
+	amount, invoice = amount_due(booking, purpose, invoice)
 	if amount <= 0:
 		frappe.throw(_("Nothing is due for this booking"))
 	open_row = frappe.db.get_value(
 		DOCTYPE,
-		{"rental_booking": booking.name, "purpose": purpose, "status": "Pending", "amount": amount},
+		{
+			"rental_booking": booking.name,
+			"purpose": purpose,
+			"status": "Pending",
+			"amount": amount,
+			"sales_invoice": invoice or ["is", "not set"],
+		},
 		["name", "payment_url"],
 		as_dict=True,
 	)

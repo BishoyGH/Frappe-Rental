@@ -277,7 +277,11 @@ def _csrf() -> str | None:
 
 
 def summary(name: str) -> dict:
-	doc = own_booking(name)
+	return booking_summary(own_booking(name))
+
+
+def booking_summary(doc) -> dict:
+	"""The customer-facing state of a booking the caller already proved is theirs."""
 	rtype = frappe.get_cached_doc("Rental Type", doc.rental_type)
 	contract = None
 	if doc.rental_contract:
@@ -349,11 +353,18 @@ def finish(name: str) -> dict:
 	return summary(name)
 
 
-def payment(name: str, purpose: str = "Deposit") -> dict:
+def payment(name: str, purpose: str = "Deposit", invoice: str | None = None) -> dict:
 	"""A hosted payment page for the customer's own booking (deposit while held, balance once invoiced)."""
 	from frappe_rental.services import payments
 
 	doc = own_booking(name)
 	item = doc.lines[0].rental_item if doc.lines else None
 	success, cancel = payments.urls(doc.name, item)
-	return payments.start(doc, purpose, success, cancel)
+	if invoice:
+		from frappe_rental.services import portal
+
+		with _as_system():
+			own = {i["name"] for i in portal.booking_invoices(doc)}
+		if invoice not in own:
+			frappe.throw(_("Invoice not found"), frappe.DoesNotExistError)
+	return payments.start(doc, purpose, success, cancel, invoice)
