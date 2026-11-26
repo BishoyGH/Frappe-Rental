@@ -33,6 +33,9 @@ EVENTS = (
 	"contract_notice",
 	"contract_renewed",
 	"contract_ended",
+	"damage_reported",
+	"sla_breached",
+	"housekeeping_overdue",
 )
 
 
@@ -65,6 +68,9 @@ def emit(event: str, doc, key: str | None = None, extra: dict | None = None) -> 
 		log.insert()
 	except frappe.UniqueValidationError:
 		return None  # a parallel request fired it first
+	from frappe_rental.services import staff_alerts
+
+	staff_alerts.dispatch(log)
 	for handler in frappe.get_hooks("rental_event_handlers") or []:
 		frappe.get_attr(handler)(event, log)
 	return log.name

@@ -13,7 +13,7 @@ from frappe_rental.services.idempotency import idempotent
 CREATE_LIMIT = 60
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def quote(booking: str | dict) -> dict:
 	"""Price a draft booking without saving it. Returns lines, charges and totals."""
 	if not frappe.has_permission("Rental Booking", "create"):
@@ -79,7 +79,7 @@ def confirm(name: str) -> dict:
 	return _state(doc)
 
 
-@frappe.whitelist(methods=["GET", "POST"])
+@frappe.whitelist(methods=["POST"])
 def cancel(name: str, preview: int = 0, by: str = "customer") -> dict:
 	"""Cancel a confirmed booking or release a hold. ``preview=1`` returns the refund calculation only."""
 	if cint(preview):
@@ -111,7 +111,7 @@ def _require_read() -> None:
 		frappe.throw(_("Not permitted"), frappe.PermissionError)
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def get_list(
 	filters: str | dict | None = None,
 	order_by: str = "creation",
@@ -129,13 +129,13 @@ def get_list(
 	return out
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def get_detail(name: str) -> dict:
 	"""Everything the booking page shows: fields, lines, totals, linked documents, activity and allowed actions."""
 	return booking_views.get_detail(_get(name, "read"))
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def list_options() -> dict:
 	"""Filter and form choices for the staff app."""
 	_require_read()
@@ -163,7 +163,7 @@ LINK_SEARCH = {
 }
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def search_link(doctype: str, txt: str = "", rental_item: str | None = None) -> list[dict]:
 	"""Options for the create form's pickers. Only the doctypes the form uses, through permission-aware get_list."""
 	if doctype not in LINK_SEARCH:
@@ -196,7 +196,7 @@ def move(name: str, from_datetime: str, to_datetime: str, rental_unit: str | Non
 	return {**_state(doc), "from_datetime": doc.from_datetime, "to_datetime": doc.to_datetime}
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def cancellation_preview(name: str, by: str = "customer") -> dict:
 	"""What cancelling now would keep, refund or bill, under the booking's cancellation policy."""
 	if by not in ("customer", "provider"):
@@ -214,7 +214,7 @@ def cancel_with_policy(name: str, by: str = "customer") -> dict:
 	return {**_state(doc), "cancellation": result}
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def get(name: str) -> dict:
 	"""REST v1 alias of ``get_detail``."""
 	return get_detail(name)
@@ -237,7 +237,7 @@ def _my_customers(user: str) -> list[str]:
 	return sorted(names)
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def list_mine(start: int = 0, page_length: int = 20) -> dict:
 	"""The signed-in customer's own bookings, newest first."""
 	if frappe.session.user == "Guest":

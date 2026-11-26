@@ -6,7 +6,7 @@ from frappe import _
 from frappe_rental.services import terms
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def preview(template: str, customer: str | None = None) -> dict:
 	if not frappe.has_permission("Rental Terms Template", "read", template):
 		frappe.throw(_("Not permitted"), frappe.PermissionError)

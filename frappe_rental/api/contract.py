@@ -18,7 +18,7 @@ def _contract(name: str, staff: bool = False):
 	return doc
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def terms(name: str) -> dict:
 	doc = _contract(name)
 	return {

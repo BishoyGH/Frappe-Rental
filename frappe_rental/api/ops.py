@@ -17,7 +17,7 @@ def _booking(name: str, ptype: str = "read"):
 	return doc
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def find_booking(code: str) -> dict | None:
 	"""Scan-first lookup: a booking name, unit barcode, serial or external ID."""
 	if not frappe.has_permission("Rental Handover", "read"):
@@ -28,12 +28,12 @@ def find_booking(code: str) -> dict | None:
 	return staff_ops.handover_state(frappe.get_doc("Rental Booking", name))
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def handover_state(name: str) -> dict:
 	return staff_ops.handover_state(_booking(name))
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def todays_handovers() -> dict:
 	"""Bookings to hand out or take back today (and anything overdue)."""
 	if not frappe.has_permission("Rental Booking", "read"):
@@ -65,7 +65,7 @@ def todays_handovers() -> dict:
 	return {"outgoing": outgoing, "incoming": incoming}
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def billing(name: str) -> dict:
 	return staff_ops.billing(_booking(name))
 
@@ -78,7 +78,7 @@ def save_schedule(name: str, rows: str | list) -> dict:
 	return staff_ops.save_schedule(_booking(name, "write"), data)
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def panels(name: str) -> dict:
 	return staff_ops.panels(_booking(name))
 

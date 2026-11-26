@@ -25,7 +25,9 @@
   "payment_account",
   "column_break_payments",
   "stripe_secret_key",
-  "stripe_webhook_secret"
+  "stripe_webhook_secret",
+  "alerts_section",
+  "alert_rules"
  ],
  "fields": [
   {
@@ -157,6 +159,18 @@
    "label": "Stripe webhook signing secret",
    "depends_on": "eval:doc.payment_provider=='Stripe'",
    "description": "Point a Stripe webhook at /api/method/frappe_rental.api.payment.stripe_webhook for checkout.session.completed, checkout.session.expired and checkout.session.async_payment_failed."
+  },
+  {
+   "fieldname": "alerts_section",
+   "fieldtype": "Section Break",
+   "label": "Staff alerts"
+  },
+  {
+   "fieldname": "alert_rules",
+   "fieldtype": "Table",
+   "label": "Alert rules",
+   "options": "Rental Alert Rule",
+   "description": "Who is alerted for each event. Empty means the defaults."
   }
  ],
  "issingle": 1,

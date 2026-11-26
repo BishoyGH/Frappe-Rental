@@ -26,7 +26,7 @@ def _state(name: str) -> dict:
 	}
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["POST"])
 def request(booking: str) -> dict | None:
 	if not frappe.has_permission("Rental Booking", "write", booking):
 		frappe.throw(_("Not permitted"), frappe.PermissionError)

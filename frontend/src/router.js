@@ -9,6 +9,7 @@ const built = {
   Availability: () => import('./pages/AvailabilityPage.vue'),
   Handovers: () => import('./pages/HandoversPage.vue'),
   Contracts: () => import('./pages/ContractsList.vue'),
+  Settings: () => import('./pages/SettingsPage.vue'),
 }
 const SETUP = ['ItemTypes', 'Items', 'Units', 'Customers']
 

@@ -16,6 +16,8 @@ import frappe
 from frappe import _
 from frappe.utils import cint, get_datetime, now_datetime
 
+from frappe_rental.services import events
+
 DOCTYPE = "Rental Housekeeping Task"
 CLOSED = ("Done", "Cancelled")
 
@@ -125,4 +127,5 @@ def check_overdue(now=None) -> int:
 		block.flags.ignore_permissions = True  # system block until the overdue task is done
 		block.insert()
 		frappe.db.set_value(DOCTYPE, t.name, "rental_block", block.name, update_modified=False)
+		events.emit("housekeeping_overdue", frappe.get_doc(DOCTYPE, t.name))
 	return len(tasks)

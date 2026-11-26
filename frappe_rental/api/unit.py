@@ -4,7 +4,7 @@ from frappe import _
 from frappe_rental.services import unit as unit_service
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def lookup(identifier: str) -> dict | None:
 	"""Find a Rental Unit by unit code, barcode, serial, batch, asset or external id."""
 	if not isinstance(identifier, str) or not identifier.strip():

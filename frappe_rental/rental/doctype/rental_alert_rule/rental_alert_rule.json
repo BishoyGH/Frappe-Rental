@@ -1,0 +1,26 @@
+{
+ "actions": [],
+ "creation": "2026-11-26 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": ["event", "role", "in_app", "email"],
+ "fields": [
+  {"fieldname": "event", "fieldtype": "Select", "label": "Event", "reqd": 1, "in_list_view": 1,
+   "options": "damage_reported\nsla_breached\nhousekeeping_overdue\noverdue\ncontract_signed\ncontract_notice"},
+  {"fieldname": "role", "fieldtype": "Link", "label": "Role", "options": "Role", "reqd": 1, "in_list_view": 1},
+  {"default": "1", "fieldname": "in_app", "fieldtype": "Check", "label": "In-app alert", "in_list_view": 1},
+  {"default": "0", "fieldname": "email", "fieldtype": "Check", "label": "Email", "in_list_view": 1}
+ ],
+ "links": [],
+ "modified": "2026-11-26 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "name": "Rental Alert Rule",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "istable": 1,
+ "editable_grid": 1
+}

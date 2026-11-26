@@ -20,6 +20,8 @@ import frappe
 from frappe import _
 from frappe.utils import add_months, flt, get_datetime, getdate, now_datetime
 
+from frappe_rental.services import events
+
 STEP_MONTHS = {"Monthly": 1, "Quarterly": 3, "Semi-annual": 6, "Yearly": 12}
 OPEN = ("Planned", "Booked")
 RUNNING = ("Active", "Suspended", "Ending")
@@ -98,6 +100,8 @@ def assign(contract, visit: str, technician: str, start, hours: float = 2) -> st
 	if row.response_due and now_datetime() > get_datetime(row.response_due):
 		row.sla_breached = 1
 	contract.save()
+	if row.sla_breached:
+		events.emit("sla_breached", contract, key=row.name)
 	if previous and frappe.db.get_value("Rental Booking", previous, "docstatus") == 1:
 		frappe.get_doc("Rental Booking", previous).cancel()
 	return booking.name
@@ -139,6 +143,8 @@ def complete(contract, visit: str, notes: str | None = None, on=None) -> None:
 	if row.resolution_due and done > get_datetime(row.resolution_due):
 		row.sla_breached = 1
 	contract.save()
+	if row.sla_breached:
+		events.emit("sla_breached", contract, key=row.name)
 
 
 def check_sla(now=None) -> int:
@@ -176,4 +182,6 @@ def check_sla(now=None) -> int:
 		if values:
 			frappe.db.set_value("Rental Contract Visit", r.name, values, update_modified=False)
 			changed += 1
+			if values.get("sla_breached"):
+				events.emit("sla_breached", frappe.get_doc("Rental Contract", r.parent), key=r.name)
 	return changed

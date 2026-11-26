@@ -6,7 +6,7 @@ from frappe import _
 from frappe_rental.services import housekeeping
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def open_tasks(location: str | None = None) -> list[dict]:
 	if not frappe.has_permission(housekeeping.DOCTYPE, "read"):
 		frappe.throw(_("Not permitted"), frappe.PermissionError)

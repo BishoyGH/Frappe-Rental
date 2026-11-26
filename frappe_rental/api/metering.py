@@ -16,7 +16,7 @@ def add_reading(booking: str, unit: str, reading: float, read_on: str | None = N
 	return {"name": name, **metering.summary(booking)}
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def summary(booking: str) -> dict:
 	if not frappe.has_permission("Rental Booking", "read", booking):
 		frappe.throw(_("Not permitted"), frappe.PermissionError)

@@ -7,7 +7,7 @@ from frappe_rental.services import rental_type as rental_type_service
 from frappe_rental.services import setup_ui
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["POST"])
 def install_presets() -> list[str]:
 	"""Install the bundled Rental Type presets (button on the Rental Type list)."""
 	if not frappe.has_permission("Rental Type", "create"):
@@ -22,7 +22,7 @@ def _obj(value, label: str) -> dict:
 	return data
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def get_records(
 	doctype: str,
 	search: str | None = None,
@@ -34,7 +34,7 @@ def get_records(
 	return setup_ui.get_records(doctype, search, _obj(filters, _("Filters")), start, page_length)
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def get_record(doctype: str, name: str) -> dict:
 	"""One record for a setup form, with the custom fields its item type adds."""
 	return setup_ui.get_record(doctype, name)
@@ -46,7 +46,7 @@ def save_record(doctype: str, data: str | dict, name: str | None = None) -> dict
 	return {"name": setup_ui.save_record(doctype, _obj(data, _("Data")), name or None)}
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def form_options() -> dict:
 	"""Select choices for the setup forms."""
 	if not frappe.has_permission("Rental Type", "read"):
@@ -54,7 +54,7 @@ def form_options() -> dict:
 	return setup_ui.options()
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def type_fields(doctype: str, rental_type: str | None = None, rental_item: str | None = None) -> list[dict]:
 	"""Custom fields an item type adds to Rental Item or Rental Unit (for a new record's form)."""
 	if doctype not in ("Rental Item", "Rental Unit") or not frappe.has_permission("Rental Type", "read"):
@@ -78,7 +78,7 @@ def import_csv(doctype: str, content: str, dry_run: int | bool = 0) -> dict:
 	return importer.import_csv(doctype, content, dry_run=bool(int(dry_run or 0)))
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def import_template(doctype: str) -> str:
 	from frappe_rental.services import importer
 

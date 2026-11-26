@@ -14,7 +14,7 @@ from frappe import _
 from frappe.utils import flt, get_datetime, now_datetime, nowdate
 
 from frappe_rental.compat import erpnext as compat
-from frappe_rental.services import billable_events, deposits, invoicing
+from frappe_rental.services import billable_events, deposits, events, invoicing
 
 DOCTYPE = "Rental Damage Report"
 
@@ -46,6 +46,7 @@ def after_insert(doc) -> None:
 		block.insert()
 		doc.db_set("rental_block", block.name)
 	frappe.db.set_value("Rental Unit", doc.rental_unit, "status", "Maintenance")
+	events.emit("damage_reported", doc)
 
 
 def on_update(doc) -> None:

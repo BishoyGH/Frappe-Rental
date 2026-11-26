@@ -6,7 +6,7 @@ from frappe import _
 from frappe_rental.services import reports
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def kpis(company: str | None = None) -> dict:
 	if not frappe.has_permission("Rental Booking", "read"):
 		frappe.throw(_("Not permitted"), frappe.PermissionError)
@@ -15,7 +15,7 @@ def kpis(company: str | None = None) -> dict:
 	return reports.kpis(company)
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def revenue(
 	from_date: str, to_date: str, group_by: str = "rental_type", company: str | None = None
 ) -> list[dict]:

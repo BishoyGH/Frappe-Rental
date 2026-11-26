@@ -14,7 +14,16 @@ Business events are recorded as **Rental Event Log** rows. The unique `event_key
 | `overdue` | hourly overdue check (T27) | Rental Booking |
 | `waitlist_available` | units freed by a cancel or an expired hold (T52) | Rental Waitlist Entry |
 | `contract_signature_requested`, `contract_signature_reminder`, `contract_signed` | e-signature (T41); the reminder fires every 3 days while unsigned | Rental Contract |
+| `damage_reported` | a damage report is created (T38) | Rental Damage Report |
+| `sla_breached` | a service visit misses its response or resolution deadline, once per visit (T38) | Rental Contract |
+| `housekeeping_overdue` | a turnaround task passes its due time and the unit is blocked (T38) | Rental Housekeeping Task |
 | `contract_notice`, `contract_renewed`, `contract_ended` | renewal job (T44): notice period starts, auto-renewal, end without renewal | Rental Contract |
+
+## Staff alerts
+
+Six events alert staff in the app: `damage_reported`, `sla_breached`, `housekeeping_overdue`, `overdue`, `contract_signed` and `contract_notice`. Each creates a Notification Log entry (the bell in the desk and the My alerts list under Settings in the staff app) for every enabled system user with a chosen role. Out of the box managers get them all, agents get overdue returns and housekeeping, and admins get damage and SLA breaches. Email is off by default.
+
+Change who is alerted in Settings > Notifications (staff app) or in Rental Settings > Alert rules (event, role, in-app, email). Saving rules needs write access to Rental Settings. An empty table means the defaults. An alert that fails to send is logged and never blocks the action that raised the event.
 
 ## Hooking in
 
