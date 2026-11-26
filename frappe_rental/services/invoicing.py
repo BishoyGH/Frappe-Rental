@@ -11,7 +11,10 @@ A daily job turns due Rental Billing Schedule rows into Sales Invoices.
 - Email goes out through the `invoice_created` event (T31 Notification "Rental: invoice").
 - `reschedule()` handles extension, shortening and early return on a confirmed booking: un-invoiced
   rows are rebuilt and over-billing is credited. Posted invoices are never edited.
-Grouping: one invoice per booking. Per-customer consolidation is T50.
+Grouping: one invoice per booking, unless the customer has `rental_consolidate_invoices` (T50): then
+all of that customer's due period rows in a run go on one invoice per company, currency and tax
+template, each item carrying its booking and billing row (Sales Invoice Item `rental_booking`,
+`rental_billing_row`). Whole-booking and credit rows stay per booking.
 """
 
 import frappe
@@ -33,9 +36,20 @@ def run_due_invoices(today=None) -> list[str]:
 		fields=["name", "parent"],
 		order_by="invoice_date asc, idx asc",
 	)
-	made = []
+	made, groups = [], {}
 	for row in rows:
-		if frappe.db.get_value("Rental Booking", row.parent, "docstatus") != 1:
+		b = frappe.db.get_value(
+			"Rental Booking",
+			row.parent,
+			["docstatus", "customer", "company", "currency", "taxes_and_charges"],
+			as_dict=True,
+		)
+		if not b or b.docstatus != 1:
+			continue
+		if consolidates(b.customer) and _is_period_row(row.name):
+			groups.setdefault((b.customer, b.company, b.currency, b.taxes_and_charges or ""), []).append(
+				row.name
+			)
 			continue
 		frappe.db.savepoint("rental_invoice_row")
 		try:
@@ -46,8 +60,28 @@ def run_due_invoices(today=None) -> list[str]:
 			continue
 		if name:
 			made.append(name)
+	for key, names in groups.items():
+		frappe.db.savepoint("rental_invoice_group")
+		try:
+			name = consolidated_invoice(names, today)
+		except Exception:
+			frappe.db.rollback(save_point="rental_invoice_group")
+			frappe.log_error(title=_("Consolidated rental invoicing failed for {0}").format(key[0]))
+			continue
+		if name:
+			made.append(name)
 	made += _bill_leftover_events(today)
 	return made
+
+
+def _is_period_row(row_name: str) -> bool:
+	"""A positive row that is not the whole booking (those keep their own invoice path)."""
+	row = frappe.db.get_value(ROW, row_name, ["parent", "amount"], as_dict=True)
+	if flt(row.amount) <= 0:
+		return False
+	count = frappe.db.count(ROW, {"parent": row.parent, "parenttype": "Rental Booking"})
+	total = frappe.db.get_value("Rental Booking", row.parent, "net_total")
+	return not (count == 1 and flt(row.amount) == flt(total))
 
 
 def _bill_leftover_events(today) -> list[str]:
@@ -206,27 +240,38 @@ def _is_whole_booking(booking, row) -> bool:
 	return len(booking.billing_schedule) == 1 and flt(row.amount) == flt(booking.net_total)
 
 
-def _period_invoice(booking, row) -> str:
-	si = _new_invoice(booking, row.invoice_date)
-	si.rental_billing_row = row.name
+def _append_row(si, booking, row, tag_lines: bool = False) -> list[str]:
+	"""Add one schedule row's items (split by line amount) and its due events. Returns event names."""
 	account = erpnext_sync._income_account(booking)
 	lines = erpnext_sync._item_rows(booking)
 	precision = billing._precision(booking)
 	amounts = billing_schedule._split([flt(r["rate"]) for r in lines], flt(row.amount), precision)
 	period = _("{0} to {1}").format(row.period_from, row.period_to)
+	tags = {"rental_booking": booking.name, "rental_billing_row": row.name} if tag_lines else {}
 	for line, amount in zip(lines, amounts, strict=True):
 		if not amount:
 			continue
-		item = {**line, "rate": amount, "description": f"{line['description']}, {period}"}
+		prefix = f"{booking.name}: " if tag_lines else ""
+		item = {**line, "rate": amount, "description": f"{prefix}{line['description']}, {period}", **tags}
 		if account and line.get("rental_booking_line"):
 			item["income_account"] = account
 		if booking.cost_center:
 			item["cost_center"] = booking.cost_center
 		item.update(_deferred(booking, row))
 		si.append("items", item)
+	before = len(si.items)
 	extras = billable_events.append_to_invoice(
 		si, booking, billable_events.pending(booking.name, row.invoice_date)
 	)
+	for item in si.items[before:]:
+		item.update(tags)
+	return extras
+
+
+def _period_invoice(booking, row) -> str:
+	si = _new_invoice(booking, row.invoice_date)
+	si.rental_billing_row = row.name
+	extras = _append_row(si, booking, row)
 	for tax in compat.template_taxes(booking.taxes_and_charges):
 		si.append("taxes", tax)
 	si.flags.ignore_permissions = True  # system job billing a confirmed booking on its schedule
@@ -235,6 +280,49 @@ def _period_invoice(booking, row) -> str:
 	if _submit():
 		si.submit()
 		events.emit("invoice_created", si, key=str(row.period_from), extra={"rental_booking": booking.name})
+	return si.name
+
+
+def consolidates(customer: str) -> bool:
+	return bool(frappe.db.get_value("Customer", customer, "rental_consolidate_invoices"))
+
+
+def consolidated_invoice(row_names: list[str], today=None) -> str | None:
+	"""Bill several due period rows of one customer on one invoice. Safe to run twice."""
+	rows = []
+	for name in row_names:
+		locked = frappe.db.sql(
+			f"select name, parent, status from `tab{ROW}` where name=%s for update", name, as_dict=True
+		)
+		if not locked or locked[0].status != "Planned":
+			continue
+		if frappe.db.exists("Sales Invoice Item", {"rental_billing_row": name, "docstatus": ["<", 2]}):
+			continue
+		booking = frappe.get_doc("Rental Booking", locked[0].parent)
+		rows.append((booking, next(r for r in booking.billing_schedule if r.name == name)))
+	if not rows:
+		return None
+	first = rows[0][0]
+	keys = {(b.customer, b.company, b.currency, b.taxes_and_charges or "") for b, _r in rows}
+	if len(keys) > 1:
+		frappe.throw(_("Consolidated rows must share customer, company, currency and taxes"))
+	si = _new_invoice(first, today or nowdate())
+	si.rental_booking = None
+	if si.meta.has_field("cost_center"):
+		si.cost_center = None  # bookings may sit in different cost centres; items keep their own
+	extras = []
+	for booking, row in rows:
+		extras += _append_row(si, booking, row, tag_lines=True)
+	for tax in compat.template_taxes(first.taxes_and_charges):
+		si.append("taxes", tax)
+	si.flags.ignore_permissions = True  # system job billing confirmed bookings on their schedules
+	si.insert()
+	billable_events.mark_invoiced(extras, si.name)
+	for _b, row in rows:
+		frappe.db.set_value(ROW, row.name, {"status": "Invoiced", "sales_invoice": si.name})
+	if _submit():
+		si.submit()
+		events.emit("invoice_created", si, extra={"rental_bookings": sorted({b.name for b, _r in rows})})
 	return si.name
 
 

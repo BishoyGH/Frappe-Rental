@@ -52,7 +52,32 @@ CUSTOM_FIELDS = {
 		},
 	],
 	"Sales Order Item": _line_fields("item_name"),
-	"Sales Invoice Item": _line_fields("item_name"),
+	"Sales Invoice Item": [
+		*_line_fields("item_name"),
+		# T50: consolidated invoices reference the booking and billing row per item
+		_link("rental_booking", "Rental Booking", "Rental Booking", "rental_booking_line"),
+		{
+			"fieldname": "rental_billing_row",
+			"label": "Rental Billing Row",
+			"fieldtype": "Data",
+			"insert_after": "rental_booking",
+			"read_only": 1,
+			"no_copy": 1,
+			"hidden": 1,
+			"search_index": 1,
+			"module": "Rental",
+		},
+	],
+	"Customer": [
+		{
+			"fieldname": "rental_consolidate_invoices",
+			"label": "Consolidate Rental Invoices",
+			"description": "One invoice per billing run for all of this customer's rentals",
+			"fieldtype": "Check",
+			"insert_after": "customer_group",
+			"module": "Rental",
+		}
+	],
 	"Journal Entry": [_link("rental_deposit", "Rental Deposit", "Rental Deposit", "voucher_type")],
 	"Serial No": [
 		_link("rental_booking", "Rented On", "Rental Booking", "warehouse"),
