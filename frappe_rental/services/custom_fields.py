@@ -53,6 +53,7 @@ CUSTOM_FIELDS = {
 	],
 	"Sales Order Item": _line_fields("item_name"),
 	"Sales Invoice Item": _line_fields("item_name"),
+	"Journal Entry": [_link("rental_deposit", "Rental Deposit", "Rental Deposit", "voucher_type")],
 	"Asset": [_link("rental_unit", "Rental Unit", "Rental Unit", "item_name")],
 	"Item": [_link("rental_item", "Rental Item", "Rental Item", "item_name")],
 }

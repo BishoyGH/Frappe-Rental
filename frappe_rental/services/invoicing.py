@@ -168,6 +168,7 @@ def _period_invoice(booking, row) -> str:
 			item["income_account"] = account
 		if booking.cost_center:
 			item["cost_center"] = booking.cost_center
+		item.update(_deferred(booking, row))
 		si.append("items", item)
 	extras = billable_events.append_to_invoice(
 		si, booking, billable_events.pending(booking.name, row.invoice_date)
@@ -181,6 +182,21 @@ def _period_invoice(booking, row) -> str:
 		si.submit()
 		events.emit("invoice_created", si, key=str(row.period_from), extra={"rental_booking": booking.name})
 	return si.name
+
+
+def _deferred(booking, row) -> dict:
+	"""D5.4: advance-billed periods recognise income over the service dates when the type enables it."""
+	if not frappe.db.get_value("Rental Type", booking.rental_type, "enable_deferred_revenue"):
+		return {}
+	account = frappe.get_cached_value("Company", booking.company, "default_deferred_revenue_account")
+	if not account:
+		return {}
+	return {
+		"enable_deferred_revenue": 1,
+		"deferred_revenue_account": account,
+		"service_start_date": row.period_from,
+		"service_end_date": row.period_to,
+	}
 
 
 def _credit_note(booking, row) -> str:

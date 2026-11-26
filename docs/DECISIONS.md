@@ -78,3 +78,6 @@ All remaining tasks go into one pull request, so Bishoy can run and debug the ap
 ## T20 setup screens (2026-11-26)
 - The SPA edits setup records through `api.setup.get_records/get_record/save_record`, which allow only the doctypes and fields each screen names. The item type's custom fields are the only extra keys an Item or Unit form may write.
 - Playwright blocks `socket.io` and `favicon.ico` requests. `bench serve` has no socket.io server and is built without website assets, and its error page for those requests leaves a database transaction open. That open transaction blocks the schema change behind a new custom field. Production serves both, so only the test harness needs this.
+
+## D-deposit-journal (2026-11-26, T25)
+Deposits move by **Journal Entry**, not Payment Entry. A Payment Entry for a Customer needs a receivable account, and its advance-account options differ between ERPNext v15 and v16. A Journal Entry posts straight to the `Customer Deposits (Rental)` liability on both versions. Each entry carries `rental_deposit` and is listed on the Rental Deposit. Applying a deposit to an invoice credits the customer's receivable against that invoice, so its outstanding amount drops as it would after a payment. VAT on applied or forfeited amounts (D5.6) is not posted automatically yet.
