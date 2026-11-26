@@ -4,7 +4,7 @@ import frappe
 from frappe import _
 
 from frappe_rental.services import booking as booking_service
-from frappe_rental.services import booking_views, erpnext_sync, lifecycle
+from frappe_rental.services import booking_views, cancellation, erpnext_sync, lifecycle
 
 
 @frappe.whitelist()
@@ -184,3 +184,21 @@ def move(name: str, from_datetime: str, to_datetime: str, rental_unit: str | Non
 	doc = _get(name, "write")
 	timeline.move_booking(doc, from_datetime, to_datetime, rental_unit or None)
 	return {**_state(doc), "from_datetime": doc.from_datetime, "to_datetime": doc.to_datetime}
+
+
+@frappe.whitelist()
+def cancellation_preview(name: str, by: str = "customer") -> dict:
+	"""What cancelling now would keep, refund or bill, under the booking's cancellation policy."""
+	if by not in ("customer", "provider"):
+		frappe.throw(_("Cancelled by must be customer or provider"))
+	return cancellation.preview(_get(name, "read"), by=by)
+
+
+@frappe.whitelist(methods=["POST"])
+def cancel_with_policy(name: str, by: str = "customer") -> dict:
+	"""Cancel a confirmed booking and settle fee, credit note and refund exactly as previewed."""
+	if by not in ("customer", "provider"):
+		frappe.throw(_("Cancelled by must be customer or provider"))
+	doc = _get(name, "cancel")
+	result = cancellation.cancel(doc, by=by)
+	return {**_state(doc), "cancellation": result}

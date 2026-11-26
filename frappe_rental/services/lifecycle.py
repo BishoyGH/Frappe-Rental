@@ -12,7 +12,7 @@ import frappe
 from frappe import _
 from frappe.utils import add_to_date, flt, get_datetime, now_datetime
 
-from frappe_rental.services import availability, deposits, erpnext_sync, events, invoicing
+from frappe_rental.services import availability, cancellation, deposits, erpnext_sync, events, invoicing
 
 SOURCE = "Rental Booking"
 
@@ -70,7 +70,10 @@ def on_submit(doc) -> None:
 
 def on_cancel(doc) -> None:
 	availability.release(SOURCE, doc.name)
-	erpnext_sync.reverse(doc)
+	if doc.flags.get("cancellation"):
+		cancellation.settle(doc, doc.flags.cancellation)
+	else:
+		erpnext_sync.reverse(doc)
 	doc.db_set("status", "Cancelled")
 	events.emit("booking_cancelled", doc)
 

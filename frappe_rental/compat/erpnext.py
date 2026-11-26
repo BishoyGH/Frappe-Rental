@@ -118,3 +118,21 @@ def enable_serial_numbers() -> None:
 		"Stock Settings", field
 	):
 		frappe.db.set_single_value("Stock Settings", field, 1)
+
+
+def make_refund_entry(credit_note: str, amount: float):
+	"""Unsaved Payment Entry (Pay) refunding `amount` of a submitted credit note to the customer.
+
+	Versions: `erpnext.accounts.doctype.payment_entry.payment_entry.get_payment_entry` on v15 and v16;
+	for a return invoice it builds a "Pay" entry with the credit note as reference. Removal: keep while
+	the function and its return-invoice behaviour are unchanged on every supported major.
+	"""
+	from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
+
+	pe = get_payment_entry("Sales Invoice", credit_note)
+	pe.paid_amount = pe.received_amount = amount
+	for ref in pe.references:
+		ref.allocated_amount = -amount if ref.allocated_amount < 0 else amount
+	if hasattr(pe, "set_amounts"):
+		pe.set_amounts()
+	return pe
