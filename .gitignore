@@ -13,3 +13,4 @@ e2e/test-results/
 e2e/playwright-report/
 frontend/auto-imports.d.ts
 frontend/components.d.ts
+frontend/test-results/
