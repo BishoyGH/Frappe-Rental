@@ -63,7 +63,7 @@ def _needs_rebuild(doc) -> bool:
 	return (
 		before.from_datetime != doc.from_datetime
 		or before.to_datetime != doc.to_datetime
-		or flt(before.grand_total) != flt(doc.grand_total)
+		or flt(before.net_total) != flt(doc.net_total)
 		or [_row_dict(r) for r in before.get("billing_plan") or []]
 		!= [_row_dict(r) for r in doc.get("billing_plan") or []]
 	)
@@ -91,7 +91,7 @@ def update_schedule(doc, force: bool = False) -> None:
 			plan,
 			start,
 			end,
-			flt(doc.grand_total),
+			flt(doc.net_total),
 			confirmed_on=getdate(doc.modified) if doc.docstatus == 1 else None,
 			precision=_precision(doc),
 		)
@@ -110,4 +110,4 @@ def preview(doc_or_dict, plan: dict | None = None) -> list[dict]:
 	start, end = getdate(doc.from_datetime), getdate(doc.to_datetime)
 	if end > start and get_datetime(doc.to_datetime).time() == time(0, 0):
 		end -= timedelta(days=1)
-	return billing_schedule.generate(plan, start, end, flt(doc.grand_total))
+	return billing_schedule.generate(plan, start, end, flt(doc.net_total))

@@ -38,7 +38,18 @@ CUSTOM_FIELDS = {
 		_link("rental_booking", "Rental Booking", "Rental Booking", "customer_name", in_standard_filter=1)
 	],
 	"Sales Invoice": [
-		_link("rental_booking", "Rental Booking", "Rental Booking", "customer_name", in_standard_filter=1)
+		_link("rental_booking", "Rental Booking", "Rental Booking", "customer_name", in_standard_filter=1),
+		{
+			"fieldname": "rental_billing_row",
+			"label": "Rental Billing Row",
+			"fieldtype": "Data",
+			"insert_after": "rental_booking",
+			"read_only": 1,
+			"no_copy": 1,
+			"hidden": 1,
+			"search_index": 1,
+			"module": "Rental",
+		},
 	],
 	"Sales Order Item": _line_fields("item_name"),
 	"Sales Invoice Item": _line_fields("item_name"),

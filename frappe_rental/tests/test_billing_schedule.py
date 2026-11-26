@@ -144,7 +144,7 @@ class TestBookingSchedule(FrappeTestCase):
 			billing_plan=[frappe._dict(frequency="Monthly", alignment="Calendar period start")],
 			from_datetime="2026-01-01 00:00:00",
 			to_datetime="2026-04-01 00:00:00",
-			grand_total=300,
+			net_total=300,
 		)
 		rows = billing.preview(doc)
 		self.assertEqual([r["amount"] for r in rows], [100, 100, 100])

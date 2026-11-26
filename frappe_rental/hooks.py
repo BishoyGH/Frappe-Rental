@@ -26,7 +26,8 @@ scheduler_events = {
 			"frappe_rental.services.lifecycle.expire_holds",
 			"frappe_rental.services.events.remind_expiring_holds",
 		]
-	}
+	},
+	"daily": ["frappe_rental.services.invoicing.run_due_invoices"],
 }
 
 website_route_rules = [{"from_route": "/rental/<path:app_path>", "to_route": "rental"}]

@@ -12,7 +12,7 @@ import frappe
 from frappe import _
 from frappe.utils import add_to_date, flt, get_datetime, now_datetime
 
-from frappe_rental.services import availability, erpnext_sync, events
+from frappe_rental.services import availability, erpnext_sync, events, invoicing
 
 SOURCE = "Rental Booking"
 
@@ -63,8 +63,7 @@ def on_submit(doc) -> None:
 	"""Mirror the confirmed booking in ERPNext; invoice now when Rental Settings auto-invoices."""
 	erpnext_sync.make_sales_order(doc)
 	events.emit("booking_confirmed", doc)
-	if frappe.db.get_single_value("Rental Settings", "auto_invoice"):
-		erpnext_sync.make_sales_invoice(doc)
+	invoicing.on_confirm(doc)
 
 
 def on_cancel(doc) -> None:
