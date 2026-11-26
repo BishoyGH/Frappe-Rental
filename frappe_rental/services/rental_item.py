@@ -38,6 +38,8 @@ def sync_item(doc) -> str:
 		)
 	for field in SHARED_FIELDS:
 		item.set(field, doc.get(field))
+	if item.meta.has_field("rental_item"):
+		item.rental_item = doc.name
 	_set_income_account(item, income_account(doc.rental_type))
 	item.flags[SYNC_FLAG] = True
 	item.save(ignore_permissions=True)  # Item is owned by the Rental Item; the user already passed its check

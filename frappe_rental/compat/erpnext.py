@@ -42,3 +42,65 @@ def ensure_setup_complete() -> str:
 	)
 	frappe.clear_cache()
 	return frappe.db.get_value("Company", {}, "name", order_by="creation asc")
+
+
+def template_taxes(template: str | None) -> list[dict]:
+	"""Rows of a Sales Taxes and Charges Template, ready for a transaction's `taxes` table.
+
+	Versions: v15 and v16 both expose `get_taxes_and_charges` in `erpnext.controllers.accounts_controller`
+	with the same signature. Feature-detected so a move only needs this shim changed.
+	Removal: keep while the function lives in different places or signatures across supported majors.
+	"""
+	if not template:
+		return []
+	from erpnext.controllers import accounts_controller
+
+	getter = getattr(accounts_controller, "get_taxes_and_charges", None)
+	if getter:
+		return getter("Sales Taxes and Charges Template", template) or []
+	doc = frappe.get_doc("Sales Taxes and Charges Template", template)
+	return [
+		{
+			k: v
+			for k, v in row.as_dict().items()
+			if k not in ("name", "parent", "parenttype", "parentfield", "idx")
+		}
+		for row in doc.taxes
+	]
+
+
+def make_sales_invoice_from_order(sales_order: str):
+	"""Map a submitted Sales Order to a new, unsaved Sales Invoice.
+
+	Versions: `erpnext.selling.doctype.sales_order.sales_order.make_sales_invoice` on v15 and v16.
+	Removal: when its import path or signature differs between supported majors, branch here.
+	"""
+	from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice
+
+	return make_sales_invoice(sales_order)
+
+
+def make_credit_note(sales_invoice: str):
+	"""Unsaved return (credit note) for a submitted Sales Invoice.
+
+	Versions: `erpnext.accounts.doctype.sales_invoice.sales_invoice.make_sales_return` on v15 and v16.
+	Removal: as above.
+	"""
+	from erpnext.accounts.doctype.sales_invoice.sales_invoice import make_sales_return
+
+	return make_sales_return(sales_invoice)
+
+
+def create_dimension_fields(dimension: str) -> None:
+	"""Add an Accounting Dimension's fields to every accounting doctype now, not in a background job.
+
+	Versions: v15 and v16 enqueue `make_dimension_in_accounting_doctypes` outside tests, so a site with
+	no worker (fresh install, CI) misses the columns and v16's budget check then fails on submit.
+	Calling the same public function inline is idempotent (it skips existing fields).
+	Removal: when ERPNext creates dimension fields synchronously on both supported majors.
+	"""
+	from erpnext.accounts.doctype.accounting_dimension import accounting_dimension
+
+	accounting_dimension.make_dimension_in_accounting_doctypes(
+		doc=frappe.get_doc("Accounting Dimension", dimension)
+	)

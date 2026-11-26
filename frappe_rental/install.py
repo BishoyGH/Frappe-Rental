@@ -2,6 +2,9 @@ from frappe_rental.services.setup import create_defaults
 
 
 def after_install():
+	from frappe_rental.services import custom_fields
+
+	custom_fields.install()
 	create_defaults()
 
 
