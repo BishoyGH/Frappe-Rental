@@ -41,6 +41,31 @@ def make_schedule(holidays=()):
 	).insert()
 
 
+def make_hourly_fixtures(company):
+	currency = frappe.db.get_value("Company", company, "default_currency")
+	if not frappe.db.exists("Rental Rate Card", "T45 Hourly"):
+		frappe.get_doc(
+			{
+				"doctype": "Rental Rate Card",
+				"card_name": "T45 Hourly",
+				"currency": currency,
+				"rates": [{"time_unit": "Hour", "rate": 50}],
+			}
+		).insert()
+	if not frappe.db.exists("Rental Type", "T45 Shoot"):
+		frappe.get_doc(
+			{
+				"doctype": "Rental Type",
+				"type_name": "T45 Shoot",
+				"mode": "Resource",
+				"time_unit": "Hour",
+				"requires_hold": 0,
+			}
+		).insert()
+	if not frappe.db.exists("Gender", "Female"):
+		frappe.get_doc({"doctype": "Gender", "gender": "Female"}).insert()
+
+
 class TestProvider(FrappeTestCase):
 	_tax_template = t16.TestErpnextSync.__dict__["_tax_template"]
 	make_fixtures = t16.TestErpnextSync.__dict__["make_fixtures"]
@@ -49,28 +74,7 @@ class TestProvider(FrappeTestCase):
 	def setUpClass(cls):
 		super().setUpClass()
 		cls.make_fixtures()
-		currency = frappe.db.get_value("Company", cls.company, "default_currency")
-		if not frappe.db.exists("Rental Rate Card", "T45 Hourly"):
-			frappe.get_doc(
-				{
-					"doctype": "Rental Rate Card",
-					"card_name": "T45 Hourly",
-					"currency": currency,
-					"rates": [{"time_unit": "Hour", "rate": 50}],
-				}
-			).insert()
-		if not frappe.db.exists("Rental Type", "T45 Shoot"):
-			frappe.get_doc(
-				{
-					"doctype": "Rental Type",
-					"type_name": "T45 Shoot",
-					"mode": "Resource",
-					"time_unit": "Hour",
-					"requires_hold": 0,
-				}
-			).insert()
-		if not frappe.db.exists("Gender", "Female"):
-			frappe.get_doc({"doctype": "Gender", "gender": "Female"}).insert()
+		make_hourly_fixtures(cls.company)
 
 	def _unit(self, **kw):
 		item = frappe.get_doc(

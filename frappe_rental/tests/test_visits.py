@@ -19,7 +19,9 @@ class TestVisits(FrappeTestCase):
 
 	@classmethod
 	def setUpClass(cls):
-		P["setUpClass"].__func__(cls)
+		super().setUpClass()
+		cls.make_fixtures()
+		t45.make_hourly_fixtures(cls.company)
 
 	def hvac(self, **kw):
 		doc = make_contract(visit_frequency="Quarterly", sla_response_hours=4, sla_resolution_hours=24, **kw)
