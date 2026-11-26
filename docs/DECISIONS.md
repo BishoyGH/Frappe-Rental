@@ -49,3 +49,6 @@ Foundation tasks T00A to T00C are stacked as one commit per task on a single bra
 
 ## D-accounting-dimension (2026-11-25)
 The `Rental Item Type` Accounting Dimension is created in T06 together with the Rental Type DocType it points to, not in T04.
+
+## D-ui-tests (2026-11-26)
+Browser tests use **Playwright**, not Cypress. Frappe core ships Cypress tests, but they target its own desk and test site; Playwright runs headless in CI without extra services, works the same against v15 and v16 benches, and is what `docs/COMPATIBILITY.md` already names for the smoke suite. The harness is task T16B; later UI tasks add specs to it.
