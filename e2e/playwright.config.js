@@ -2,6 +2,7 @@ import { defineConfig } from '@playwright/test'
 
 // Smoke tests against a running bench site: BASE_URL defaults to the bench dev server.
 export default defineConfig({
+  workers: 1, // one Administrator session at a time
   testDir: '.',
   timeout: 30_000,
   retries: 0,

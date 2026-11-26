@@ -47,6 +47,7 @@ The staff app lives in `frontend/` (Vue 3, `frappe-ui`, Vite 5) and is served at
 cd frontend && yarn install --frozen-lockfile
 yarn dev            # proxies API calls to the bench site on port 8000
 yarn build          # writes frappe_rental/public/frontend and frappe_rental/www/rental.html
+bench --site <site> execute frappe_rental.tests.e2e_fixtures.setup   # data the Playwright specs use (idempotent)
 cd ../e2e && yarn install && BASE_URL=http://127.0.0.1:8000 yarn test   # Playwright smoke (Node >=20)
 ```
 
