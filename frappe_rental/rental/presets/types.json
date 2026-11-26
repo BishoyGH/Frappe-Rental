@@ -1,17 +1,213 @@
 [
- {"type_name": "Device", "mode": "Resource", "time_unit": "Day", "identification_mode": "Serial", "requires_deposit": 1, "requires_checkin": 1, "requires_return_inspection": 1, "buffer_after": 60,
-  "custom_fields": [{"applies_to": "Rental Item", "label": "Brand", "fieldname": "brand", "fieldtype": "Data"}]},
- {"type_name": "Apartment", "mode": "Resource", "time_unit": "Month", "identification_mode": "None", "requires_deposit": 1, "requires_contract": 1, "requires_checkin": 1, "requires_return_inspection": 1,
-  "custom_fields": [{"applies_to": "Rental Item", "label": "Bedrooms", "fieldname": "bedrooms", "fieldtype": "Int"}, {"applies_to": "Rental Item", "label": "Area (sqm)", "fieldname": "area_sqm", "fieldtype": "Float"}]},
- {"type_name": "Hotel Room", "mode": "Resource", "time_unit": "Night", "identification_mode": "None", "requires_checkin": 1, "buffer_after": 120,
-  "custom_fields": [{"applies_to": "Rental Item", "label": "Bed Type", "fieldname": "bed_type", "fieldtype": "Data"}]},
- {"type_name": "Storage Unit", "mode": "Resource", "time_unit": "Month", "identification_mode": "None", "requires_deposit": 1, "requires_contract": 1,
-  "custom_fields": [{"applies_to": "Rental Item", "label": "Area (sqm)", "fieldname": "area_sqm", "fieldtype": "Float"}]},
- {"type_name": "Vehicle", "mode": "Resource", "time_unit": "Day", "identification_mode": "Asset", "requires_deposit": 1, "requires_checkin": 1, "requires_return_inspection": 1, "buffer_after": 120,
-  "custom_fields": [{"applies_to": "Rental Item", "label": "Plate Number", "fieldname": "plate_number", "fieldtype": "Data"}]},
- {"type_name": "Event Gear", "mode": "Resource", "time_unit": "Day", "identification_mode": "Pooled", "allow_quantity": 1, "requires_deposit": 1, "requires_checkin": 1, "requires_return_inspection": 1, "custom_fields": []},
- {"type_name": "Photographer", "mode": "Service", "time_unit": "Hour", "identification_mode": "None", "requires_hold": 1, "min_duration": 2,
-  "custom_fields": [{"applies_to": "Rental Item", "label": "Speciality", "fieldname": "speciality", "fieldtype": "Data"}]},
- {"type_name": "Maintenance", "mode": "Contract", "time_unit": "Month", "identification_mode": "None", "requires_contract": 1,
-  "custom_fields": [{"applies_to": "Rental Item", "label": "Visits per Month", "fieldname": "visits_per_month", "fieldtype": "Int"}]}
+ {
+  "type_name": "Device",
+  "mode": "Resource",
+  "time_unit": "Day",
+  "identification_mode": "Serial",
+  "requires_deposit": 1,
+  "requires_checkin": 1,
+  "requires_return_inspection": 1,
+  "buffer_after": 60,
+  "custom_fields": [
+   {
+    "applies_to": "Rental Item",
+    "label": "Brand",
+    "fieldname": "brand",
+    "fieldtype": "Data"
+   }
+  ]
+ },
+ {
+  "type_name": "Apartment",
+  "mode": "Resource",
+  "time_unit": "Month",
+  "identification_mode": "None",
+  "requires_deposit": 1,
+  "requires_contract": 1,
+  "requires_checkin": 1,
+  "requires_return_inspection": 1,
+  "custom_fields": [
+   {
+    "applies_to": "Rental Item",
+    "label": "Bedrooms",
+    "fieldname": "bedrooms",
+    "fieldtype": "Int"
+   },
+   {
+    "applies_to": "Rental Item",
+    "label": "Area (sqm)",
+    "fieldname": "area_sqm",
+    "fieldtype": "Float"
+   }
+  ]
+ },
+ {
+  "type_name": "Hotel Room",
+  "mode": "Resource",
+  "time_unit": "Night",
+  "identification_mode": "None",
+  "requires_checkin": 1,
+  "buffer_after": 120,
+  "custom_fields": [
+   {
+    "applies_to": "Rental Item",
+    "label": "Bed Type",
+    "fieldname": "bed_type",
+    "fieldtype": "Data"
+   }
+  ]
+ },
+ {
+  "type_name": "Storage Unit",
+  "mode": "Resource",
+  "time_unit": "Month",
+  "identification_mode": "None",
+  "requires_deposit": 1,
+  "requires_contract": 1,
+  "custom_fields": [
+   {
+    "applies_to": "Rental Item",
+    "label": "Area (sqm)",
+    "fieldname": "area_sqm",
+    "fieldtype": "Float"
+   }
+  ]
+ },
+ {
+  "type_name": "Vehicle",
+  "mode": "Resource",
+  "time_unit": "Day",
+  "identification_mode": "Asset",
+  "requires_deposit": 1,
+  "requires_checkin": 1,
+  "requires_return_inspection": 1,
+  "buffer_after": 120,
+  "custom_fields": [
+   {
+    "applies_to": "Rental Item",
+    "label": "Plate Number",
+    "fieldname": "plate_number",
+    "fieldtype": "Data"
+   }
+  ]
+ },
+ {
+  "type_name": "Event Gear",
+  "mode": "Resource",
+  "time_unit": "Day",
+  "identification_mode": "Pooled",
+  "allow_quantity": 1,
+  "requires_deposit": 1,
+  "requires_checkin": 1,
+  "requires_return_inspection": 1,
+  "custom_fields": []
+ },
+ {
+  "type_name": "Photographer",
+  "mode": "Service",
+  "time_unit": "Hour",
+  "identification_mode": "None",
+  "requires_hold": 1,
+  "min_duration": 2,
+  "custom_fields": [
+   {
+    "applies_to": "Rental Item",
+    "label": "Speciality",
+    "fieldname": "speciality",
+    "fieldtype": "Data"
+   }
+  ]
+ },
+ {
+  "type_name": "Maintenance",
+  "mode": "Contract",
+  "time_unit": "Month",
+  "identification_mode": "None",
+  "requires_contract": 1,
+  "custom_fields": [
+   {
+    "applies_to": "Rental Item",
+    "label": "Visits per Month",
+    "fieldname": "visits_per_month",
+    "fieldtype": "Int"
+   }
+  ]
+ },
+ {
+  "type_name": "Boat Charter",
+  "mode": "Resource",
+  "time_unit": "Hour",
+  "identification_mode": "None",
+  "min_duration": 2,
+  "buffer_after": 30,
+  "requires_deposit": 1,
+  "requires_contract": 1,
+  "requires_checkin": 1,
+  "requires_return_inspection": 1,
+  "custom_fields": [
+   {
+    "applies_to": "Rental Item",
+    "label": "Length (m)",
+    "fieldname": "boat_length_m",
+    "fieldtype": "Float"
+   },
+   {
+    "applies_to": "Rental Booking",
+    "label": "Skipper required",
+    "fieldname": "skipper_required",
+    "fieldtype": "Check"
+   }
+  ]
+ },
+ {
+  "type_name": "Bicycle",
+  "mode": "Resource",
+  "time_unit": "Day",
+  "identification_mode": "Pooled",
+  "allow_quantity": 1,
+  "requires_checkin": 1,
+  "custom_fields": [
+   {
+    "applies_to": "Rental Item",
+    "label": "Frame size",
+    "fieldname": "frame_size",
+    "fieldtype": "Select",
+    "options": "S\nM\nL\nXL"
+   }
+  ]
+ },
+ {
+  "type_name": "Meeting Room",
+  "mode": "Resource",
+  "time_unit": "Hour",
+  "identification_mode": "None",
+  "buffer_after": 15,
+  "requires_hold": 1,
+  "custom_fields": []
+ },
+ {
+  "type_name": "Tool",
+  "mode": "Resource",
+  "time_unit": "Day",
+  "identification_mode": "Batch",
+  "allow_quantity": 1,
+  "requires_deposit": 1,
+  "requires_return_inspection": 1,
+  "custom_fields": []
+ },
+ {
+  "type_name": "Tour Guide",
+  "mode": "Service",
+  "time_unit": "Hour",
+  "identification_mode": "None",
+  "min_duration": 2,
+  "custom_fields": [
+   {
+    "applies_to": "Rental Item",
+    "label": "Languages",
+    "fieldname": "guide_languages",
+    "fieldtype": "Data"
+   }
+  ]
+ }
 ]

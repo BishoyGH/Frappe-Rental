@@ -77,7 +77,7 @@ Work top to bottom. One task = one PR. Each task lists what to build (**Build**)
 - [ ] **T50 Consolidated invoices.** Build: per-customer per-period grouping with per-line references. Done when: totals tests. Needs: T23.
 - [ ] **T51 Housekeeping and turnaround.** Build: tasks on check-out, unit status automation, buffer integration. Needs: T27.
 - [x] **T52 Waitlist and substitutions.** Build: waitlist notify, substitute suggestions on conflict. Needs: T15. Note: backend, API and events only (`api.waitlist.add`, `substitutes`, `get_list`; event `waitlist_available`). The SPA waitlist screen and the substitute panel in New Booking come with the frontend phases.
-- [ ] **T53 Additional presets and import.** Build: CSV import for items/units/customers with identifiers; more presets. Needs: T08.
+- [x] **T53 Additional presets and import.** Build: CSV import for items/units/customers with identifiers; more presets. Needs: T08. Note: `api.setup.import_csv` (with dry-run preview) and `import_template`; presets Boat Charter, Bicycle, Meeting Room, Tool, Tour Guide. The SPA upload screen comes with the frontend phases.
 - [ ] **T54 Gateway adapter 2 and pre-authorisation (optional).** Build: regional gateway adapter, card hold/capture for deposits. Needs: T36.
 - [ ] **T54b Postgres support (optional).** Build: enable the Postgres CI leg, fix SQL portability issues. Done when: tests pass on Postgres for both versions. Needs: T38.
 
