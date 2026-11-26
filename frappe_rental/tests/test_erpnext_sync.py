@@ -14,6 +14,10 @@ class TestErpnextSync(FrappeTestCase):
 	@classmethod
 	def setUpClass(cls):
 		super().setUpClass()
+		cls.make_fixtures()
+
+	@classmethod
+	def make_fixtures(cls):
 		cls.company = ensure_setup_complete()
 		create_defaults()
 		custom_fields.install()

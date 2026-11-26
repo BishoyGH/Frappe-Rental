@@ -1,0 +1,237 @@
+{
+ "actions": [],
+ "creation": "2026-11-26 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "rental_booking",
+  "handover_type",
+  "posted_on",
+  "scan_input",
+  "column_break_1",
+  "customer",
+  "company",
+  "is_late",
+  "late_minutes",
+  "lines_section",
+  "lines",
+  "checklist_section",
+  "checklist",
+  "signature_section",
+  "signed_by",
+  "signature",
+  "links_section",
+  "stock_entry",
+  "asset_movements",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "RHO-.YYYY.-",
+   "default": "RHO-.YYYY.-",
+   "hidden": 1
+  },
+  {
+   "fieldname": "rental_booking",
+   "fieldtype": "Link",
+   "label": "Booking",
+   "options": "Rental Booking",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "handover_type",
+   "fieldtype": "Select",
+   "label": "Type",
+   "options": "Check-out\nReturn",
+   "reqd": 1,
+   "default": "Check-out",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "posted_on",
+   "fieldtype": "Datetime",
+   "label": "When",
+   "reqd": 1,
+   "default": "now"
+  },
+  {
+   "fieldname": "scan_input",
+   "fieldtype": "Data",
+   "label": "Scan",
+   "description": "Scan or type a unit code, barcode, serial, batch or asset to add it",
+   "options": "Barcode"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer",
+   "fetch_from": "rental_booking.customer",
+   "read_only": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "fetch_from": "rental_booking.company",
+   "read_only": 1
+  },
+  {
+   "fieldname": "is_late",
+   "fieldtype": "Check",
+   "label": "Late",
+   "read_only": 1
+  },
+  {
+   "fieldname": "late_minutes",
+   "fieldtype": "Int",
+   "label": "Minutes late",
+   "read_only": 1,
+   "depends_on": "is_late"
+  },
+  {
+   "fieldname": "lines_section",
+   "fieldtype": "Section Break",
+   "label": "Units"
+  },
+  {
+   "fieldname": "lines",
+   "fieldtype": "Table",
+   "label": "Units",
+   "options": "Rental Handover Line",
+   "reqd": 1
+  },
+  {
+   "fieldname": "checklist_section",
+   "fieldtype": "Section Break",
+   "label": "Checklist",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "checklist",
+   "fieldtype": "Table",
+   "label": "Checklist",
+   "options": "Rental Handover Check"
+  },
+  {
+   "fieldname": "signature_section",
+   "fieldtype": "Section Break",
+   "label": "Signature"
+  },
+  {
+   "fieldname": "signed_by",
+   "fieldtype": "Data",
+   "label": "Signed by"
+  },
+  {
+   "fieldname": "signature",
+   "fieldtype": "Signature",
+   "label": "Signature"
+  },
+  {
+   "fieldname": "links_section",
+   "fieldtype": "Section Break",
+   "label": "Stock and assets",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "stock_entry",
+   "fieldtype": "Link",
+   "label": "Stock Entry",
+   "options": "Stock Entry",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "asset_movements",
+   "fieldtype": "Small Text",
+   "label": "Asset Movements",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Rental Handover",
+   "read_only": 1,
+   "no_copy": 1,
+   "print_hide": 1
+  }
+ ],
+ "links": [],
+ "modified": "2026-11-26 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "name": "Rental Handover",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "Rental Admin",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Rental Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "submit": 1,
+   "cancel": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Rental Agent",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "submit": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Rental Accountant",
+   "read": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "is_submittable": 1,
+ "autoname": "naming_series:",
+ "track_changes": 1
+}

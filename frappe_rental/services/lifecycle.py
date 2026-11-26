@@ -12,7 +12,15 @@ import frappe
 from frappe import _
 from frappe.utils import add_to_date, flt, get_datetime, now_datetime
 
-from frappe_rental.services import availability, erpnext_sync, events, waitlist
+from frappe_rental.services import (
+	availability,
+	cancellation,
+	deposits,
+	erpnext_sync,
+	events,
+	invoicing,
+	waitlist,
+)
 
 SOURCE = "Rental Booking"
 
@@ -29,6 +37,7 @@ def place_hold(doc) -> None:
 	doc.hold_expires_on = add_to_date(now_datetime(), minutes=hold_minutes())
 	doc.save()  # on_update reserves
 	events.emit("booking_held", doc, key=str(doc.hold_expires_on))
+	deposits.request(doc)
 
 
 def on_update(doc) -> None:
@@ -63,13 +72,16 @@ def on_submit(doc) -> None:
 	"""Mirror the confirmed booking in ERPNext; invoice now when Rental Settings auto-invoices."""
 	erpnext_sync.make_sales_order(doc)
 	events.emit("booking_confirmed", doc)
-	if frappe.db.get_single_value("Rental Settings", "auto_invoice"):
-		erpnext_sync.make_sales_invoice(doc)
+	deposits.request(doc)
+	invoicing.on_confirm(doc)
 
 
 def on_cancel(doc) -> None:
 	availability.release(SOURCE, doc.name)
-	erpnext_sync.reverse(doc)
+	if doc.flags.get("cancellation"):
+		cancellation.settle(doc, doc.flags.cancellation)
+	else:
+		erpnext_sync.reverse(doc)
 	doc.db_set("status", "Cancelled")
 	events.emit("booking_cancelled", doc)
 	waitlist.on_release(doc)

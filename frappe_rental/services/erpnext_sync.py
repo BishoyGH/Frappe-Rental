@@ -64,6 +64,8 @@ def make_sales_invoice(booking, submit: bool = True) -> str:
 	"""Create the one-off Sales Invoice from the booking's Sales Order. Returns its name."""
 	if booking.docstatus != 1:
 		frappe.throw(_("Confirm the booking before invoicing it"))
+	if len(booking.get("billing_schedule") or []) > 1:
+		frappe.throw(_("{0} is billed on a schedule; its invoices are made per row").format(booking.name))
 	name = _existing("Sales Invoice", booking.name)
 	if not name:
 		si = compat.make_sales_invoice_from_order(make_sales_order(booking))

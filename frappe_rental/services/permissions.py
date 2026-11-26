@@ -13,6 +13,30 @@ MATRIX = {
 		"Rental Agent": "rwc",
 		"Rental Accountant": "r",
 	},
+	"Rental Damage Report": {
+		"Rental Admin": "rwcd",
+		"Rental Manager": "rwc",
+		"Rental Agent": "rwc",
+		"Rental Accountant": "rw",
+	},
+	"Rental Handover": {
+		"Rental Admin": "rwcdsx",
+		"Rental Manager": "rwcsx",
+		"Rental Agent": "rwcs",
+		"Rental Accountant": "r",
+	},
+	"Rental Deposit": {
+		"Rental Admin": "rwcd",
+		"Rental Manager": "rwc",
+		"Rental Agent": "rwc",
+		"Rental Accountant": "rwc",
+	},
+	"Rental Billable Event": {
+		"Rental Admin": "rwcd",
+		"Rental Manager": "rwcd",
+		"Rental Agent": "rwc",
+		"Rental Accountant": "rwc",
+	},
 	"Rental Event Log": {
 		"Rental Admin": "r",
 		"Rental Manager": "r",

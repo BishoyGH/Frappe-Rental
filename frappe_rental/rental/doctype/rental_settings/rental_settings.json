@@ -9,6 +9,7 @@
   "default_price_list",
   "hold_expiry_minutes",
   "auto_invoice",
+  "submit_scheduled_invoices",
   "late_return_section",
   "grace_period_minutes",
   "late_fee_rate",
@@ -107,11 +108,18 @@
    "fieldtype": "Link",
    "label": "Rented Out Warehouse",
    "options": "Warehouse"
+  },
+  {
+   "fieldname": "submit_scheduled_invoices",
+   "fieldtype": "Check",
+   "label": "Submit scheduled invoices",
+   "default": "1",
+   "description": "Off: the daily billing job leaves invoices in draft for review"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2026-11-25 00:00:00.000000",
+ "modified": "2026-11-26 00:00:01.000000",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Rental Settings",
