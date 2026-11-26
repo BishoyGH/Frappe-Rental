@@ -15,6 +15,7 @@
   "from_datetime",
   "to_datetime",
   "hold_expires_on",
+  "rental_contract",
   "contract",
   "all_day",
   "accounting_section",
@@ -321,6 +322,13 @@
    "label": "Billing schedule",
    "options": "Rental Billing Schedule",
    "allow_on_submit": 1
+  },
+  {
+   "fieldname": "rental_contract",
+   "fieldtype": "Link",
+   "label": "Rental Contract",
+   "options": "Rental Contract",
+   "in_standard_filter": 1
   }
  ],
  "links": [],

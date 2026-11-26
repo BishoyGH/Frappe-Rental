@@ -197,3 +197,30 @@ def make_asset_repair(asset: str, company: str, description: str, failure_date) 
 	repair.flags.ignore_mandatory = True  # the user completes costs before submitting
 	repair.insert()
 	return repair.name
+
+
+def make_signed_contract(customer: str, start_date, end_date, terms_html: str, signee: str, signed_on) -> str:
+	"""Create the ERPNext Contract mirroring a signed Rental Contract. Returns its name.
+
+	Versions: Contract (party_type, party_name, start_date, end_date, contract_terms, is_signed, signee,
+	signed_on) on v15 and v16; it is submitted when the doctype is submittable. Feature-detected by
+	meta. Removal: keep while the fields are unchanged on every supported major.
+	"""
+	doc = frappe.new_doc("Contract")
+	doc.update(
+		{
+			"party_type": "Customer",
+			"party_name": customer,
+			"start_date": start_date,
+			"end_date": end_date,
+			"contract_terms": terms_html,
+			"is_signed": 1,
+			"signee": signee,
+			"signed_on": signed_on,
+		}
+	)
+	doc.flags.ignore_permissions = True  # mirror of a permitted Rental Contract signature
+	doc.insert()
+	if doc.meta.is_submittable:
+		doc.submit()
+	return doc.name

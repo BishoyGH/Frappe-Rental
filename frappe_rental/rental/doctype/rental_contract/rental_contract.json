@@ -1,0 +1,461 @@
+{
+ "actions": [],
+ "creation": "2026-11-26 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "customer",
+  "company",
+  "rental_type",
+  "language",
+  "column_break_1",
+  "status",
+  "currency",
+  "renewal_of",
+  "erpnext_contract",
+  "term_section",
+  "start_date",
+  "end_date",
+  "open_ended",
+  "minimum_term_months",
+  "column_break_2",
+  "auto_renew",
+  "renewal_term_months",
+  "notice_period_days",
+  "early_termination_fee",
+  "money_section",
+  "deposit_rule",
+  "cancellation_policy",
+  "price_lock_months",
+  "indexation_percent",
+  "column_break_3",
+  "included_allowance",
+  "allowance_unit",
+  "overage_rate",
+  "responsibility_section",
+  "insurance_required",
+  "damage_liability_cap",
+  "maintenance_responsibility",
+  "column_break_4",
+  "sla_response_hours",
+  "sla_resolution_hours",
+  "visit_frequency",
+  "billing_section",
+  "billing_plan",
+  "terms_section",
+  "terms_template",
+  "clauses",
+  "template_version",
+  "rendered_terms",
+  "signature_section",
+  "signed_by",
+  "signed_on",
+  "column_break_5",
+  "countersigned_by",
+  "countersigned_on",
+  "termination_section",
+  "terminated_on",
+  "termination_reason",
+  "amendments_section",
+  "amendments"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "RCON-.YYYY.-",
+   "default": "RCON-.YYYY.-",
+   "hidden": 1
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "rental_type",
+   "fieldtype": "Link",
+   "label": "Rental Type",
+   "options": "Rental Type"
+  },
+  {
+   "fieldname": "language",
+   "fieldtype": "Link",
+   "label": "Language",
+   "options": "Language"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nIn Review\nAwaiting Signature\nActive\nSuspended\nEnding\nEnded\nTerminated\nRenewed",
+   "default": "Draft",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "renewal_of",
+   "fieldtype": "Link",
+   "label": "Renewal of",
+   "options": "Rental Contract",
+   "read_only": 1
+  },
+  {
+   "fieldname": "erpnext_contract",
+   "fieldtype": "Link",
+   "label": "ERPNext Contract",
+   "options": "Contract",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "term_section",
+   "fieldtype": "Section Break",
+   "label": "Term"
+  },
+  {
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "label": "Start",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "end_date",
+   "fieldtype": "Date",
+   "label": "End",
+   "in_list_view": 1,
+   "depends_on": "eval:!doc.open_ended"
+  },
+  {
+   "fieldname": "open_ended",
+   "fieldtype": "Check",
+   "label": "Open-ended"
+  },
+  {
+   "fieldname": "minimum_term_months",
+   "fieldtype": "Int",
+   "label": "Minimum term (months)"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "auto_renew",
+   "fieldtype": "Check",
+   "label": "Auto-renew"
+  },
+  {
+   "fieldname": "renewal_term_months",
+   "fieldtype": "Int",
+   "label": "Renewal term (months)",
+   "depends_on": "auto_renew"
+  },
+  {
+   "fieldname": "notice_period_days",
+   "fieldtype": "Int",
+   "label": "Notice period (days)"
+  },
+  {
+   "fieldname": "early_termination_fee",
+   "fieldtype": "Currency",
+   "label": "Early termination fee",
+   "options": "currency"
+  },
+  {
+   "fieldname": "money_section",
+   "fieldtype": "Section Break",
+   "label": "Money and usage",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "deposit_rule",
+   "fieldtype": "Link",
+   "label": "Deposit rule",
+   "options": "Rental Deposit Rule"
+  },
+  {
+   "fieldname": "cancellation_policy",
+   "fieldtype": "Link",
+   "label": "Cancellation policy",
+   "options": "Rental Cancellation Policy"
+  },
+  {
+   "fieldname": "price_lock_months",
+   "fieldtype": "Int",
+   "label": "Price lock (months)"
+  },
+  {
+   "fieldname": "indexation_percent",
+   "fieldtype": "Percent",
+   "label": "Indexation on anniversary"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "included_allowance",
+   "fieldtype": "Float",
+   "label": "Included allowance"
+  },
+  {
+   "fieldname": "allowance_unit",
+   "fieldtype": "Select",
+   "label": "Allowance unit",
+   "options": "\nHours\nKm\nVisits\nPages\nkWh"
+  },
+  {
+   "fieldname": "overage_rate",
+   "fieldtype": "Currency",
+   "label": "Overage rate",
+   "options": "currency"
+  },
+  {
+   "fieldname": "responsibility_section",
+   "fieldtype": "Section Break",
+   "label": "Responsibility and service",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "insurance_required",
+   "fieldtype": "Check",
+   "label": "Insurance required"
+  },
+  {
+   "fieldname": "damage_liability_cap",
+   "fieldtype": "Currency",
+   "label": "Damage liability cap",
+   "options": "currency"
+  },
+  {
+   "fieldname": "maintenance_responsibility",
+   "fieldtype": "Select",
+   "label": "Maintenance by",
+   "options": "Us\nCustomer"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "sla_response_hours",
+   "fieldtype": "Float",
+   "label": "SLA response (hours)"
+  },
+  {
+   "fieldname": "sla_resolution_hours",
+   "fieldtype": "Float",
+   "label": "SLA resolution (hours)"
+  },
+  {
+   "fieldname": "visit_frequency",
+   "fieldtype": "Select",
+   "label": "Visit frequency",
+   "options": "\nMonthly\nQuarterly\nSemi-annual\nYearly"
+  },
+  {
+   "fieldname": "billing_section",
+   "fieldtype": "Section Break",
+   "label": "Billing",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "billing_plan",
+   "fieldtype": "Table",
+   "label": "Billing plan",
+   "options": "Rental Billing Plan",
+   "description": "One row; bookings under the contract use it unless they set their own"
+  },
+  {
+   "fieldname": "terms_section",
+   "fieldtype": "Section Break",
+   "label": "Terms"
+  },
+  {
+   "fieldname": "terms_template",
+   "fieldtype": "Link",
+   "label": "Terms template",
+   "options": "Rental Terms Template"
+  },
+  {
+   "fieldname": "clauses",
+   "fieldtype": "Table",
+   "label": "Clauses",
+   "options": "Rental Contract Clause",
+   "description": "Empty: the template's clauses"
+  },
+  {
+   "fieldname": "template_version",
+   "fieldtype": "Int",
+   "label": "Template version",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "rendered_terms",
+   "fieldtype": "HTML Editor",
+   "label": "Signed terms",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "signature_section",
+   "fieldtype": "Section Break",
+   "label": "Signatures"
+  },
+  {
+   "fieldname": "signed_by",
+   "fieldtype": "Data",
+   "label": "Signed by",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "signed_on",
+   "fieldtype": "Datetime",
+   "label": "Signed on",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "countersigned_by",
+   "fieldtype": "Link",
+   "label": "Countersigned by",
+   "options": "User",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "countersigned_on",
+   "fieldtype": "Datetime",
+   "label": "Countersigned on",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "termination_section",
+   "fieldtype": "Section Break",
+   "label": "Ending",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "terminated_on",
+   "fieldtype": "Date",
+   "label": "Terminated on",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "termination_reason",
+   "fieldtype": "Small Text",
+   "label": "Termination reason",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "amendments_section",
+   "fieldtype": "Section Break",
+   "label": "Amendments",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "amendments",
+   "fieldtype": "Table",
+   "label": "Amendments",
+   "options": "Rental Contract Amendment",
+   "read_only": 1
+  }
+ ],
+ "links": [],
+ "modified": "2026-11-26 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "name": "Rental Contract",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "Rental Admin",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Rental Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Rental Agent",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Rental Accountant",
+   "read": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "autoname": "naming_series:",
+ "title_field": "customer",
+ "track_changes": 1
+}

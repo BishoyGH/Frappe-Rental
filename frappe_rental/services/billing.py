@@ -1,8 +1,8 @@
 """Billing plan resolution and schedule upkeep on bookings (T22, D6).
 
 The maths lives in `billing_schedule` (pure). This module reads documents and writes child rows.
-Plan precedence (D6 rule 1): booking plan, then Rental Type default, then a one-off plan.
-Contract plans join the chain with the Rental Contract task (T40).
+Plan precedence (D6 rule 1): booking plan, then its Rental Contract's plan, then the Rental Type
+default, then a one-off plan.
 """
 
 from datetime import time, timedelta
@@ -38,6 +38,16 @@ def _row_dict(row) -> dict:
 def resolve_plan(doc) -> dict:
 	if doc.get("billing_plan"):
 		return _row_dict(doc.billing_plan[0])
+	contract = doc.get("rental_contract")
+	if contract:
+		rows = frappe.get_all(
+			"Rental Billing Plan",
+			filters={"parent": contract, "parenttype": "Rental Contract", "parentfield": "billing_plan"},
+			fields=list(PLAN_FIELDS),
+			limit=1,
+		)
+		if rows:
+			return rows[0]
 	if doc.get("rental_type"):
 		rows = frappe.get_all(
 			"Rental Billing Plan",
