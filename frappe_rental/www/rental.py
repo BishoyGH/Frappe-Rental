@@ -1,5 +1,9 @@
 """Staff app entry (T17): serves the Vue SPA at /rental for signed-in users with a rental role."""
 
+import csv
+import os
+import re
+
 import frappe
 from frappe import _
 
@@ -25,7 +29,35 @@ def is_portal_path(path: str | None) -> bool:
 	return any(path == p or path.startswith(p + "/") for p in PORTAL_PATHS)
 
 
+RTL_LANGUAGES = frozenset({"ar", "he", "fa", "ur"})
+
+
+def messages(lang: str | None = None) -> dict:
+	"""SPA strings for the session language, from the app's translations/<lang>.csv (exact code, then base)."""
+	lang = (lang or frappe.local.lang or "en").replace("_", "-")
+	if not re.fullmatch(r"[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})?", lang):
+		return {}
+	for code in dict.fromkeys((lang, lang.split("-")[0])):
+		path = frappe.get_app_path("frappe_rental", "translations", f"{code}.csv")
+		if os.path.exists(path):
+			with open(path, newline="", encoding="utf-8") as f:
+				return {row[0]: row[1] for row in csv.reader(f) if len(row) >= 2 and row[1].strip()}
+	return {}
+
+
+def direction(lang: str | None = None) -> str:
+	return (
+		"rtl" if (lang or frappe.local.lang or "en").split("-")[0].split("_")[0] in RTL_LANGUAGES else "ltr"
+	)
+
+
+def page_language(context) -> None:
+	context.lang = (frappe.local.lang or "en").replace("_", "-")
+	context.dir = direction()
+
+
 def get_context(context):
+	page_language(context)
 	path = frappe.request.path if frappe.request else ""
 	if is_portal_path(path):
 		context.boot = {
@@ -59,6 +91,7 @@ def boot_data() -> dict:
 		"full_name": frappe.utils.get_fullname(user),
 		"company": company or "",
 		"roles": sorted(STAFF_ROLES.intersection(frappe.get_roles(user))),
+		"messages": messages(),
 	}
 
 
@@ -69,4 +102,5 @@ def portal_boot() -> dict:
 		"full_name": "" if user == "Guest" else frappe.utils.get_fullname(user),
 		"portal": True,
 		"is_staff": has_app_access(user),
+		"messages": messages(),
 	}

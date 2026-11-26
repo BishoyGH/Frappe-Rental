@@ -66,14 +66,14 @@
           <FormControl v-model="row.fieldname" type="text" data-testid="cf-fieldname" @input="row._touched = true" />
           <FormControl v-model="row.fieldtype" type="select" :options="(options.field_types || []).map((o) => ({ label: o, value: o }))" data-testid="cf-type" />
           <FormControl v-model="row.options" type="text" :placeholder="row.fieldtype === 'Select' ? __('One per line, use |') : ''" />
-          <input v-model="row.reqd" type="checkbox" :true-value="1" :false-value="0" />
+          <input v-model="row.reqd" type="checkbox" :aria-label="__('Required')" :true-value="1" :false-value="0" />
           <Button @click="form.custom_fields.splice(i, 1)"><LucideX class="h-4 w-4" /></Button>
         </div>
         <Button class="mt-2" :label="__('Add field')" data-testid="cf-add" @click="addCustomField"><template #prefix><LucidePlus class="h-4 w-4" /></template></Button>
       </template>
     </section>
 
-    <aside v-if="!isNew" class="border-t bg-surface-gray-1 p-4 lg:border-l lg:border-t-0" data-testid="setup-rail">
+    <aside v-if="!isNew" class="border-t bg-surface-gray-1 p-4 lg:border-s lg:border-t-0" data-testid="setup-rail">
       <template v-if="rec.items">
         <h3 class="mb-2 font-semibold">{{ __('Items of this type') }}</h3>
         <RailList :rows="rec.items" label="item_name" route="ItemsForm" />

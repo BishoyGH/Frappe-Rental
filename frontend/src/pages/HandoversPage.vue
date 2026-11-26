@@ -44,15 +44,15 @@
           </thead>
           <tbody>
             <tr v-for="l in eligible" :key="l.rental_unit" data-testid="ho-line">
-              <td :class="td"><input v-model="l.picked" type="checkbox" :data-testid="`ho-pick-${l.rental_unit}`" /></td>
+              <td :class="td"><input v-model="l.picked" type="checkbox" :aria-label="__('Scanned')" :data-testid="`ho-pick-${l.rental_unit}`" /></td>
               <td :class="td">{{ l.unit_name }}</td>
               <td :class="td">{{ l.serial_no || l.barcode || '-' }}</td>
               <td v-if="isReturn" :class="td">
-                <select v-model="l.condition" class="rounded border-gray-300 py-1 text-base" :data-testid="`ho-cond-${l.rental_unit}`">
+                <select v-model="l.condition" :aria-label="__('Condition')" class="rounded border-gray-300 py-1 text-base" :data-testid="`ho-cond-${l.rental_unit}`">
                   <option v-for="c in CONDITIONS" :key="c" :value="c">{{ __(c) }}</option>
                 </select>
               </td>
-              <td v-if="isReturn" :class="td"><input v-model="l.notes" class="w-full rounded border-gray-300 py-1 text-base" /></td>
+              <td v-if="isReturn" :class="td"><input v-model="l.notes" :aria-label="__('Notes')" class="w-full rounded border-gray-300 py-1 text-base" /></td>
             </tr>
           </tbody>
         </table>
@@ -98,7 +98,7 @@ import { fmtDate } from '../lib/format'
 import { __ } from '../lib/translate'
 
 const CONDITIONS = ['Good', 'Damaged', 'Missing']
-const th = 'bg-surface-gray-1 px-2.5 py-1.5 text-left text-sm font-medium text-ink-gray-5'
+const th = 'bg-surface-gray-1 px-2.5 py-1.5 text-start text-sm font-medium text-ink-gray-5'
 const td = 'border-b px-2.5 py-2 text-ink-gray-7'
 
 const code = ref('')

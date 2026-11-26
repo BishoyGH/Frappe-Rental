@@ -98,7 +98,7 @@ import { __ } from '../lib/translate'
 
 const props = defineProps({ name: { type: String, required: true } })
 const TABS = ['Overview', 'Terms', 'Allocations', 'Billing', 'Bookings and visits']
-const th = 'bg-surface-gray-1 px-2.5 py-1.5 text-left text-sm font-medium text-ink-gray-5'
+const th = 'bg-surface-gray-1 px-2.5 py-1.5 text-start text-sm font-medium text-ink-gray-5'
 const td = 'border-b px-2.5 py-2 text-ink-gray-7'
 const tab = ref('Overview')
 const c = ref(null)

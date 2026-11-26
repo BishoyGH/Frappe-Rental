@@ -33,6 +33,8 @@ jobs:
         run: cd frontend && yarn install --frozen-lockfile && yarn build
       - name: Dependency audit (fails on high findings)
         run: cd frontend && yarn audit --groups dependencies --level high
+      - name: Customer-facing strings have Arabic translations
+        run: python scripts/extract_messages.py --check ar
       - name: Secrets scan
         run: "! git grep -nE 'sk_live_|whsec_[A-Za-z0-9]{20,}|BEGIN (RSA |EC )?PRIVATE KEY|AKIA[0-9A-Z]{16}' -- . ':!docs' ':!frappe_rental/tests' ':!.github'"
       - run: pip install pyyaml

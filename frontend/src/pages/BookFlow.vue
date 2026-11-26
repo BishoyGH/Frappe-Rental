@@ -7,7 +7,7 @@
     </div>
 
     <ol class="mb-5 flex flex-wrap gap-2 text-sm">
-      <li v-for="(s, i) in steps" :key="s" :class="['rounded px-2 py-0.5', i === stepIndex ? 'bg-surface-gray-3 font-medium' : 'text-ink-gray-5']">
+      <li v-for="(s, i) in steps" :key="s" :aria-current="i === stepIndex ? 'step' : undefined" :class="['rounded px-2 py-0.5', i === stepIndex ? 'bg-surface-gray-3 font-medium' : 'text-ink-gray-5']">
         {{ i + 1 }}. {{ __(s) }}
       </li>
     </ol>

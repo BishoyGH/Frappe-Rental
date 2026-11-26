@@ -34,7 +34,7 @@
           <div
             v-for="(d, i) in days"
             :key="i"
-            class="min-h-[44px] border-l"
+            class="min-h-[44px] border-s"
             :class="inSelection(u, i) ? 'bg-blue-50' : dragOver === `${u.name}|${i}` ? 'bg-surface-gray-3' : 'hover:bg-surface-gray-1'"
             data-testid="cal-cell"
             :data-unit="u.name"

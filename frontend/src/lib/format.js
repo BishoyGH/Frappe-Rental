@@ -20,6 +20,9 @@ const STATUS_THEME = {
   Planned: 'blue',
   Done: 'green',
 }
+// The page language (set by the server from the user's language), so dates and numbers follow it
+const lang = () => document.documentElement.lang || undefined
+
 export const statusTheme = (s) => STATUS_THEME[s] || 'gray'
 
 export function fmtDate(value, withTime = false) {
@@ -28,19 +31,19 @@ export function fmtDate(value, withTime = false) {
   if (Number.isNaN(d.getTime())) return value
   const opts = { day: 'numeric', month: 'short' }
   if (withTime) Object.assign(opts, { year: 'numeric', hour: '2-digit', minute: '2-digit' })
-  return d.toLocaleString(undefined, opts)
+  return d.toLocaleString(lang(), opts)
 }
 
 export function fmtMoney(value) {
   const n = Number(value || 0)
-  return n.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })
+  return n.toLocaleString(lang(), { minimumFractionDigits: 0, maximumFractionDigits: 2 })
 }
 
 export function fromNow(value, now) {
   if (!value) return ''
   const parse = (v) => new Date(String(v).replace(' ', 'T')).getTime()
   const sec = ((now ? parse(now) : Date.now()) - parse(value)) / 1000
-  const rtf = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' })
+  const rtf = new Intl.RelativeTimeFormat(lang(), { numeric: 'auto' })
   for (const [unit, s] of [['day', 86400], ['hour', 3600], ['minute', 60]]) {
     if (Math.abs(sec) >= s) return rtf.format(-Math.round(sec / s), unit)
   }

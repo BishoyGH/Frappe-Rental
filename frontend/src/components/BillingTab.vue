@@ -17,11 +17,11 @@
           <tr v-for="r in rows" :key="r.idx" data-testid="bill-row">
             <td :class="td">{{ fmtDate(r.period_from) }} → {{ fmtDate(r.period_to) }}</td>
             <td :class="td">
-              <input v-if="r.editable" v-model="r.invoice_date" type="date" class="rounded border-gray-300 py-1 text-base" :data-testid="`bill-date-${r.idx}`" />
+              <input v-if="r.editable" v-model="r.invoice_date" :aria-label="__('Due')" type="date" class="rounded border-gray-300 py-1 text-base" :data-testid="`bill-date-${r.idx}`" />
               <span v-else>{{ fmtDate(r.invoice_date) }}</span>
             </td>
-            <td :class="[td, 'text-right']">
-              <input v-if="r.editable" v-model.number="r.amount" type="number" step="0.01" class="w-28 rounded border-gray-300 py-1 text-right text-base" :data-testid="`bill-amount-${r.idx}`" />
+            <td :class="[td, 'text-end']">
+              <input v-if="r.editable" v-model.number="r.amount" :aria-label="__('Amount')" type="number" step="0.01" class="w-28 rounded border-gray-300 py-1 text-end text-base" :data-testid="`bill-amount-${r.idx}`" />
               <span v-else class="tabular-nums">{{ fmtMoney(r.amount) }}</span>
             </td>
             <td :class="td"><Badge :label="__(r.status)" :theme="r.editable ? 'gray' : 'green'" /></td>
@@ -29,13 +29,13 @@
               <a v-if="r.sales_invoice" :href="`/app/sales-invoice/${r.sales_invoice}`" class="text-ink-blue-3 hover:underline">{{ r.sales_invoice }}</a>
             </td>
             <td :class="td">
-              <input v-if="r.editable" v-model="r.adjustment_note" class="w-full rounded border-gray-300 py-1 text-base" />
+              <input v-if="r.editable" v-model="r.adjustment_note" :aria-label="__('Notes')" class="w-full rounded border-gray-300 py-1 text-base" />
               <span v-else>{{ r.adjustment_note }}</span>
             </td>
           </tr>
           <tr>
             <td :class="[td, 'font-semibold']" colspan="2">{{ __('Total') }}</td>
-            <td :class="[td, 'text-right font-semibold tabular-nums']" :data-testid="'bill-total'">{{ fmtMoney(total) }}</td>
+            <td :class="[td, 'text-end font-semibold tabular-nums']" :data-testid="'bill-total'">{{ fmtMoney(total) }}</td>
             <td :class="td" colspan="3">
               <span v-if="Math.abs(total - bill.net_total) > 0.005" class="text-red-600">{{ __('Must equal {0}', [fmtMoney(bill.net_total)]) }}</span>
             </td>
@@ -56,7 +56,7 @@ import { __ } from '../lib/translate'
 
 const props = defineProps({ name: { type: String, required: true }, canWrite: { type: Boolean, default: true } })
 const HEAD = ['Period', 'Invoice date', 'Amount', 'Status', 'Invoice', 'Note']
-const th = 'bg-surface-gray-1 px-2.5 py-1.5 text-left text-sm font-medium text-ink-gray-5 whitespace-nowrap'
+const th = 'bg-surface-gray-1 px-2.5 py-1.5 text-start text-sm font-medium text-ink-gray-5 whitespace-nowrap'
 const td = 'border-b px-2.5 py-2 text-ink-gray-7 whitespace-nowrap'
 const bill = ref(null)
 const rows = ref([])

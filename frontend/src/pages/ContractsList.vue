@@ -9,7 +9,7 @@
     <table v-else class="w-full min-w-[640px] border-collapse" data-testid="contracts-table">
       <thead>
         <tr>
-          <th v-for="h in heads" :key="h" class="bg-surface-gray-1 px-2.5 py-1.5 text-left text-sm font-medium text-ink-gray-5">{{ __(h) }}</th>
+          <th v-for="h in heads" :key="h" class="bg-surface-gray-1 px-2.5 py-1.5 text-start text-sm font-medium text-ink-gray-5">{{ __(h) }}</th>
         </tr>
       </thead>
       <tbody>

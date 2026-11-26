@@ -30,7 +30,7 @@
       <Button :label="__('Add item')" @click="addLine"><template #prefix><LucidePlus class="h-4 w-4" /></template></Button>
     </section>
 
-    <aside class="border-t bg-surface-gray-1 p-4 lg:border-l lg:border-t-0" data-testid="quote">
+    <aside class="border-t bg-surface-gray-1 p-4 lg:border-s lg:border-t-0" data-testid="quote">
       <h3 class="mb-2 font-semibold">{{ __('Price') }}</h3>
       <p v-if="!quote" class="text-ink-gray-5">{{ quoteError || __('Pick a customer, dates and an item to see the price.') }}</p>
       <template v-else>

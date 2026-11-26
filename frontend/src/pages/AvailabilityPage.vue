@@ -23,7 +23,7 @@
           <th :class="th">{{ __('Type') }}</th>
           <th :class="th">{{ __('Location') }}</th>
           <th :class="th">{{ __('Availability') }}</th>
-          <th :class="[th, 'text-right']">{{ __('Price') }}</th>
+          <th :class="[th, 'text-end']">{{ __('Price') }}</th>
           <th :class="th" />
         </tr>
       </thead>
@@ -34,8 +34,8 @@
           <td :class="td">{{ r.rental_type }}</td>
           <td :class="td">{{ r.location || '-' }}</td>
           <td :class="td"><Badge :label="__('Free')" theme="green" /></td>
-          <td :class="[td, 'text-right tabular-nums']">{{ r.price == null ? '-' : `${fmtMoney(r.price)} ${r.currency}` }}</td>
-          <td :class="[td, 'text-right']"><Button variant="solid" :label="__('Book')" data-testid="av-book" @click="book(r)" /></td>
+          <td :class="[td, 'text-end tabular-nums']">{{ r.price == null ? '-' : `${fmtMoney(r.price)} ${r.currency}` }}</td>
+          <td :class="[td, 'text-end']"><Button variant="solid" :label="__('Book')" data-testid="av-book" @click="book(r)" /></td>
         </tr>
         <tr v-if="!results.length">
           <td colspan="7" class="py-10 text-center text-ink-gray-5" data-testid="av-empty">{{ __('Nothing is free for that period.') }}</td>
@@ -65,7 +65,7 @@ import { addDays, fmtMoney, fromInput, parseDt, startOfDay, toInput } from '../l
 import { __ } from '../lib/translate'
 
 const router = useRouter()
-const th = 'whitespace-nowrap bg-surface-gray-1 px-2.5 py-1.5 text-left text-sm font-medium text-ink-gray-5'
+const th = 'whitespace-nowrap bg-surface-gray-1 px-2.5 py-1.5 text-start text-sm font-medium text-ink-gray-5'
 const td = 'whitespace-nowrap border-b px-2.5 py-2 text-ink-gray-7'
 const tomorrow = addDays(startOfDay(new Date()), 1)
 tomorrow.setHours(9)

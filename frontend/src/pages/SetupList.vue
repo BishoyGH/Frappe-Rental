@@ -57,7 +57,7 @@ import { __ } from '../lib/translate'
 const props = defineProps({ screenKey: { type: String, required: true } })
 const router = useRouter()
 const screen = computed(() => screens[props.screenKey])
-const th = 'whitespace-nowrap bg-surface-gray-1 px-2.5 py-1.5 text-left text-sm font-medium text-ink-gray-5'
+const th = 'whitespace-nowrap bg-surface-gray-1 px-2.5 py-1.5 text-start text-sm font-medium text-ink-gray-5'
 const td = 'whitespace-nowrap border-b px-2.5 py-2 text-ink-gray-7'
 const rows = ref([])
 const total = ref(0)

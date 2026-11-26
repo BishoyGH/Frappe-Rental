@@ -37,7 +37,7 @@
 
       <section v-if="b.documents.length" class="mt-4">
         <h2 class="mb-2 font-semibold">{{ __('Documents') }}</h2>
-        <a v-for="d in b.documents" :key="d.ref" :href="downloadUrl(d)" class="mr-4 text-ink-blue-3 hover:underline" data-testid="mb-doc">{{ d.label }}</a>
+        <a v-for="d in b.documents" :key="d.ref" :href="downloadUrl(d)" class="me-4 text-ink-blue-3 hover:underline" data-testid="mb-doc">{{ d.label }}</a>
       </section>
 
       <section v-if="b.can_change" class="mt-4" data-testid="mb-change">

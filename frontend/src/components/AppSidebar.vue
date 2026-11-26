@@ -1,6 +1,6 @@
 <template>
   <aside
-    class="hidden w-56 shrink-0 flex-col gap-0.5 border-r bg-surface-menu-bar p-2 sm:flex"
+    class="hidden w-56 shrink-0 flex-col gap-0.5 border-e bg-surface-menu-bar p-2 sm:flex"
     data-testid="sidebar"
   >
     <div class="mb-1.5 flex items-center gap-2 rounded p-1.5">
@@ -28,7 +28,7 @@
     <div class="mt-auto flex items-center gap-2 rounded p-1.5 text-sm text-ink-gray-7">
       <Avatar :label="boot.full_name || boot.user" size="sm" />
       <span class="truncate">{{ boot.full_name || boot.user }}</span>
-      <a href="/app" class="ml-auto text-xs text-ink-gray-5 hover:underline">Desk</a>
+      <a href="/app" class="ms-auto text-xs text-ink-gray-5 hover:underline">Desk</a>
     </div>
   </aside>
 </template>

@@ -22,19 +22,19 @@
       <tbody>
         <tr v-for="(r, i) in rules" :key="i" data-testid="st-rule">
           <td :class="td">
-            <select v-if="data.can_edit" v-model="r.event" class="rounded border-gray-300 py-1 text-base">
+            <select v-if="data.can_edit" v-model="r.event" :aria-label="__('Event')" class="rounded border-gray-300 py-1 text-base">
               <option v-for="e in data.events" :key="e" :value="e">{{ eventLabel(e) }}</option>
             </select>
             <span v-else>{{ eventLabel(r.event) }}</span>
           </td>
           <td :class="td">
-            <select v-if="data.can_edit" v-model="r.role" class="rounded border-gray-300 py-1 text-base">
+            <select v-if="data.can_edit" v-model="r.role" :aria-label="__('Role')" class="rounded border-gray-300 py-1 text-base">
               <option v-for="role in data.roles" :key="role" :value="role">{{ role }}</option>
             </select>
             <span v-else>{{ r.role }}</span>
           </td>
-          <td :class="td"><input v-model="r.in_app" type="checkbox" :true-value="1" :false-value="0" :disabled="!data.can_edit" /></td>
-          <td :class="td"><input v-model="r.email" type="checkbox" :true-value="1" :false-value="0" :disabled="!data.can_edit" /></td>
+          <td :class="td"><input v-model="r.in_app" :aria-label="__('In-app')" type="checkbox" :true-value="1" :false-value="0" :disabled="!data.can_edit" /></td>
+          <td :class="td"><input v-model="r.email" :aria-label="__('Email')" type="checkbox" :true-value="1" :false-value="0" :disabled="!data.can_edit" /></td>
           <td v-if="data.can_edit" :class="td"><Button variant="ghost" :label="__('Remove')" @click="rules.splice(i, 1)" /></td>
         </tr>
       </tbody>
@@ -64,7 +64,7 @@ import { api } from '../lib/api'
 import { fmtDate } from '../lib/format'
 import { __ } from '../lib/translate'
 
-const th = 'border-b px-2 py-1.5 text-left font-medium text-ink-gray-6'
+const th = 'border-b px-2 py-1.5 text-start font-medium text-ink-gray-6'
 const td = 'border-b px-2 py-1.5'
 const data = ref({ rules: [], events: [], roles: [], alerts: [], can_edit: false })
 const rules = ref([])

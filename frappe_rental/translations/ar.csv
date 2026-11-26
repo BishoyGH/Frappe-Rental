@@ -1,0 +1,341 @@
+A deposit of {0} confirms this booking.,يتم تأكيد هذا الحجز بدفع عربون قدره {0}.
+A deposit of {0} is due.,مطلوب عربون قدره {0}.
+A drawn signature must be an image,يجب أن يكون التوقيع المرسوم صورة
+A valid email is required,مطلوب بريد إلكتروني صالح
+All,الكل
+An account with this email exists. Sign in to continue.,يوجد حساب بهذا البريد الإلكتروني. سجّل الدخول للمتابعة.
+Anywhere,أي مكان
+Back,رجوع
+Book,احجز
+Book {0},احجز {0}
+Booked with us before?,هل حجزت لدينا من قبل؟
+Booking,الحجز
+Booking as {0},الحجز باسم {0}
+Booking cancelled,تم إلغاء الحجز
+Booking not found,الحجز غير موجود
+Booking {0} is confirmed.,تم تأكيد الحجز {0}.
+Browse rentals,تصفح الإيجارات
+Browse what you can rent and check the price.,تصفح ما يمكنك استئجاره وتحقق من السعر.
+Cancel booking,إلغاء الحجز
+Change dates,تغيير التواريخ
+Choose an item on the rentals page first.,اختر عنصراً من صفحة الإيجارات أولاً.
+Choose dates in the future,اختر تواريخ في المستقبل
+Choose your dates,اختر تواريخك
+Code sent,تم إرسال الرمز
+Confirm booking,تأكيد الحجز
+Continue,متابعة
+Countersigned by,وقّعه من الطرف الآخر
+Customer,العميل
+Dates changed,تم تغيير التواريخ
+Document not found,المستند غير موجود
+Documents,المستندات
+Download signed contract,تنزيل العقد الموقّع
+Email,البريد الإلكتروني
+Email me a code,أرسل لي رمزاً بالبريد
+Extras must be a list,يجب أن تكون الإضافات قائمة
+From,من
+Full name,الاسم الكامل
+Guests,الضيوف
+Hold my booking,احجز لي مؤقتاً
+Invalid webhook signature,توقيع الويب هوك غير صالح
+Invoice not found,الفاتورة غير موجودة
+Invoices,الفواتير
+Keep booking,الإبقاء على الحجز
+Location,الموقع
+Log in to see your bookings,سجّل الدخول لرؤية حجوزاتك
+Missing webhook signature,توقيع الويب هوك مفقود
+Month must look like 2026-05,يجب أن يكون الشهر بصيغة 2026-05
+More,المزيد
+My bookings,حجوزاتي
+My contracts,عقودي
+Name and signature are required,الاسم والتوقيع مطلوبان
+Need a visit? Describe the problem,تحتاج إلى زيارة؟ صف المشكلة
+No bookings yet.,لا توجد حجوزات بعد.
+No contracts yet.,لا توجد عقود بعد.
+No extras for this item.,لا توجد إضافات لهذا العنصر.
+Not available for these dates,غير متاح في هذه التواريخ
+Not permitted,غير مسموح
+Nothing is due for this booking,لا يوجد مبلغ مستحق لهذا الحجز
+Nothing matches. Try other dates or filters.,لا توجد نتائج. جرّب تواريخ أو عوامل تصفية أخرى.
+Online payment is not set up. Contact us to pay.,الدفع الإلكتروني غير مفعّل. تواصل معنا للدفع.
+Only a held booking can be changed. Cancel and book again instead.,يمكن تغيير الحجز المؤقت فقط. ألغِ الحجز واحجز من جديد.
+Paid,مدفوع
+Pay deposit,ادفع العربون
+Pay {0},ادفع {0}
+Payment provider error: {0},خطأ من مزود الدفع: {0}
+Payment was cancelled. You can try again.,تم إلغاء الدفع. يمكنك المحاولة مرة أخرى.
+Phone,الهاتف
+Quantity,الكمية
+Rentals,الإيجارات
+Request a new signing code,اطلب رمز توقيع جديداً
+Request sent. We will be in touch.,تم إرسال الطلب. سنتواصل معك.
+Request service,اطلب خدمة
+Save,حفظ
+Search,بحث
+Set the payment clearing account in Rental Settings,حدد حساب تسوية الدفع في إعدادات التأجير
+Sign,وقّع
+Sign by typing your name or drawing,وقّع بكتابة اسمك أو بالرسم
+Sign in,تسجيل الدخول
+Sign in to see your bookings.,سجّل الدخول لرؤية حجوزاتك.
+Sign in to see your contracts.,سجّل الدخول لرؤية عقودك.
+Sign this contract,وقّع هذا العقد
+Signatures,التوقيعات
+Signed PDF failed for {0},فشل إنشاء ملف PDF الموقّع للعقد {0}
+Signed contract {0},العقد الموقّع {0}
+Signed on,تاريخ التوقيع
+Signing code from your email,رمز التوقيع من بريدك الإلكتروني
+Something went wrong,حدث خطأ ما
+Stripe is not configured in Rental Settings,لم يتم إعداد Stripe في إعدادات التأجير
+Tax,الضريبة
+Terms,الشروط
+Thank you. We will confirm your payment shortly.,شكراً لك. سنؤكد دفعتك قريباً.
+Thank you. Your signature is recorded.,شكراً لك. تم تسجيل توقيعك.
+The customer has not signed yet,لم يوقّع العميل بعد
+The signing code is wrong,رمز التوقيع غير صحيح
+This booking can no longer be cancelled online,لم يعد بالإمكان إلغاء هذا الحجز عبر الإنترنت
+This booking can no longer be confirmed,لم يعد بالإمكان تأكيد هذا الحجز
+This booking has nothing to sign,لا يوجد ما يتطلب التوقيع في هذا الحجز
+This contract is not waiting for a signature,هذا العقد لا ينتظر توقيعاً
+This item is not available,هذا العنصر غير متاح
+This releases your held dates. Nothing is charged.,سيؤدي هذا إلى تحرير التواريخ المحجوزة. لن يتم تحصيل أي مبلغ.
+To,إلى
+Total,الإجمالي
+Type,النوع
+Type your full name to sign,اكتب اسمك الكامل للتوقيع
+Unknown payment provider,مزود دفع غير معروف
+Unknown payment purpose,غرض دفع غير معروف
+Visits and service,الزيارات والخدمة
+We have not received the payment confirmation yet. Refresh in a minute.,لم نستلم تأكيد الدفع بعد. حدّث الصفحة بعد دقيقة.
+We hold this booking until {0}.,نحتفظ بهذا الحجز حتى {0}.
+We keep {0} under the cancellation policy.,نحتفظ بمبلغ {0} وفق سياسة الإلغاء.
+Webhook signature is too old,توقيع الويب هوك قديم جداً
+What is covered,ما الذي يشمله
+"Yes, cancel",نعم، ألغِ
+You cannot sign for {0},لا يمكنك التوقيع عن {0}
+You get back {0}.,ستسترد {0}.
+You need a Rental role to open the rental app.,تحتاج إلى دور في التأجير لفتح تطبيق التأجير.
+You signed. We will countersign shortly.,لقد وقّعت. سنوقّع نحن قريباً.
+Your code is {0}. It expires in {1} minutes.,رمزك هو {0}. تنتهي صلاحيته خلال {1} دقيقة.
+Your details are not valid,بياناتك غير صالحة
+Your name is required,الاسم مطلوب
+Your signing code for {0},رمز التوقيع الخاص بك للعقد {0}
+on,في
+open-ended,مفتوح المدة
+{0} cannot be booked online yet: it has no terms template,لا يمكن حجز {0} عبر الإنترنت بعد: لا يوجد له قالب شروط
+{0} for booking {1},{0} للحجز {1}
+{0} is not offered for this item,{0} غير متاحة لهذا العنصر
+{0} must be JSON,يجب أن يكون {0} بصيغة JSON
+{0} must be an object,يجب أن يكون {0} كائناً
+{0} results,{0} نتيجة
+Action failed,فشل الإجراء
+Activity,النشاط
+Add,إضافة
+Add field,إضافة حقل
+Add item,إضافة عنصر
+Add rule,إضافة قاعدة
+Add unit,إضافة وحدة
+"Add your own fields to items, units or bookings of this type.",أضف حقولك الخاصة إلى العناصر أو الوحدات أو الحجوزات من هذا النوع.
+Added presets: {0},تمت إضافة القوالب: {0}
+All presets are already installed.,جميع القوالب مثبّتة بالفعل.
+All types,كل الأنواع
+Amendments,التعديلات
+Amount,المبلغ
+Any,أي
+Applied / refunded / kept,مطبّق / مسترد / محتفظ به
+Applies to,ينطبق على
+Approve,اعتماد
+Approved amount,المبلغ المعتمد
+Approved {0},تم اعتماد {0}
+Availability,التوفر
+Basis,الأساس
+Billing plan,خطة الفوترة
+Booking {0} held,تم حجز {0} مؤقتاً
+Bookings,الحجوزات
+Bookings under this contract,الحجوزات ضمن هذا العقد
+Breached,متجاوز
+Calendar,التقويم
+Cancel,إلغاء
+Check-out,تسليم
+Clear,مسح
+Close,إغلاق
+Collect,تحصيل
+Columns,الأعمدة
+Condition,الحالة
+Confirm,تأكيد
+Contracts,العقود
+Could not book,تعذّر الحجز
+Could not load booking,تعذّر تحميل الحجز
+Could not load bookings,تعذّر تحميل الحجوزات
+Could not load the calendar,تعذّر تحميل التقويم
+Could not move the booking,تعذّر نقل الحجز
+Could not price this booking,تعذّر تسعير هذا الحجز
+Could not save,تعذّر الحفظ
+Could not save the booking,تعذّر حفظ الحجز
+Countersign,توقيع الطرف الآخر
+Create,إنشاء
+Create invoice,إنشاء فاتورة
+Custom fields,حقول مخصصة
+Damage,الضرر
+Deposit,العربون
+Drag across empty days to book. Drag a draft or held booking to move it.,اسحب عبر الأيام الفارغة للحجز. اسحب حجزاً مسودة أو مؤقتاً لنقله.
+Due,مستحق
+Event,الحدث
+Field name,اسم الحقل
+Fields of this item type,حقول هذا النوع من العناصر
+Find,بحث
+Fixed,ثابت
+Free,متاح
+From deposit,من العربون
+Group: customer,التجميع: العميل
+Group: location,التجميع: الموقع
+Group: none,التجميع: بلا
+Group: status,التجميع: الحالة
+Group: type,التجميع: النوع
+Hand out {0},تسليم {0}
+Hand units out and take them back on the Handovers screen.,سلّم الوحدات واستلمها من شاشة التسليم والاستلام.
+Handovers,التسليم والاستلام
+Held,محجوز مؤقتاً
+History,السجل
+Hold,حجز مؤقت
+Hold expires,ينتهي الحجز المؤقت
+In-app,داخل التطبيق
+Install presets,تثبيت القوالب
+Invoice,فاتورة
+Invoiced,مفوتر
+Item,عنصر
+Item type,نوع العنصر
+Items,العناصر
+Items of this type,عناصر هذا النوع
+Keep,إبقاء
+Label,التسمية
+Late {0} min,متأخر {0} دقيقة
+Linked,مرتبط
+Load more,تحميل المزيد
+Location: all,الموقع: الكل
+Location: any,الموقع: أي
+Mark read,تعليم كمقروء
+Moved {0},تم نقل {0}
+Must equal {0},يجب أن يساوي {0}
+My alerts,تنبيهاتي
+Net,الصافي
+New,جديد
+New booking,حجز جديد
+New {0},{0} جديد
+Next,التالي
+No,لا
+No alerts yet.,لا توجد تنبيهات بعد.
+No billing plan on this contract.,لا توجد خطة فوترة لهذا العقد.
+No bookings match these filters.,لا توجد حجوزات تطابق عوامل التصفية.
+No contracts.,لا توجد عقود.
+No damage reported.,لم يُبلّغ عن أي ضرر.
+No deposit on this booking.,لا يوجد عربون لهذا الحجز.
+No open booking found for {0},لم يُعثر على حجز مفتوح لـ {0}
+No units match these filters.,لا توجد وحدات تطابق عوامل التصفية.
+No visits.,لا توجد زيارات.
+None yet.,لا شيء بعد.
+Not needed,غير مطلوب
+Not set,غير محدد
+Notes,ملاحظات
+Nothing allocated.,لا شيء مخصص.
+Nothing due.,لا شيء مستحق.
+Nothing here yet.,لا شيء هنا بعد.
+Nothing is free for that period.,لا يوجد شيء متاح في تلك الفترة.
+Nothing linked yet.,لا شيء مرتبط بعد.
+Nothing to hand over for this booking.,لا يوجد ما يُسلَّم في هذا الحجز.
+Notifications,الإشعارات
+"One per line, use |",واحد في كل سطر، استخدم |
+One-off,مرة واحدة
+Open handover,فتح التسليم
+Options,الخيارات
+"Pick a customer, dates and an item to see the price.",اختر عميلاً وتواريخ وعنصراً لرؤية السعر.
+Pick all,اختيار الكل
+Pick dates and search to see free units with their price.,اختر التواريخ وابحث لرؤية الوحدات المتاحة وأسعارها.
+Plan,الخطة
+Planned,مخطط
+Previous,السابق
+Price,السعر
+Qty,الكمية
+Quick book,حجز سريع
+Rate,السعر
+Received,المستلم
+Refund,استرداد
+Release hold,إلغاء الحجز المؤقت
+Remove,إزالة
+Rental,التأجير
+Req.,مطلوب
+Required,مطلوب
+Return,إرجاع
+Role,الدور
+Save and hold,حفظ وحجز مؤقت
+Save draft,حفظ المسودة
+Save schedule,حفظ الجدول
+Saved,تم الحفظ
+"Scan a booking, barcode or serial",امسح حجزاً أو باركود أو رقماً تسلسلياً
+Scanned,تم المسح
+Schedule saved,تم حفظ الجدول
+Search ID or customer,ابحث بالرقم أو العميل
+Search contract or customer,ابحث عن عقد أو عميل
+Search customers,ابحث عن العملاء
+Search failed,فشل البحث
+Select,اختيار
+Send for signature,إرسال للتوقيع
+Serial / barcode,الرقم التسلسلي / الباركود
+Settings,الإعدادات
+Sort order,ترتيب الفرز
+Sort: ID,الفرز: الرقم
+Sort: created,الفرز: تاريخ الإنشاء
+Sort: from,الفرز: من
+Sort: to,الفرز: إلى
+Sort: total,الفرز: الإجمالي
+Source,المصدر
+Staff are alerted in the app by role. Turn on email for the roles that should also get a message.,يتم تنبيه الموظفين داخل التطبيق حسب الدور. فعّل البريد الإلكتروني للأدوار التي يجب أن تتلقى رسالة أيضاً.
+Status: any,الحالة: أي
+Summary,الملخص
+Take back {0},استلام {0}
+Taxes,الضرائب
+Terms are written when the contract is sent for signature.,تُكتب الشروط عند إرسال العقد للتوقيع.
+To hand out,للتسليم
+To take back,للاستلام
+Today,اليوم
+Total {0},الإجمالي {0}
+Type: all,النوع: الكل
+Type: any,النوع: أي
+Unit,الوحدة
+Unit (optional),الوحدة (اختياري)
+Units,الوحدات
+Write off,شطب
+Yes,نعم
+days,أيام
+months,أشهر
+{0} can only move to another unit of the same item,يمكن نقل {0} إلى وحدة أخرى من العنصر نفسه فقط
+{0} is not free for those days,{0} غير متاح في تلك الأيام
+{0} of {1},{0} من {1}
+{0} saved,تم حفظ {0}
+Dates,التواريخ
+Extras,الإضافات
+Details,البيانات
+Pay,الدفع
+Done,تم
+Draft,مسودة
+Confirmed,مؤكد
+Checked Out,تم التسليم
+Returned,تم الإرجاع
+Closed,مغلق
+Cancelled,ملغى
+No Show,لم يحضر
+In Review,قيد المراجعة
+Awaiting Signature,بانتظار التوقيع
+Active,ساري
+Suspended,معلّق
+Ending,ينتهي قريباً
+Ended,منتهٍ
+Terminated,مفسوخ
+Renewed,مجدَّد
+Booked,محجوز
+Missed,فائتة
+Damage reported,الإبلاغ عن ضرر
+SLA breached,تجاوز مستوى الخدمة
+Housekeeping overdue,تأخر التنظيف
+Return overdue,تأخر الإرجاع
+Contract signed,تم توقيع العقد
+Contract notice period,فترة إشعار العقد
