@@ -12,7 +12,7 @@ import frappe
 from frappe import _
 from frappe.utils import add_to_date, flt, get_datetime, now_datetime
 
-from frappe_rental.services import availability, erpnext_sync, events
+from frappe_rental.services import availability, erpnext_sync, events, waitlist
 
 SOURCE = "Rental Booking"
 
@@ -72,6 +72,7 @@ def on_cancel(doc) -> None:
 	erpnext_sync.reverse(doc)
 	doc.db_set("status", "Cancelled")
 	events.emit("booking_cancelled", doc)
+	waitlist.on_release(doc)
 
 
 def on_trash(doc) -> None:
@@ -86,6 +87,7 @@ def cancel(doc) -> None:
 		availability.release(SOURCE, doc.name)
 		doc.db_set({"status": "Cancelled", "hold_expires_on": None})
 		events.emit("booking_cancelled", doc)
+		waitlist.on_release(doc)
 	else:
 		frappe.throw(_("Only a held or confirmed booking can be cancelled"))
 
@@ -97,8 +99,13 @@ def expire_holds(now=None) -> list[str]:
 		filters={"docstatus": 0, "status": "Hold", "hold_expires_on": ["<", now or now_datetime()]},
 		pluck="name",
 	)
+	items = []
 	for name in names:
 		availability.release(SOURCE, name)
 		frappe.db.set_value(SOURCE, name, {"status": "Draft", "hold_expires_on": None})
-		frappe.get_doc(SOURCE, name).add_comment("Info", _("Hold expired; units released"))
+		doc = frappe.get_doc(SOURCE, name)
+		doc.add_comment("Info", _("Hold expired; units released"))
+		items += [ln.rental_item for ln in doc.lines if ln.rental_item]
+	if items:
+		waitlist.check(items)
 	return names

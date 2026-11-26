@@ -19,7 +19,7 @@
    "fieldname": "event",
    "fieldtype": "Select",
    "label": "Event",
-   "options": "booking_held\nbooking_confirmed\nbooking_cancelled\nhold_expiring\ninvoice_created\ndeposit_requested\ndeposit_received\nhandover_done\nreturned\noverdue",
+   "options": "booking_held\nbooking_confirmed\nbooking_cancelled\nhold_expiring\ninvoice_created\ndeposit_requested\ndeposit_received\nhandover_done\nreturned\noverdue\nwaitlist_available",
    "reqd": 1,
    "in_list_view": 1,
    "in_standard_filter": 1,

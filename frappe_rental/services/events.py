@@ -26,6 +26,7 @@ EVENTS = (
 	"handover_done",
 	"returned",
 	"overdue",
+	"waitlist_available",
 )
 
 
@@ -89,6 +90,16 @@ def payload(event: str, doc, extra: dict | None = None) -> dict:
 				],
 			}
 		)
+	elif doc.doctype == "Rental Waitlist Entry":
+		out.update(
+			{
+				"rental_item": doc.rental_item,
+				"rental_unit": doc.rental_unit,
+				"from_datetime": doc.from_datetime,
+				"to_datetime": doc.to_datetime,
+				"qty": doc.qty,
+			}
+		)
 	elif doc.doctype == "Sales Invoice":
 		out.update({"grand_total": doc.grand_total, "currency": doc.currency, "due_date": doc.due_date})
 	out.update(extra or {})
@@ -132,6 +143,10 @@ TEMPLATES = {
 		"Booking {{ doc.reference_name }} is overdue. Please return the item.",
 	),
 	"invoice_created": ("Rental: invoice", "Invoice {{ doc.reference_name }} is ready."),
+	"waitlist_available": (
+		"Rental: waitlist available",
+		"Good news: what you asked for is free again. Contact us to book it before someone else does.",
+	),
 	"deposit_requested": ("Rental: deposit due", "A deposit is due for booking {{ doc.reference_name }}."),
 }
 
