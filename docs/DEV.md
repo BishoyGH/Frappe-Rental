@@ -47,7 +47,7 @@ The staff app lives in `frontend/` (Vue 3, `frappe-ui`, Vite 5) and is served at
 cd frontend && yarn install --frozen-lockfile
 yarn dev            # proxies API calls to the bench site on port 8000
 yarn build          # writes frappe_rental/public/frontend and frappe_rental/www/rental.html
-BASE_URL=http://127.0.0.1:8000 yarn test:e2e   # Playwright smoke against a running site
+cd ../e2e && yarn install && BASE_URL=http://127.0.0.1:8000 yarn test   # Playwright smoke (Node >=20)
 ```
 
 `bench build` runs the root `package.json` build script, so a normal bench build also builds the app.

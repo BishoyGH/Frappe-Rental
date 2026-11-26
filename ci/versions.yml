@@ -43,6 +43,8 @@ versions:
 app_dependency_bounds:
   frappe: ">=15.0.0,<17.0.0"
   erpnext: ">=15.0.0,<17.0.0"
+# Node for the Playwright smoke (e2e/), independent of the Frappe major: Playwright needs Node >=20.
+e2e_node: "24"
 # App python floor = lowest supported Python across majors (v15: 3.11). Code and ruff target it.
 app_requires_python: ">=3.11"
 ruff_target: "py311"
