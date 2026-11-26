@@ -60,7 +60,7 @@ Work top to bottom. One task = one PR. Each task lists what to build (**Build**)
 
 ## Phase 4: Contracts and services
 
-- [ ] **T39 Clause library and templates.** Build: Rental Clause, Terms Template, Jinja rendering, language/RTL, preview (C). Done when: render tests with merge fields; template versioning. Needs: T33.
+- [x] **T39 Clause library and templates.** Build: Rental Clause, Terms Template, Jinja rendering, language/RTL, preview (C). Done when: render tests with merge fields; template versioning. Needs: T33. *Done: Rental Clause, Rental Terms Template (+ ordered clause child), `services/terms.py` (sandboxed Jinja render with merge fields, per-contract overrides on editable clauses, mandatory check, RTL by language, template lookup by type and language with fallback, version bump on text or clause change), `api.terms.preview`. PDF snapshot at signing is T40.*
 - [ ] **T40 Rental Contract core.** Build: contract doctype with structured terms, lifecycle workflow, snapshot at signing, amendments; ERPNext Contract link via compat if fields differ. Done when: workflow tests; snapshot unchanged after template edit. Needs: T39, T22.
 - [ ] **T41 E-signature.** Build: portal signing (typed/drawn, optional OTP), counter-signature, signed PDF, audit fields, reminders. Done when: signed contract immutable; tests. Needs: T40, T37.
 - [ ] **T42 Allocations.** Build: allocation rows (unit, category, quantity, capacity, provider time), cache integration, over-allocation guards, swap/add/release with effective dates and billing regeneration. Done when: exclusive allocation blocks calendar; swap tested end to end. Needs: T40, T13.

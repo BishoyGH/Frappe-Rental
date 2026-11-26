@@ -90,6 +90,28 @@
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
+   "label": "Rental Clause",
+   "link_count": 0,
+   "link_to": "Rental Clause",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Rental Terms Template",
+   "link_count": 0,
+   "link_to": "Rental Terms Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Rental Event Log",
    "link_count": 0,
    "link_to": "Rental Event Log",
