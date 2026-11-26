@@ -16,7 +16,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Bookings",
-   "link_count": 1,
+   "link_count": 3,
    "onboard": 0,
    "type": "Card Break"
   },
@@ -27,6 +27,28 @@
    "label": "Rental Booking",
    "link_count": 0,
    "link_to": "Rental Booking",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Rental Block",
+   "link_count": 0,
+   "link_to": "Rental Block",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Rental Availability Cache",
+   "link_count": 0,
+   "link_to": "Rental Availability Cache",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
