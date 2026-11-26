@@ -174,3 +174,13 @@ def search_link(doctype: str, txt: str = "", rental_item: str | None = None) -> 
 		limit_page_length=20,
 	)
 	return [{"value": r.name, "label": r.title or r.name} for r in rows]
+
+
+@frappe.whitelist(methods=["POST"])
+def move(name: str, from_datetime: str, to_datetime: str, rental_unit: str | None = None) -> dict:
+	"""Move a draft or held booking (calendar drag). Rejected when the target unit or period is taken."""
+	from frappe_rental.services import timeline
+
+	doc = _get(name, "write")
+	timeline.move_booking(doc, from_datetime, to_datetime, rental_unit or None)
+	return {**_state(doc), "from_datetime": doc.from_datetime, "to_datetime": doc.to_datetime}

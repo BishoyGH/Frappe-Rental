@@ -5,6 +5,8 @@ import Placeholder from './pages/Placeholder.vue'
 const slug = (label) => label.toLowerCase().replace(/\s+/g, '-')
 const built = {
   Bookings: () => import('./pages/BookingsList.vue'),
+  Calendar: () => import('./pages/CalendarPage.vue'),
+  Availability: () => import('./pages/AvailabilityPage.vue'),
 }
 
 const routes = [

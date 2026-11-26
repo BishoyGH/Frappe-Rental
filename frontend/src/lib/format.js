@@ -51,3 +51,21 @@ export function store(key, value) {
     /* storage unavailable */
   }
 }
+
+// Server datetimes are naive "YYYY-MM-DD HH:MM:SS"; treat them as wall-clock times on both sides.
+export const parseDt = (v) => new Date(String(v).replace(' ', 'T'))
+const pad = (n) => String(n).padStart(2, '0')
+export const toDt = (d) =>
+  `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:00`
+export const toInput = (d) => toDt(d).slice(0, 16).replace(' ', 'T')
+export const fromInput = (v) => (v ? v.replace('T', ' ') + (v.length === 16 ? ':00' : '') : '')
+export const addDays = (d, n) => {
+  const x = new Date(d)
+  x.setDate(x.getDate() + n)
+  return x
+}
+export const startOfDay = (d) => {
+  const x = new Date(d)
+  x.setHours(0, 0, 0, 0)
+  return x
+}

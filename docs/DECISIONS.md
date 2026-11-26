@@ -63,3 +63,11 @@ Browser tests use **Playwright**, not Cypress. Frappe core ships Cypress tests, 
 - The Sales Order is created and submitted on confirm. The one-off Sales Invoice comes from it on confirm when `auto_invoice` is on, otherwise via `api.booking.make_invoice`.
 - Cancel: an unpaid invoice is cancelled, a paid one gets a credit note (the Sales Order is then closed, not cancelled); an uninvoiced Sales Order is cancelled.
 - Custom fields are created with `create_custom_fields` on install and migrate instead of fixture files, so they stay idempotent and versioned in code.
+
+## D-phase-prs (2026-11-26)
+From T19 on, work is delivered as one pull request per phase, with one commit per task inside it. The PR opens when the phase's last task is done and CI is green on v15 and v16.
+
+## T19 calendar (2026-11-26)
+- The calendar moves only draft and held bookings. A confirmed (submitted) booking changes through amendment, which a later task adds.
+- A move to another unit is allowed only for a one-item booking and only to a unit of the same item.
+- Conflicts are checked in the browser for instant feedback and again on the server, which has the final word.
