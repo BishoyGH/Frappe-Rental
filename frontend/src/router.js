@@ -8,15 +8,26 @@ const built = {
   Calendar: () => import('./pages/CalendarPage.vue'),
   Availability: () => import('./pages/AvailabilityPage.vue'),
 }
+const SETUP = ['ItemTypes', 'Items', 'Units', 'Customers']
 
 const routes = [
   { path: '/', redirect: { name: 'Bookings' } },
   ...pages.map((p) => ({
     path: `/${slug(p.label)}`,
     name: p.route,
-    component: built[p.route] || Placeholder,
+    component: SETUP.includes(p.route) ? () => import('./pages/SetupList.vue') : built[p.route] || Placeholder,
+    props: SETUP.includes(p.route) ? { screenKey: p.route } : false,
     meta: { title: p.label },
   })),
+  ...pages
+    .filter((p) => SETUP.includes(p.route))
+    .map((p) => ({
+      path: `/${slug(p.label)}/:name`,
+      name: `${p.route}Form`,
+      component: () => import('./pages/SetupForm.vue'),
+      props: (r) => ({ screenKey: p.route, name: r.params.name }),
+      meta: { title: p.label, section: p.route },
+    })),
   {
     path: '/bookings/new',
     name: 'BookingNew',

@@ -21,6 +21,9 @@ async function holdInDialog(page) {
 }
 
 test.beforeEach(async ({ page }) => {
+  // `bench serve` has no socket.io server; its error page leaks a DB transaction that blocks schema changes
+  await page.route('**/socket.io/**', (route) => route.abort())
+  await page.route('**/favicon.ico', (route) => route.abort())
   const res = await page.request.post('/api/method/login', { data: { usr: 'Administrator', pwd: ADMIN_PASSWORD } })
   expect(res.ok()).toBeTruthy()
 })

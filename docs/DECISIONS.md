@@ -71,3 +71,10 @@ From T19 on, work is delivered as one pull request per phase, with one commit pe
 - The calendar moves only draft and held bookings. A confirmed (submitted) booking changes through amendment, which a later task adds.
 - A move to another unit is allowed only for a one-item booking and only to a unit of the same item.
 - Conflicts are checked in the browser for instant feedback and again on the server, which has the final word.
+
+## D-one-pr (2026-11-26)
+All remaining tasks go into one pull request, so Bishoy can run and debug the app from a single branch. It stays a draft while work continues, with one commit per task. This replaces D-phase-prs.
+
+## T20 setup screens (2026-11-26)
+- The SPA edits setup records through `api.setup.get_records/get_record/save_record`, which allow only the doctypes and fields each screen names. The item type's custom fields are the only extra keys an Item or Unit form may write.
+- Playwright blocks `socket.io` and `favicon.ico` requests. `bench serve` has no socket.io server and is built without website assets, and its error page for those requests leaves a database transaction open. That open transaction blocks the schema change behind a new custom field. Production serves both, so only the test harness needs this.

@@ -36,7 +36,8 @@ import { api } from '../lib/api'
 defineOptions({ inheritAttrs: false })
 const props = defineProps({ doctype: String, modelValue: String, placeholder: String, rentalItem: String })
 const emit = defineEmits(['update:modelValue'])
-const text = ref('')
+const text = ref(props.modelValue || '')
+let picked = props.modelValue || ''
 const results = ref([])
 const open = ref(false)
 let timer
@@ -58,12 +59,22 @@ function onInput(v) {
 }
 function pick(r) {
   text.value = r.label
+  picked = r.value
   open.value = false
   emit('update:modelValue', r.value)
 }
 function close() {
   setTimeout(() => (open.value = false), 100)
 }
+watch(
+  () => props.modelValue,
+  (v) => {
+    if (v && v !== picked) {
+      picked = v
+      text.value = v
+    }
+  },
+)
 watch(
   () => props.rentalItem,
   () => {
