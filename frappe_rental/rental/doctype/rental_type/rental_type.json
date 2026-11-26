@@ -27,7 +27,9 @@
   "deposit_rule",
   "cancellation_policy",
   "custom_fields_section",
-  "custom_fields"
+  "custom_fields",
+  "billing_section",
+  "billing_plan"
  ],
  "fields": [
   {
@@ -172,10 +174,23 @@
    "fieldtype": "Table",
    "label": "Custom Fields",
    "options": "Rental Type Custom Field"
+  },
+  {
+   "fieldname": "billing_section",
+   "fieldtype": "Section Break",
+   "label": "Billing",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "billing_plan",
+   "fieldtype": "Table",
+   "label": "Billing plan",
+   "options": "Rental Billing Plan",
+   "description": "Default plan for bookings of this type (one row)."
   }
  ],
  "links": [],
- "modified": "2026-11-25 00:00:00.000000",
+ "modified": "2026-11-26 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Rental Type",

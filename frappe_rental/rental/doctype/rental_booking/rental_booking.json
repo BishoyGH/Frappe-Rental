@@ -40,6 +40,9 @@
   "links_section",
   "sales_order",
   "sales_invoice",
+  "billing_section",
+  "billing_plan",
+  "billing_schedule",
   "amended_from"
  ],
  "fields": [
@@ -297,10 +300,31 @@
    "read_only": 1,
    "no_copy": 1,
    "print_hide": 1
+  },
+  {
+   "fieldname": "billing_section",
+   "fieldtype": "Section Break",
+   "label": "Billing",
+   "collapsible": 1,
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "billing_plan",
+   "fieldtype": "Table",
+   "label": "Billing plan",
+   "options": "Rental Billing Plan",
+   "description": "One row. Empty uses the rental type default, then one-off."
+  },
+  {
+   "fieldname": "billing_schedule",
+   "fieldtype": "Table",
+   "label": "Billing schedule",
+   "options": "Rental Billing Schedule",
+   "allow_on_submit": 1
   }
  ],
  "links": [],
- "modified": "2026-11-26 11:00:00.000000",
+ "modified": "2026-11-26 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Rental Booking",

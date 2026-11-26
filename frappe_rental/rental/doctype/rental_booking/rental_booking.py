@@ -1,13 +1,14 @@
 from frappe.model.document import Document
 
+from frappe_rental.services import billing, lifecycle
 from frappe_rental.services import booking as booking_service
-from frappe_rental.services import lifecycle
 
 
 class RentalBooking(Document):
 	def validate(self):
 		booking_service.validate_booking(self)
 		booking_service.apply_pricing(self)
+		billing.update_schedule(self)
 
 	def on_update(self):
 		lifecycle.on_update(self)
