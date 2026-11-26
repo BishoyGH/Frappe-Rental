@@ -4,7 +4,7 @@ import frappe
 from frappe import _
 
 from frappe_rental.services import booking as booking_service
-from frappe_rental.services import lifecycle
+from frappe_rental.services import erpnext_sync, lifecycle
 
 
 @frappe.whitelist()
@@ -79,3 +79,13 @@ def cancel(name: str) -> dict:
 	doc = _get(name, "cancel" if frappe.db.get_value("Rental Booking", name, "docstatus") == 1 else "write")
 	lifecycle.cancel(doc)
 	return _state(doc)
+
+
+@frappe.whitelist(methods=["POST"])
+def make_invoice(name: str, submit: int = 1) -> dict:
+	"""Create (or return) the one-off Sales Invoice for a confirmed booking."""
+	doc = _get(name, "read")
+	if not frappe.has_permission("Sales Invoice", "create"):
+		frappe.throw(_("Not permitted"), frappe.PermissionError)
+	invoice = erpnext_sync.make_sales_invoice(doc, submit=bool(int(submit)))
+	return {"name": doc.name, "sales_order": doc.sales_order, "sales_invoice": invoice}

@@ -7,6 +7,8 @@ from pathlib import Path
 import frappe
 from frappe import _
 
+from frappe_rental.compat.erpnext import create_dimension_fields
+
 FIELDNAME_RE = re.compile(r"^[a-z][a-z0-9_]*$")
 # Doctypes that custom fields may target. Only those that exist are synced, so this works before
 # Rental Item, Unit and Booking are added by later tasks.
@@ -85,8 +87,14 @@ def install_presets() -> list[str]:
 
 def ensure_accounting_dimension() -> None:
 	"""Accounting Dimension 'Rental Item Type' pointing at Rental Type, for P&L by type (D-accounting)."""
-	if frappe.db.exists("Accounting Dimension", {"document_type": "Rental Type"}):
-		return
-	frappe.get_doc(
-		{"doctype": "Accounting Dimension", "document_type": "Rental Type", "label": DIMENSION_LABEL}
-	).insert(ignore_permissions=True)  # install-time bootstrap
+	name = frappe.db.get_value("Accounting Dimension", {"document_type": "Rental Type"})
+	if not name:
+		name = (
+			frappe.get_doc(
+				{"doctype": "Accounting Dimension", "document_type": "Rental Type", "label": DIMENSION_LABEL}
+			)
+			.insert(ignore_permissions=True)  # install-time bootstrap
+			.name
+		)
+	if not frappe.get_meta("Sales Invoice").has_field(frappe.scrub(DIMENSION_LABEL)):
+		create_dimension_fields(name)

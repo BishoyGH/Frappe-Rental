@@ -15,6 +15,13 @@ class RentalBooking(Document):
 	def before_submit(self):
 		lifecycle.before_submit(self)
 
+	def on_submit(self):
+		lifecycle.on_submit(self)
+
+	def before_cancel(self):
+		# Our Sales Order and Invoice link back here; lifecycle.on_cancel reverses them itself.
+		self.ignore_linked_doctypes = ("Sales Order", "Sales Invoice", "Rental Availability Cache")
+
 	def on_cancel(self):
 		lifecycle.on_cancel(self)
 

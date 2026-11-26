@@ -57,3 +57,9 @@ The `Rental Item Type` Accounting Dimension is created in T06 together with the 
 
 ## D-ui-tests (2026-11-26)
 Browser tests use **Playwright**, not Cypress. Frappe core ships Cypress tests, but they target its own desk and test site; Playwright runs headless in CI without extra services, works the same against v15 and v16 benches, and is what `docs/COMPATIBILITY.md` already names for the smoke suite. The harness is task T16B; later UI tasks add specs to it.
+
+## T16 ERPNext sync (2026-11-26)
+- Each booking line is one Sales Order Item with qty 1 and rate = line amount, so ERPNext totals equal the booking's exactly; qty and period go in the description. Charges become items (the Rental Charge's Item, else an auto-made service Item).
+- The Sales Order is created and submitted on confirm. The one-off Sales Invoice comes from it on confirm when `auto_invoice` is on, otherwise via `api.booking.make_invoice`.
+- Cancel: an unpaid invoice is cancelled, a paid one gets a credit note (the Sales Order is then closed, not cancelled); an uninvoiced Sales Order is cancelled.
+- Custom fields are created with `create_custom_fields` on install and migrate instead of fixture files, so they stay idempotent and versioned in code.
