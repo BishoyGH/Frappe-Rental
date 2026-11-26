@@ -12,8 +12,8 @@ A daily job turns due Rental Billing Schedule rows into Sales Invoices.
 - `reschedule()` handles extension, shortening and early return on a confirmed booking: un-invoiced
   rows are rebuilt and over-billing is credited. Posted invoices are never edited.
 Grouping: one invoice per booking, unless the customer has `rental_consolidate_invoices` (T50): then
-all of that customer's due period rows in a run go on one invoice per company, currency and tax
-template, each item carrying its booking and billing row (Sales Invoice Item `rental_booking`,
+all of that customer's due period rows in a run go on one invoice per invoice month, company,
+currency and tax template, each item carrying its booking and billing row (Sales Invoice Item `rental_booking`,
 `rental_billing_row`). Whole-booking and credit rows stay per booking.
 """
 
@@ -33,7 +33,7 @@ def run_due_invoices(today=None) -> list[str]:
 	rows = frappe.get_all(
 		ROW,
 		filters={"parenttype": "Rental Booking", "status": "Planned", "invoice_date": ["<=", today]},
-		fields=["name", "parent"],
+		fields=["name", "parent", "invoice_date"],
 		order_by="invoice_date asc, idx asc",
 	)
 	made, groups = [], {}
