@@ -47,9 +47,9 @@ def run_due_invoices(today=None) -> list[str]:
 		if not b or b.docstatus != 1:
 			continue
 		if consolidates(b.customer) and _is_period_row(row.name):
-			groups.setdefault((b.customer, b.company, b.currency, b.taxes_and_charges or ""), []).append(
-				row.name
-			)
+			month = str(row.invoice_date)[:7]
+			key = (b.customer, month, b.company, b.currency, b.taxes_and_charges or "")
+			groups.setdefault(key, []).append(row.name)
 			continue
 		frappe.db.savepoint("rental_invoice_row")
 		try:
