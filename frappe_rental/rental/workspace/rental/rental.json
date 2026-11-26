@@ -68,6 +68,17 @@
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
+   "label": "Rental Handover",
+   "link_count": 0,
+   "link_to": "Rental Handover",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Rental Event Log",
    "link_count": 0,
    "link_to": "Rental Event Log",

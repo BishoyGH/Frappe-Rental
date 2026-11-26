@@ -28,6 +28,7 @@ scheduler_events = {
 		]
 	},
 	"daily": ["frappe_rental.services.invoicing.run_due_invoices"],
+	"hourly": ["frappe_rental.services.handover.check_overdue"],
 }
 
 website_route_rules = [{"from_route": "/rental/<path:app_path>", "to_route": "rental"}]

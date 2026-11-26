@@ -54,6 +54,12 @@ CUSTOM_FIELDS = {
 	"Sales Order Item": _line_fields("item_name"),
 	"Sales Invoice Item": _line_fields("item_name"),
 	"Journal Entry": [_link("rental_deposit", "Rental Deposit", "Rental Deposit", "voucher_type")],
+	"Serial No": [
+		_link("rental_booking", "Rented On", "Rental Booking", "warehouse"),
+		_link("rental_customer", "Rented To", "Customer", "rental_booking"),
+	],
+	"Stock Entry": [_link("rental_handover", "Rental Handover", "Rental Handover", "stock_entry_type")],
+	"Asset Movement": [_link("rental_handover", "Rental Handover", "Rental Handover", "purpose")],
 	"Asset": [_link("rental_unit", "Rental Unit", "Rental Unit", "item_name")],
 	"Item": [_link("rental_item", "Rental Item", "Rental Item", "item_name")],
 }
