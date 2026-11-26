@@ -87,7 +87,7 @@ Work top to bottom. One task = one PR. Each task lists what to build (**Build**)
 - [ ] **T56 Security review.** Build: permission audit, input fuzz tests on public endpoints, secrets and PII review, dependency scan in CI; re-check that v16-specific permission or API changes are covered by tests.
 - [ ] **T57 Accessibility and i18n.** Build: WCAG pass on website, Arabic translation file and RTL check, translation extraction in CI.
 - [ ] **T58 Documentation.** Build: user guide per role, admin setup guide, API reference, accounting guide (D5), upgrade notes, supported-versions page.
-- [ ] **T59 Demo site and data.** Build: `bench rental-demo` command, seeded demo with all presets; works on both versions.
+- [x] **T59 Demo site and data.** Build: `bench rental-demo` command, seeded demo with all presets; works on both versions. Note: `bench --site <site> rental-demo` now runs `demo.make_full_demo` (`--basic` keeps the Device and Apartment set, `--with-bookings` adds a held booking). It adds an item for every preset, units for all but Vehicle (which needs an ERPNext Asset per unit, so you link your own), working hours for provider units, and an active maintenance contract with quarterly visits. Safe to run twice.
 - [ ] **T60 Release.** Build: version tags, changelog, Marketplace and Frappe Cloud packaging checks on both versions, upgrade/migration test from `v0.2.0` on both, promote or retire the next-major CI job. Done when: `v1.0.0` tagged and installs clean on v15 and v16.
 
 ## Standing tasks (any time)
