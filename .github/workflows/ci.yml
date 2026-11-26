@@ -1,28 +1,26 @@
 name: CI
 on:
   pull_request:
+    paths-ignore: ["**.md", "docs/**", "LICENSE", ".github/workflows/nightly.yml"]
   push:
     branches: [develop, main]
+    paths-ignore: ["**.md", "docs/**", "LICENSE", ".github/workflows/nightly.yml"]
   schedule:
-    - cron: "0 3 * * *" # nightly
+    - cron: "0 3 * * 1" # weekly (Mon) instead of nightly, to save Actions minutes
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  matrix:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.m.outputs.matrix }}
-    steps:
-      - uses: actions/checkout@v4
-      - run: pip install pyyaml
-      - id: m
-        run: echo "matrix=$(python scripts/ci-matrix.py)" >> "$GITHUB_OUTPUT"
-
+  # One cheap job: lint, frontend check and matrix output. Billing rounds every job up to a
+  # whole minute, and tests only start (and burn minutes) when lint passes.
   lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      matrix: ${{ steps.m.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/ruff-action@v3
@@ -31,14 +29,20 @@ jobs:
       - uses: astral-sh/ruff-action@v3
         with:
           args: format --check
+      - name: Frontend build
+        run: if [ -f frontend/package.json ]; then cd frontend && yarn && yarn build; else echo "no frontend yet"; fi
+      - run: pip install pyyaml
+      - id: m
+        run: echo "matrix=$(python scripts/ci-matrix.py)" >> "$GITHUB_OUTPUT"
 
   tests:
     name: tests (v${{ matrix.major }})
-    needs: matrix
+    needs: lint
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     strategy:
       fail-fast: false
-      matrix: ${{ fromJSON(needs.matrix.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.lint.outputs.matrix) }}
     services:
       mariadb:
         image: ${{ matrix.mariadb_image }}
@@ -62,6 +66,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
@@ -91,10 +97,3 @@ jobs:
           cd ~/bench
           bench pip install coverage
           bench --site test.localhost run-tests --app frappe_rental --coverage
-
-  frontend:
-    name: frontend build (placeholder)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: if [ -f frontend/package.json ]; then cd frontend && yarn && yarn build; else echo "no frontend yet"; fi
