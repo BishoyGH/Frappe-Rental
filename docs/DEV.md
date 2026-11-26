@@ -57,7 +57,7 @@ The built files are not committed. Guests are redirected to `/login`; users need
 ## Demo data and acceptance scenarios
 
 ```
-bench --site <site> rental-demo [--with-bookings]
+bench --site <site> rental-demo [--with-bookings] [--basic]   # every preset; --basic = Device and Apartment only
 ```
 
 This installs the type presets and creates a demo location, rate cards, a Device item with three serialised units, an Apartment item with two units and two customers. Running it again creates nothing new. The Phase 1 acceptance scenarios live in `frappe_rental/tests/test_scenarios.py`:
