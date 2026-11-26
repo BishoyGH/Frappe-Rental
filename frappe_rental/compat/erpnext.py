@@ -180,3 +180,20 @@ def move_asset(asset: str, company: str, target_location: str, reference: dict |
 	am.insert()
 	am.submit()
 	return am.name
+
+
+def make_asset_repair(asset: str, company: str, description: str, failure_date) -> str:
+	"""Draft Asset Repair for a damaged asset. Returns its name.
+
+	Versions: Asset Repair with asset, company, failure_date and description on v15 and v16; repair
+	cost and stock items are filled in by the user before submitting. Removal: keep while the fields
+	are unchanged on every supported major.
+	"""
+	repair = frappe.new_doc("Asset Repair")
+	repair.update(
+		{"asset": asset, "company": company, "failure_date": failure_date, "description": description}
+	)
+	repair.flags.ignore_permissions = True  # drafted from a permitted damage report
+	repair.flags.ignore_mandatory = True  # the user completes costs before submitting
+	repair.insert()
+	return repair.name

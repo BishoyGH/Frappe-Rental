@@ -114,6 +114,9 @@ def on_submit(doc) -> None:
 			description=_("Late return: {0} minutes").format(doc.late_minutes),
 			source=doc,
 		)
+	from frappe_rental.services import damage
+
+	damage.from_return(doc)
 	events.emit("returned", doc)
 
 
