@@ -38,3 +38,17 @@ Verified 2026-11-25 in a Linux sandbox (Ubuntu 24.04, MariaDB 10.11 for both, Re
 - Set the utf8mb4 settings in the MariaDB config (`character-set-server=utf8mb4`, `collation-server=utf8mb4_unicode_ci`, `character-set-client-handshake=FALSE`).
 - v15 `yarn install` could not fetch a GitHub tarball through the sandbox proxy (not an app issue); the sandbox used a no-op yarn shim, so JS assets were not built on v15 there.
 - Not yet verified: MariaDB 10.6 / 11.8 exact versions, and the JS asset build on v15.
+
+## Staff app (frontend)
+
+The staff app lives in `frontend/` (Vue 3, `frappe-ui`, Vite 5) and is served at `/rental`.
+
+```
+cd frontend && yarn install --frozen-lockfile
+yarn dev            # proxies API calls to the bench site on port 8000
+yarn build          # writes frappe_rental/public/frontend and frappe_rental/www/rental.html
+BASE_URL=http://127.0.0.1:8000 yarn test:e2e   # Playwright smoke against a running site
+```
+
+`bench build` runs the root `package.json` build script, so a normal bench build also builds the app.
+The built files are not committed. Guests are redirected to `/login`; users need a Rental role (or System Manager).

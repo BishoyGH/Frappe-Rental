@@ -8,3 +8,8 @@ frontend/dist/
 .env
 frappe_rental/public/frontend/
 dump.rdb
+frappe_rental/www/rental.html
+frontend/test-results/
+frontend/playwright-report/
+frontend/auto-imports.d.ts
+frontend/components.d.ts
