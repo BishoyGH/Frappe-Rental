@@ -14,6 +14,8 @@ PAGE = 24
 
 
 def _published(name: str) -> frappe._dict:
+	if not isinstance(name, str) or not name or len(name) > 140:
+		frappe.throw(_("This item is not available"), frappe.DoesNotExistError)
 	row = frappe.db.get_value(
 		"Rental Item",
 		{"name": name, "is_published": 1},
@@ -44,10 +46,12 @@ def list_items(
 	)
 	prices = {}
 	if from_datetime and to_datetime and items:
+		from frappe_rental.services import booking as booking_service
+
 		names = {i.name for i in items}
 		free = search_service.search(
-			get_datetime(from_datetime),
-			get_datetime(to_datetime),
+			booking_service.moment(from_datetime, _("From")),
+			booking_service.moment(to_datetime, _("To")),
 			rental_type=rental_type,
 			qty=flt(qty) or 1,
 			location=location,

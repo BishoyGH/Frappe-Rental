@@ -150,9 +150,13 @@ def _new_customer(full_name: str, user: str, email: str, phone: str | None) -> s
 def ensure_customer(details: dict) -> dict:
 	"""The customer the booking is for. Creates User, Customer and Contact for a new guest."""
 	details = details or {}
-	full_name = (details.get("full_name") or "").strip()
-	email = (details.get("email") or "").strip().lower()
-	phone = (details.get("phone") or "").strip() or None
+	if not isinstance(details, dict) or not all(
+		v is None or isinstance(v, str) for v in (details.get(k) for k in ("full_name", "email", "phone"))
+	):
+		frappe.throw(_("Your details are not valid"))
+	full_name = (details.get("full_name") or "").strip()[:140]
+	email = (details.get("email") or "").strip().lower()[:140]
+	phone = (details.get("phone") or "").strip()[:40] or None
 	user = frappe.session.user
 	if user != "Guest":
 		existing = my_customers(user)
@@ -239,9 +243,10 @@ def _contract_for(doc) -> None:
 def start(data: dict) -> dict:
 	"""Create and hold the booking for the chosen item, dates, quantity and extras."""
 	item = public_site._published(data.get("item"))
-	start_at, end_at = get_datetime(data.get("from_datetime")), get_datetime(data.get("to_datetime"))
-	if not start_at or not end_at:
+	if not data.get("from_datetime") or not data.get("to_datetime"):
 		frappe.throw(_("Choose your dates"))
+	start_at = booking_service.moment(data.get("from_datetime"), _("From"))
+	end_at = booking_service.moment(data.get("to_datetime"), _("To"))
 	if start_at < get_datetime(add_days(frappe.utils.now_datetime(), -1)):
 		frappe.throw(_("Choose dates in the future"))
 	who = ensure_customer(data.get("details") or {})

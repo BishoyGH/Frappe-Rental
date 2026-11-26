@@ -29,3 +29,11 @@ Stripe keys are Password fields (encrypted). No secrets in the repository. SQL u
 ## Dependencies
 
 `yarn audit` (runtime): the high advisory in `@vue/server-renderer` is fixed by upgrading `vue` to 3.5.46. Two moderate advisories remain, both inside `frappe-ui` (echarts XSS, postcss-selector-parser CPU use at build time). We render no user supplied echarts options and the parser runs only in the build, so they are accepted until frappe-ui updates. Python: the only runtime dependency is `pyqrcode`, also a Frappe dependency.
+
+## Input fuzzing and PII (T56)
+
+`tests/test_fuzz.py` throws hostile values (SQL and script strings, huge or null input, wrong types, bad dates) at every guest endpoint, against both a missing and a real published item. Findings fixed: blank or unparsable dates and non-text customer details raised bare Python errors; they now give a clear validation message. Dates go through one checked helper (`services/booking.moment`).
+
+Personal data we hold: customer name, email, phone (Customer, Contact, User), signature audit fields (IP, browser) on contracts, payment references. None is written to logs; the event payload carries ids and totals, not contact details. Error logs are written only for failed staff alerts and carry no customer data. Guests never receive another person's data: portal reads are ownership checked and answer "not found" otherwise.
+
+CI now runs a dependency audit (fails on high findings) and a secrets scan in the lint job.

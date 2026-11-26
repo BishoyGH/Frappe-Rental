@@ -31,6 +31,10 @@ jobs:
           args: format --check
       - name: Frontend build
         run: cd frontend && yarn install --frozen-lockfile && yarn build
+      - name: Dependency audit (fails on high findings)
+        run: cd frontend && yarn audit --groups dependencies --level high
+      - name: Secrets scan
+        run: "! git grep -nE 'sk_live_|whsec_[A-Za-z0-9]{20,}|BEGIN (RSA |EC )?PRIVATE KEY|AKIA[0-9A-Z]{16}' -- . ':!docs' ':!frappe_rental/tests' ':!.github'"
       - run: pip install pyyaml
       - id: m
         run: echo "matrix=$(python scripts/ci-matrix.py)" >> "$GITHUB_OUTPUT"
