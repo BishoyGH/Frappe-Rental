@@ -57,3 +57,32 @@ def countersign(name: str) -> dict:
 	doc = _contract(name, staff=True)
 	esign.countersign(doc)
 	return {"status": doc.status, "signed_pdf": doc.signed_pdf}
+
+
+# Maintenance visits (T46)
+
+
+@frappe.whitelist(methods=["POST"])
+def request_service(name: str, notes: str) -> dict:
+	"""Customer (portal) or staff asks for an unplanned visit."""
+	doc = _contract(name)
+	from frappe_rental.services import visits
+
+	return {"visit": visits.request_service(doc, notes)}
+
+
+@frappe.whitelist(methods=["POST"])
+def assign_visit(name: str, visit: str, technician: str, start: str, hours: float = 2) -> dict:
+	doc = _contract(name, staff=True)
+	from frappe_rental.services import visits
+
+	return {"booking": visits.assign(doc, visit, technician, start, float(hours or 2))}
+
+
+@frappe.whitelist(methods=["POST"])
+def complete_visit(name: str, visit: str, notes: str | None = None) -> dict:
+	doc = _contract(name, staff=True)
+	from frappe_rental.services import visits
+
+	visits.complete(doc, visit, notes)
+	return {"status": "Done"}

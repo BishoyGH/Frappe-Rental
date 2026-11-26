@@ -85,6 +85,7 @@ def renew(doc) -> str:
 		if flt(row.rate_override):
 			row.rate_override = flt(row.rate_override * factor, 2)
 	new.allocations = [r for r in new.allocations if r.status in ("Reserved", "Active")]
+	new.visits = []  # the renewal plans its own visits on activation
 	for row in new.billing_plan:
 		if flt(row.period_amount):
 			row.period_amount = flt(row.period_amount * factor, 2)

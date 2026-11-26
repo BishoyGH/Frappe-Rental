@@ -43,6 +43,8 @@
   "visit_frequency",
   "allocations_section",
   "allocations",
+  "visits_section",
+  "visits",
   "billing_section",
   "billing_plan",
   "terms_section",
@@ -479,6 +481,18 @@
    "label": "Allocations",
    "options": "Rental Contract Allocation",
    "allow_on_submit": 1
+  },
+  {
+   "fieldname": "visits_section",
+   "fieldtype": "Section Break",
+   "label": "Visits",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "visits",
+   "fieldtype": "Table",
+   "label": "Visits",
+   "options": "Rental Contract Visit"
   }
  ],
  "links": [],

@@ -162,6 +162,9 @@ def activate(doc, signed_by: str, countersigned_by: str | None = None) -> str:
 		if row.status == "Reserved":
 			row.status = "Active"
 	allocations.reserve(doc)  # raises before anything is saved if a unit is taken
+	from frappe_rental.services import visits
+
+	visits.generate(doc, save=False)
 	transition(doc, "Active")
 	return doc.erpnext_contract
 
