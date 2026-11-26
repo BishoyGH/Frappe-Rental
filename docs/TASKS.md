@@ -79,7 +79,7 @@ Work top to bottom. One task = one PR. Each task lists what to build (**Build**)
 - [x] **T52 Waitlist and substitutions.** Build: waitlist notify, substitute suggestions on conflict. Needs: T15. Note: backend, API and events only (`api.waitlist.add`, `substitutes`, `get_list`; event `waitlist_available`). The SPA waitlist screen and the substitute panel in New Booking come with the frontend phases.
 - [x] **T53 Additional presets and import.** Build: CSV import for items/units/customers with identifiers; more presets. Needs: T08. Note: `api.setup.import_csv` (with dry-run preview) and `import_template`; presets Boat Charter, Bicycle, Meeting Room, Tool, Tour Guide. The SPA upload screen comes with the frontend phases.
 - [ ] **T54 Gateway adapter 2 and pre-authorisation (optional).** Build: regional gateway adapter, card hold/capture for deposits. Needs: T36.
-- [ ] **T54b Postgres support (optional).** Build: enable the Postgres CI leg, fix SQL portability issues. Done when: tests pass on Postgres for both versions. Needs: T38.
+- [ ] **T54b Postgres support (optional).** Build: enable the Postgres CI leg, fix SQL portability issues. Done when: tests pass on Postgres for both versions. Needs: T38. Progress (not ticked until green): CI job `tests-postgres` (allowed to fail), `postgres_image` per major in `ci/versions.yml`; SQL reviewed: `timestampdiff` ordering moved to Python in `staff_ops.find_booking`, `ifnull` became `coalesce`, staff alerts guard with a savepoint. Every other raw query is plain SQL that Frappe translates (backticks, `for update`, tuples). First Postgres run is still to do.
 
 ## Phase 6: Hardening and release
 
