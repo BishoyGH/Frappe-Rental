@@ -8,6 +8,7 @@ const built = {
   Calendar: () => import('./pages/CalendarPage.vue'),
   Availability: () => import('./pages/AvailabilityPage.vue'),
   Handovers: () => import('./pages/HandoversPage.vue'),
+  Contracts: () => import('./pages/ContractsList.vue'),
 }
 const SETUP = ['ItemTypes', 'Items', 'Units', 'Customers']
 
@@ -47,6 +48,26 @@ const routes = [
     name: 'Book',
     component: () => import('./pages/BookFlow.vue'),
     meta: { title: 'Book', public: true },
+  },
+  {
+    path: '/contracts/:name',
+    name: 'ContractDetail',
+    component: () => import('./pages/ContractDetail.vue'),
+    props: true,
+    meta: { title: 'Contract', section: 'Contracts' },
+  },
+  {
+    path: '/my-contracts',
+    name: 'MyContracts',
+    component: () => import('./pages/MyContracts.vue'),
+    meta: { title: 'My contracts', public: true },
+  },
+  {
+    path: '/my-contracts/:name',
+    name: 'MyContractDetail',
+    component: () => import('./pages/MyContractDetail.vue'),
+    props: true,
+    meta: { title: 'My contract', public: true },
   },
   {
     path: '/my-bookings',

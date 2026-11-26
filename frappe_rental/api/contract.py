@@ -66,6 +66,10 @@ def countersign(name: str) -> dict:
 def request_service(name: str, notes: str) -> dict:
 	"""Customer (portal) or staff asks for an unplanned visit."""
 	doc = _contract(name)
+	if not frappe.has_permission("Rental Contract", "write", doc):
+		doc.flags.ignore_permissions = (
+			True  # a customer who may sign for it (checked by _contract) asks for a visit
+		)
 	from frappe_rental.services import visits
 
 	return {"visit": visits.request_service(doc, notes)}
@@ -86,3 +90,43 @@ def complete_visit(name: str, visit: str, notes: str | None = None) -> dict:
 
 	visits.complete(doc, visit, notes)
 	return {"status": "Done"}
+
+
+# Screens (T47)
+
+
+@frappe.whitelist(methods=["GET", "POST"])
+def listing(
+	status: str | None = None, search: str | None = None, start: int = 0, page_length: int = 20
+) -> dict:
+	from frappe_rental.services import contract_views
+
+	return contract_views.listing(status or None, search or None, start, page_length)
+
+
+@frappe.whitelist(methods=["GET", "POST"])
+def detail(name: str) -> dict:
+	from frappe_rental.services import contract_views
+
+	return contract_views.detail(name)
+
+
+def _signed_in() -> None:
+	if frappe.session.user == "Guest":
+		frappe.throw(_("Log in to see your contracts"), frappe.PermissionError)
+
+
+@frappe.whitelist(methods=["GET", "POST"])
+def my_contracts() -> dict:
+	from frappe_rental.services import contract_views
+
+	_signed_in()
+	return contract_views.my_listing()
+
+
+@frappe.whitelist(methods=["GET", "POST"])
+def my_contract(name: str) -> dict:
+	from frappe_rental.services import contract_views
+
+	_signed_in()
+	return contract_views.my_detail(name)

@@ -17,7 +17,7 @@ def has_app_access(user: str | None = None) -> bool:
 
 
 # Customer pages of the same SPA (T35, T37): open to guests and to users without a rental role.
-PORTAL_PATHS = ("/rental/book", "/rental/my-bookings")
+PORTAL_PATHS = ("/rental/book", "/rental/my-bookings", "/rental/my-contracts")
 
 
 def is_portal_path(path: str | None) -> bool:

@@ -4,7 +4,7 @@ import frappe
 from frappe import _
 from frappe.rate_limiter import rate_limit
 
-from frappe_rental.services import portal
+from frappe_rental.services import contract_views, portal
 
 
 def _signed_in() -> None:
@@ -49,3 +49,10 @@ def cancel(name: str) -> dict:
 def download(name: str, kind: str, ref: str) -> None:
 	_signed_in()
 	portal.download(name, kind, ref)
+
+
+@frappe.whitelist(methods=["GET"])
+@rate_limit(limit=30, seconds=60)
+def download_contract(name: str) -> None:
+	_signed_in()
+	contract_views.download(name)

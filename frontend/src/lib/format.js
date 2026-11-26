@@ -7,6 +7,18 @@ const STATUS_THEME = {
   Closed: 'green',
   Cancelled: 'red',
   'No Show': 'red',
+  // contracts
+  'In Review': 'orange',
+  'Awaiting Signature': 'orange',
+  Active: 'green',
+  Suspended: 'orange',
+  Ending: 'orange',
+  Ended: 'gray',
+  Terminated: 'red',
+  Renewed: 'blue',
+  // visits
+  Planned: 'blue',
+  Done: 'green',
 }
 export const statusTheme = (s) => STATUS_THEME[s] || 'gray'
 
