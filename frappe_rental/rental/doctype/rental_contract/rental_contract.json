@@ -41,6 +41,8 @@
   "sla_response_hours",
   "sla_resolution_hours",
   "visit_frequency",
+  "allocations_section",
+  "allocations",
   "billing_section",
   "billing_plan",
   "terms_section",
@@ -465,6 +467,18 @@
    "label": "Signed PDF",
    "read_only": 1,
    "no_copy": 1
+  },
+  {
+   "fieldname": "allocations_section",
+   "fieldtype": "Section Break",
+   "label": "Allocations"
+  },
+  {
+   "fieldname": "allocations",
+   "fieldtype": "Table",
+   "label": "Allocations",
+   "options": "Rental Contract Allocation",
+   "allow_on_submit": 1
   }
  ],
  "links": [],

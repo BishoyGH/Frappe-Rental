@@ -69,6 +69,9 @@ def validate(doc) -> None:
 		missing = terms.mandatory_missing(doc.terms_template, [{"clause": c.clause} for c in doc.clauses])
 		if missing:
 			frappe.throw(_("Mandatory clauses cannot be removed: {0}").format(", ".join(missing)))
+	from frappe_rental.services import allocations
+
+	allocations.validate_rows(doc)
 	if not doc.terms_template and doc.rental_type:
 		doc.terms_template = terms.template_for(doc.rental_type, doc.language)
 	before = doc.get_doc_before_save()
@@ -142,6 +145,12 @@ def activate(doc, signed_by: str, countersigned_by: str | None = None) -> str:
 			signed_by,
 			now,
 		)
+	from frappe_rental.services import allocations
+
+	for row in doc.allocations:
+		if row.status == "Reserved":
+			row.status = "Active"
+	allocations.reserve(doc)  # raises before anything is saved if a unit is taken
 	transition(doc, "Active")
 	return doc.erpnext_contract
 
@@ -183,6 +192,9 @@ def terminate(doc, reason: str, on=None) -> None:
 	doc.termination_reason = reason
 	doc.flags.amending = True  # recording the end is not a change of terms
 	transition(doc, "Terminated")
+	from frappe_rental.services import allocations
+
+	allocations.release_all(doc)
 
 
 def for_booking(booking) -> str | None:
