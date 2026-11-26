@@ -9,7 +9,7 @@ export default defineConfig({
   reporter: 'list',
   use: {
     baseURL: process.env.BASE_URL || 'http://127.0.0.1:8000',
-    trace: 'off',
+    trace: process.env.CI ? 'retain-on-failure' : 'off',
     launchOptions: { executablePath: process.env.PW_CHROMIUM || undefined },
   },
 })

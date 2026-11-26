@@ -99,6 +99,8 @@ jobs:
           bench --site test.localhost run-tests --app frappe_rental --coverage
       - name: Frontend build (matrix Node)
         run: cd ~/bench/apps/frappe_rental/frontend && yarn install --frozen-lockfile && yarn build
+      - name: Desk assets (for desk browser specs)
+        run: cd ~/bench && bench build --app frappe
       - name: Serve site
         run: |
           cd ~/bench
@@ -119,6 +121,13 @@ jobs:
           yarn install --frozen-lockfile
           npx playwright install --with-deps chromium
           BASE_URL=http://127.0.0.1:8000 npx playwright test
+      - name: Playwright traces on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces-${{ matrix.major }}
+          path: e2e/test-results
+          retention-days: 7
       - name: Server log on failure
         if: failure()
         run: tail -100 ~/serve.log || true
