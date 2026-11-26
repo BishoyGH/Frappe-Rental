@@ -19,7 +19,7 @@ from frappe import _
 from frappe.utils import flt, get_datetime, getdate, nowdate
 
 from frappe_rental.compat import erpnext as compat
-from frappe_rental.services import billing, billing_schedule, erpnext_sync, events
+from frappe_rental.services import billable_events, billing, billing_schedule, erpnext_sync, events
 
 ROW = "Rental Billing Schedule"
 
@@ -46,7 +46,73 @@ def run_due_invoices(today=None) -> list[str]:
 			continue
 		if name:
 			made.append(name)
+	made += _bill_leftover_events(today)
 	return made
+
+
+def _bill_leftover_events(today) -> list[str]:
+	"""Pending events on confirmed bookings with no planned row left get an invoice of their own."""
+	bookings = frappe.get_all(
+		"Rental Billable Event",
+		filters={"status": "Pending", "event_date": ["<=", today]},
+		pluck="rental_booking",
+		distinct=True,
+	)
+	made = []
+	for name in bookings:
+		if frappe.db.get_value("Rental Booking", name, "docstatus") != 1:
+			continue
+		if frappe.db.exists(ROW, {"parent": name, "parenttype": "Rental Booking", "status": "Planned"}):
+			continue
+		try:
+			si = invoice_events(frappe.get_doc("Rental Booking", name), today)
+			frappe.db.commit()
+		except Exception:
+			frappe.db.rollback()
+			frappe.log_error(title=_("Rental event invoicing failed for {0}").format(name))
+			continue
+		if si:
+			made.append(si)
+	return made
+
+
+def invoice_events(booking, today=None) -> str | None:
+	"""Bill the booking's due Pending events on one invoice. Returns it, or None if nothing was due."""
+	names = billable_events.pending(booking.name, today)
+	if not names:
+		return None
+	si = _new_invoice(booking, today or nowdate())
+	billable_events.append_to_invoice(si, booking, names)
+	for tax in compat.template_taxes(booking.taxes_and_charges):
+		si.append("taxes", tax)
+	si.flags.ignore_permissions = True  # events queued by permitted operations on a confirmed booking
+	si.insert()
+	billable_events.mark_invoiced(names, si.name)
+	if _submit():
+		si.submit()
+		events.emit("invoice_created", si, extra={"rental_booking": booking.name})
+	return si.name
+
+
+def _new_invoice(booking, invoice_date):
+	day = max(getdate(invoice_date), getdate(nowdate()))
+	si = frappe.new_doc("Sales Invoice")
+	si.update(
+		{
+			"customer": booking.customer,
+			"company": booking.company,
+			"currency": booking.currency,
+			"posting_date": day,
+			"set_posting_time": 1,
+			"due_date": day,
+			"rental_booking": booking.name,
+			"ignore_pricing_rule": 1,
+			"taxes_and_charges": booking.taxes_and_charges,
+		}
+	)
+	if booking.cost_center and si.meta.has_field("cost_center"):
+		si.cost_center = booking.cost_center
+	return si
 
 
 def invoice_row(row_name: str) -> str | None:
@@ -87,23 +153,8 @@ def _is_whole_booking(booking, row) -> bool:
 
 
 def _period_invoice(booking, row) -> str:
-	si = frappe.new_doc("Sales Invoice")
-	si.update(
-		{
-			"customer": booking.customer,
-			"company": booking.company,
-			"currency": booking.currency,
-			"posting_date": max(getdate(row.invoice_date), getdate(nowdate())),
-			"set_posting_time": 1,
-			"due_date": max(getdate(row.invoice_date), getdate(nowdate())),
-			"rental_booking": booking.name,
-			"rental_billing_row": row.name,
-			"ignore_pricing_rule": 1,
-			"taxes_and_charges": booking.taxes_and_charges,
-		}
-	)
-	if booking.cost_center and si.meta.has_field("cost_center"):
-		si.cost_center = booking.cost_center
+	si = _new_invoice(booking, row.invoice_date)
+	si.rental_billing_row = row.name
 	account = erpnext_sync._income_account(booking)
 	lines = erpnext_sync._item_rows(booking)
 	precision = billing._precision(booking)
@@ -118,10 +169,14 @@ def _period_invoice(booking, row) -> str:
 		if booking.cost_center:
 			item["cost_center"] = booking.cost_center
 		si.append("items", item)
+	extras = billable_events.append_to_invoice(
+		si, booking, billable_events.pending(booking.name, row.invoice_date)
+	)
 	for tax in compat.template_taxes(booking.taxes_and_charges):
 		si.append("taxes", tax)
 	si.flags.ignore_permissions = True  # system job billing a confirmed booking on its schedule
 	si.insert()
+	billable_events.mark_invoiced(extras, si.name)
 	if _submit():
 		si.submit()
 		events.emit("invoice_created", si, key=str(row.period_from), extra={"rental_booking": booking.name})

@@ -5,7 +5,7 @@ from frappe.tests.utils import FrappeTestCase
 from frappe.utils import flt, random_string
 
 from frappe_rental.services import invoicing
-from frappe_rental.tests.test_erpnext_sync import TestErpnextSync
+from frappe_rental.tests import test_erpnext_sync as t16
 
 MONTHLY = {"frequency": "Monthly", "alignment": "Calendar period start", "timing": "In advance"}
 
@@ -17,9 +17,9 @@ def flt2(v):
 class TestInvoicing(FrappeTestCase):
 	"""Reuses the T16 fixtures (company, card at 100/day, cleaning charge, tax template), not its tests."""
 
-	_tax_template = TestErpnextSync.__dict__["_tax_template"]
-	make_fixtures = TestErpnextSync.__dict__["make_fixtures"]
-	booking = TestErpnextSync.booking
+	_tax_template = t16.TestErpnextSync.__dict__["_tax_template"]
+	make_fixtures = t16.TestErpnextSync.__dict__["make_fixtures"]
+	booking = t16.TestErpnextSync.booking
 
 	@classmethod
 	def setUpClass(cls):
