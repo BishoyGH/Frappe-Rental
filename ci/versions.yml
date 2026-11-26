@@ -22,6 +22,7 @@ versions:
     node: "18"                           # FC node-version 18; FP engines.node >=18
     mariadb: "10.6"                      # FC image mariadb:10.6.24; FM warns below 10.6 and from 10.9
     mariadb_image: "mariadb:10.6.24"     # FC
+    postgres_image: "postgres:12.4"      # FC version-15 server-tests.yml services.postgres.image
     redis: "6.2"                         # D redis:6.2-alpine
     erpnext_requires_frappe: ">=15.111.0,<16.0.0"   # E [tool.bench.frappe-dependencies]
   "16":
@@ -35,6 +36,7 @@ versions:
     node: "24"                           # FC node-version 24; FP engines.node >=24
     mariadb: "11.8"                      # FC _base-server-tests.yml image mariadb:11.8; FM warns above 11.8
     mariadb_image: "mariadb:11.8"        # FC
+    postgres_image: "postgres:18.0"      # FC version-16 _base-server-tests.yml services.postgres.image
     redis: "6.2"                         # D redis:6.2-alpine (frappe_docker); Python client redis~=7.1 in F
     erpnext_requires_frappe: ">=16.60.0,<17.0.0"    # E [tool.bench.frappe-dependencies]
 

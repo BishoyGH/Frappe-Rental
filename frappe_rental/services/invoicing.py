@@ -155,7 +155,7 @@ def invoice_contract_events(contract: str, today=None) -> str | None:
 		r[0]
 		for r in frappe.db.sql(
 			"""select name from `tabRental Billable Event` where rental_contract=%s and status='Pending'
-			and ifnull(rental_booking, '')='' and event_date<=%s order by event_date for update""",
+			and coalesce(rental_booking, '')='' and event_date<=%s order by event_date for update""",
 			(contract, today),
 		)
 	]

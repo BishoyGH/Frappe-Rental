@@ -10,7 +10,7 @@
 
 import frappe
 from frappe import _
-from frappe.utils import flt, getdate, now_datetime
+from frappe.utils import flt, get_datetime, getdate, now_datetime
 
 from frappe_rental.services import handover
 from frappe_rental.services.billing import LOCKED
@@ -80,13 +80,19 @@ def find_booking(code: str) -> str | None:
 	rows = frappe.db.sql(
 		"""select b.name, b.status, b.from_datetime from `tabRental Booking` b
 		join `tabRental Booking Line` l on l.parent = b.name
-		where l.rental_unit = %s and b.docstatus = 1 and b.status in ('Confirmed', 'Checked Out')
-		order by (b.status = 'Checked Out') desc, abs(timestampdiff(second, b.from_datetime, %s)) asc
-		limit 1""",
-		(unit, now_datetime()),
+		where l.rental_unit = %s and b.docstatus = 1 and b.status in ('Confirmed', 'Checked Out')""",
+		unit,
 		as_dict=True,
 	)
-	return rows[0].name if rows else None
+	if not rows:
+		return None
+	# Checked-out bookings first, then the one starting closest to now. Sorted here, not in SQL,
+	# because date-difference functions differ between MariaDB and Postgres.
+	now = now_datetime()
+	rows.sort(
+		key=lambda r: (r.status != "Checked Out", abs((get_datetime(r.from_datetime) - now).total_seconds()))
+	)
+	return rows[0].name
 
 
 def billing(booking) -> dict:

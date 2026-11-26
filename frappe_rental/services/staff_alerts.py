@@ -74,9 +74,11 @@ def users_with_role(role: str) -> list[str]:
 def dispatch(log) -> None:
 	if log.event not in ALERT_EVENTS:
 		return
+	frappe.db.savepoint("rental_staff_alert")  # a failed statement must not poison a Postgres transaction
 	try:
 		_dispatch(log)
 	except Exception:
+		frappe.db.rollback(save_point="rental_staff_alert")
 		frappe.log_error(title="Rental staff alert failed")
 
 
