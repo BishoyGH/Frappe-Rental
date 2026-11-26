@@ -36,14 +36,15 @@ def _as_system():
 
 	Only used after ``own_booking``/``ensure_customer`` scoped the call to the session user's own customer.
 	ERPNext checks the session user's permissions deep inside its controllers (item details, price
-	lists), which a portal customer never has. The session user is restored afterwards.
+	lists), which a portal customer never has. The session user and sid are restored afterwards.
 	"""
-	user = frappe.session.user
+	user, sid = frappe.session.user, frappe.session.sid
 	frappe.set_user("Administrator")
 	try:
 		yield
 	finally:
 		frappe.set_user(user)
+		frappe.local.session.sid = sid  # set_user overwrites the sid; keep the browser's session
 
 
 class SignInRequired(frappe.PermissionError):
