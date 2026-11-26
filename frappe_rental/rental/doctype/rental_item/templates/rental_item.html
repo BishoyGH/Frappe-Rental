@@ -1,17 +1,109 @@
 {% extends "templates/web.html" %}
 
+{% block title %}{{ doc.item_name }}{% endblock %}
+
 {% block page_content %}
-<div class="rental-item">
-	<h1>{{ doc.item_name }}</h1>
-	{% if doc.image %}<img src="{{ doc.image }}" alt="{{ doc.item_name }}" class="img-fluid mb-4">{% endif %}
-	<div class="mb-4">{{ doc.description or "" }}</div>
-	{% if doc.capacity_people %}<p>{{ _("Capacity") }}: {{ doc.capacity_people }}</p>{% endif %}
-	{% if doc.amenities %}
-	<h3>{{ _("Amenities") }}</h3>
-	<ul>{% for row in doc.amenities %}<li>{{ row.amenity }}</li>{% endfor %}</ul>
+<div class="rental-item" data-item="{{ doc.name }}">
+	<nav class="mb-3"><a href="/rentals">{{ _("All rentals") }}</a></nav>
+	<h1 class="mb-1">{{ doc.item_name }}</h1>
+	<p class="text-muted">{{ _(doc.rental_type) }}{% if doc.location %} · {{ doc.location }}{% endif %}
+		{% if from_rate %} · <span data-testid="from-price">{{ _("from {0} per {1}").format(frappe.format_value(from_rate.rate, {"fieldtype": "Currency", "options": from_rate.currency}), _(from_rate.time_unit).lower()) }}</span>{% endif %}</p>
+
+	{% if gallery %}
+	<div class="rental-gallery d-flex gap-2 overflow-auto mb-4" data-testid="gallery">
+		{% for img in gallery %}<img src="{{ img }}" alt="{{ doc.item_name }}" {% if not loop.first %}loading="lazy"{% endif %} width="480" height="320" style="object-fit: cover; max-width: 100%; height: auto">{% endfor %}
+	</div>
 	{% endif %}
-	{% if doc.attributes %}
-	<dl>{% for row in doc.attributes %}<dt>{{ row.attribute }}</dt><dd>{{ row.value }}</dd>{% endfor %}</dl>
-	{% endif %}
+
+	<div class="row">
+		<div class="col-md-7">
+			<div class="mb-4">{{ doc.description or "" }}</div>
+			{% if doc.capacity_people %}<p>{{ _("Capacity") }}: {{ doc.capacity_people }}</p>{% endif %}
+			{% if doc.amenities %}
+			<h2 class="h4">{{ _("Amenities") }}</h2>
+			<ul>{% for row in doc.amenities %}<li>{{ row.amenity }}</li>{% endfor %}</ul>
+			{% endif %}
+			{% if doc.attributes %}
+			<dl>{% for row in doc.attributes %}<dt>{{ row.attribute }}</dt><dd>{{ row.value }}</dd>{% endfor %}</dl>
+			{% endif %}
+
+			<h2 class="h4 mt-4">{{ _("Availability") }}</h2>
+			<div class="d-flex align-items-center gap-2 mb-2">
+				<button type="button" class="btn btn-sm btn-default" data-cal="-1" aria-label="{{ _('Previous month') }}">‹</button>
+				<strong data-testid="cal-month"></strong>
+				<button type="button" class="btn btn-sm btn-default" data-cal="1" aria-label="{{ _('Next month') }}">›</button>
+			</div>
+			<div class="rental-cal" data-testid="cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;max-width:360px"></div>
+			<p class="small text-muted mt-1"><span class="badge bg-success">&nbsp;</span> {{ _("free") }} <span class="badge bg-warning">&nbsp;</span> {{ _("partly booked") }} <span class="badge bg-secondary">&nbsp;</span> {{ _("booked") }}</p>
+		</div>
+
+		<div class="col-md-5">
+			<form class="card card-body" data-testid="calc" id="rental-calc">
+				<h2 class="h5">{{ _("Price") }}</h2>
+				<label class="form-label" for="c-from">{{ _("From") }}</label>
+				<input id="c-from" name="from" type="datetime-local" class="form-control mb-2" required>
+				<label class="form-label" for="c-to">{{ _("To") }}</label>
+				<input id="c-to" name="to" type="datetime-local" class="form-control mb-2" required>
+				<label class="form-label" for="c-qty">{{ _("Quantity") }}</label>
+				<input id="c-qty" name="qty" type="number" min="1" value="1" class="form-control mb-3">
+				<button type="submit" class="btn btn-primary">{{ _("Check price") }}</button>
+				<div class="mt-3" data-testid="calc-result" aria-live="polite"></div>
+				<a class="btn btn-success mt-2 d-none" data-testid="book" href="/book?item={{ doc.name }}">{{ _("Book") }}</a>
+			</form>
+		</div>
+	</div>
 </div>
+<script>
+(function () {
+	const root = document.querySelector('.rental-item')
+	const item = root.dataset.item
+	const T = {{ {"available": _("Available"), "unavailable": _("Not available for these dates"), "total": _("Total"), "deposit": _("Deposit")} | json }}
+	const get = (method, args) =>
+		fetch('/api/method/frappe_rental.api.public.' + method + '?' + new URLSearchParams(args), { headers: { Accept: 'application/json' } })
+			.then((r) => r.json().then((j) => (r.ok ? j.message : Promise.reject(j))))
+	const err = (j) => (j && j._server_messages ? JSON.parse(JSON.parse(j._server_messages)[0]).message : (j && j.exception) || 'Error')
+	const money = (v, c) => new Intl.NumberFormat(undefined, { style: 'currency', currency: c || 'USD' }).format(v || 0)
+
+	const form = document.getElementById('rental-calc')
+	const out = form.querySelector('[data-testid="calc-result"]')
+	const book = form.querySelector('[data-testid="book"]')
+	form.addEventListener('submit', (e) => {
+		e.preventDefault()
+		const f = new FormData(form)
+		const args = { item, from_datetime: f.get('from').replace('T', ' '), to_datetime: f.get('to').replace('T', ' '), qty: f.get('qty') || 1 }
+		out.textContent = '…'
+		get('quote', args).then((q) => {
+			out.innerHTML = '<div class="fw-bold" data-testid="calc-total">' + T.total + ': ' + money(q.grand_total, q.currency) + '</div>' +
+				(q.deposit_required ? '<div>' + T.deposit + ': ' + money(q.deposit_required, q.currency) + '</div>' : '') +
+				'<div class="' + (q.available ? 'text-success' : 'text-danger') + '" data-testid="calc-available">' + (q.available ? T.available : T.unavailable) + '</div>'
+			book.classList.toggle('d-none', !q.available)
+			book.href = '/book?' + new URLSearchParams({ item, from: args.from_datetime, to: args.to_datetime, qty: args.qty })
+		}, (j) => { out.textContent = err(j); book.classList.add('d-none') })
+	})
+
+	const grid = root.querySelector('[data-testid="cal-grid"]')
+	const label = root.querySelector('[data-testid="cal-month"]')
+	let cur = new Date(); cur.setDate(1)
+	const COLORS = { free: 'bg-success', partial: 'bg-warning', busy: 'bg-secondary' }
+	function draw() {
+		const month = cur.getFullYear() + '-' + String(cur.getMonth() + 1).padStart(2, '0')
+		label.textContent = cur.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
+		get('calendar', { item, month }).then((days) => {
+			grid.innerHTML = ''
+			const lead = (new Date(cur.getFullYear(), cur.getMonth(), 1).getDay() + 6) % 7
+			for (let i = 0; i < lead; i++) grid.appendChild(document.createElement('span'))
+			Object.keys(days).sort().forEach((d) => {
+				const cell = document.createElement('span')
+				cell.className = 'badge ' + COLORS[days[d]]
+				cell.dataset.day = d
+				cell.dataset.state = days[d]
+				cell.textContent = Number(d.slice(8))
+				grid.appendChild(cell)
+			})
+		})
+	}
+	root.querySelectorAll('[data-cal]').forEach((b) => b.addEventListener('click', () => { cur.setMonth(cur.getMonth() + Number(b.dataset.cal)); draw() }))
+	draw()
+})()
+</script>
 {% endblock %}
