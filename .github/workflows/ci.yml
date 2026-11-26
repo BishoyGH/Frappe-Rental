@@ -1,6 +1,8 @@
 name: CI
 on:
+  # Draft PRs don't run CI; mark ready for review, or add the "run-ci" label to run it on a draft.
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, labeled]
     paths-ignore: ["**.md", "docs/**", "LICENSE", ".github/workflows/nightly.yml"]
   push:
     branches: [develop, main]
@@ -10,13 +12,18 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ci-${{ github.ref }}
+  # Labels other than run-ci get their own group, so labelling a PR doesn't cancel its CI.
+  group: ci-${{ github.ref }}${{ github.event.action == 'labeled' && github.event.label.name != 'run-ci' && format('-{0}', github.run_id) || '' }}
   cancel-in-progress: true
 
 jobs:
   # One cheap job: lint, frontend check and matrix output. Billing rounds every job up to a
   # whole minute, and tests only start (and burn minutes) when lint passes.
   lint:
+    if: >-
+      github.event_name != 'pull_request' ||
+      (github.event.action != 'labeled' && !github.event.pull_request.draft) ||
+      (github.event.action == 'labeled' && github.event.label.name == 'run-ci')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
@@ -77,15 +84,36 @@ jobs:
           printf "[client]\nskip-ssl\n" > ~/.my.cnf
           mariadb --skip-ssl -h127.0.0.1 -uroot -proot -e "SET GLOBAL character_set_server='utf8mb4'; SET GLOBAL collation_server='utf8mb4_unicode_ci';"
       - run: pip install frappe-bench pyyaml
-      - name: Bench
+      # Cache the bench (frappe + erpnext + env) per ISO week: PR/push runs reuse it and only
+      # create the site and install this app. The weekly scheduled run never uses the cache,
+      # so the latest upstream frappe/erpnext is still tested every week.
+      - name: Cache key
+        id: heads
+        run: echo "key=bench-v${{ matrix.major }}-py${{ matrix.python }}-$(date -u +%G-W%V)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache/restore@v4
+        if: github.event_name != 'schedule'
+        id: bench-cache
+        with:
+          path: ~/bench
+          key: ${{ steps.heads.outputs.key }}
+      - name: Bench init
+        if: steps.bench-cache.outputs.cache-hit != 'true'
         run: |
           bench init --skip-redis-config-generation --skip-assets --frappe-branch ${{ matrix.frappe_branch }} --python "$(which python)" ~/bench
+          cd ~/bench
+          bench get-app https://github.com/frappe/erpnext --branch ${{ matrix.erpnext_branch }} --skip-assets
+      - uses: actions/cache/save@v4
+        if: steps.bench-cache.outputs.cache-hit != 'true' && github.event_name != 'schedule'
+        with:
+          path: ~/bench
+          key: ${{ steps.heads.outputs.key }}
+      - name: Bench
+        run: |
           cd ~/bench
           bench set-config -g redis_cache redis://127.0.0.1:13000
           bench set-config -g redis_queue redis://127.0.0.1:11000
           bench set-config -g redis_socketio redis://127.0.0.1:11000
           bench set-config -g db_host 127.0.0.1
-          bench get-app https://github.com/frappe/erpnext --branch ${{ matrix.erpnext_branch }} --skip-assets
           bench new-site test.localhost --db-root-username root --mariadb-root-password root --admin-password admin --db-host 127.0.0.1
           bench --site test.localhost install-app erpnext
           bench get-app "$GITHUB_WORKSPACE" --skip-assets
