@@ -50,5 +50,10 @@ Foundation tasks T00A to T00C are stacked as one commit per task on a single bra
 ## D-accounting-dimension (2026-11-25)
 The `Rental Item Type` Accounting Dimension is created in T06 together with the Rental Type DocType it points to, not in T04.
 
+## T14 booking lifecycle (2026-11-26)
+- A hold is a saved draft with status Hold; confirming is submitting. Types use the hold step by default (`requires_hold` = 1).
+- An expired hold returns to Draft (not Cancelled) so staff can hold it again; a cancelled hold keeps docstatus 0 with status Cancelled.
+- Until a Rental Contract doctype exists, `requires_contract` checks a linked ERPNext Contract with `is_signed`.
+
 ## D-ui-tests (2026-11-26)
 Browser tests use **Playwright**, not Cypress. Frappe core ships Cypress tests, but they target its own desk and test site; Playwright runs headless in CI without extra services, works the same against v15 and v16 benches, and is what `docs/COMPATIBILITY.md` already names for the smoke suite. The harness is task T16B; later UI tasks add specs to it.
