@@ -20,6 +20,13 @@ jinja = {"methods": ["frappe_rental.services.unit.qr_data_uri"]}
 # Other apps may append dotted paths to fn(request, result) -> result to adjust quotes.
 rental_pricing_hooks = []
 
-scheduler_events = {"cron": {"*/5 * * * *": ["frappe_rental.services.lifecycle.expire_holds"]}}
+scheduler_events = {
+	"cron": {
+		"*/5 * * * *": [
+			"frappe_rental.services.lifecycle.expire_holds",
+			"frappe_rental.services.events.remind_expiring_holds",
+		]
+	}
+}
 
 website_route_rules = [{"from_route": "/rental/<path:app_path>", "to_route": "rental"}]

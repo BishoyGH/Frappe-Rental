@@ -12,7 +12,7 @@ import frappe
 from frappe import _
 from frappe.utils import add_to_date, flt, get_datetime, now_datetime
 
-from frappe_rental.services import availability, erpnext_sync
+from frappe_rental.services import availability, erpnext_sync, events
 
 SOURCE = "Rental Booking"
 
@@ -28,6 +28,7 @@ def place_hold(doc) -> None:
 	doc.status = "Hold"
 	doc.hold_expires_on = add_to_date(now_datetime(), minutes=hold_minutes())
 	doc.save()  # on_update reserves
+	events.emit("booking_held", doc, key=str(doc.hold_expires_on))
 
 
 def on_update(doc) -> None:
@@ -61,6 +62,7 @@ def before_submit(doc) -> None:
 def on_submit(doc) -> None:
 	"""Mirror the confirmed booking in ERPNext; invoice now when Rental Settings auto-invoices."""
 	erpnext_sync.make_sales_order(doc)
+	events.emit("booking_confirmed", doc)
 	if frappe.db.get_single_value("Rental Settings", "auto_invoice"):
 		erpnext_sync.make_sales_invoice(doc)
 
@@ -69,6 +71,7 @@ def on_cancel(doc) -> None:
 	availability.release(SOURCE, doc.name)
 	erpnext_sync.reverse(doc)
 	doc.db_set("status", "Cancelled")
+	events.emit("booking_cancelled", doc)
 
 
 def on_trash(doc) -> None:
@@ -82,6 +85,7 @@ def cancel(doc) -> None:
 	elif doc.docstatus == 0 and doc.status == "Hold":
 		availability.release(SOURCE, doc.name)
 		doc.db_set({"status": "Cancelled", "hold_expires_on": None})
+		events.emit("booking_cancelled", doc)
 	else:
 		frappe.throw(_("Only a held or confirmed booking can be cancelled"))
 

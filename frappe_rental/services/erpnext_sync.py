@@ -15,6 +15,7 @@ from frappe import _
 from frappe.utils import flt, getdate, nowdate
 
 from frappe_rental.compat import erpnext as compat
+from frappe_rental.services import events
 from frappe_rental.services.rental_item import _item_group, _stock_uom, income_account
 
 
@@ -77,6 +78,7 @@ def make_sales_invoice(booking, submit: bool = True) -> str:
 		si.insert()
 		if submit:
 			si.submit()
+			events.emit("invoice_created", si, extra={"rental_booking": booking.name})
 		name = si.name
 	if booking.sales_invoice != name:
 		booking.db_set("sales_invoice", name, update_modified=False)
