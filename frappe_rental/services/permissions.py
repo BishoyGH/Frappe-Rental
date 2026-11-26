@@ -31,6 +31,12 @@ MATRIX = {
 		"Rental Agent": "rwc",
 		"Rental Accountant": "r",
 	},
+	"Rental Housekeeping Task": {
+		"Rental Admin": "rwcd",
+		"Rental Manager": "rwc",
+		"Rental Agent": "rwc",
+		"Rental Provider": "rw",
+	},
 	"Rental Meter Reading": {
 		"Rental Admin": "rwcd",
 		"Rental Manager": "rwc",

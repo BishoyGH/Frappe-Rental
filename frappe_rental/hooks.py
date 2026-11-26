@@ -37,6 +37,7 @@ scheduler_events = {
 	"hourly": [
 		"frappe_rental.services.handover.check_overdue",
 		"frappe_rental.services.visits.check_sla",
+		"frappe_rental.services.housekeeping.check_overdue",
 	],
 }
 

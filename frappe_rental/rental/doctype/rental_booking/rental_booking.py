@@ -31,3 +31,9 @@ class RentalBooking(Document):
 
 	def on_trash(self):
 		lifecycle.on_trash(self)
+
+
+def on_doctype_update():
+	from frappe_rental.services import indexes
+
+	indexes.apply("Rental Booking")

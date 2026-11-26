@@ -65,3 +65,16 @@ This installs the type presets and creates a demo location, rate cards, a Device
 - a 1-month Apartment that needs a signed contract, then is invoiced and cancelled.
 
 They run in the normal test suite on both versions.
+
+## Performance targets (T55, proposed)
+
+Measured with `frappe_rental.perf.load.run` (see its docstring) on a site with 100,000 bookings over
+500 units, on each supported major. Proposed until confirmed in `docs/DECISIONS.md`:
+
+| Path | Target |
+| --- | --- |
+| `availability.is_available` for one unit | p95 under 50 ms |
+| `search.search` over one type, 3-day window, 50 results | p95 under 500 ms |
+| Daily invoicing job, 1,000 due rows | under 5 minutes |
+
+Composite indexes for these paths live in `frappe_rental/services/indexes.py` and are applied on migrate.
