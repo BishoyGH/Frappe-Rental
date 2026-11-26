@@ -1,5 +1,6 @@
 """Custom fields this app adds to ERPNext doctypes (T16). Created on install and migrate; idempotent."""
 
+import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
 
@@ -92,4 +93,24 @@ CUSTOM_FIELDS = {
 
 
 def install() -> None:
-	create_custom_fields(CUSTOM_FIELDS, update=True)
+	try:
+		create_custom_fields(CUSTOM_FIELDS, update=True)
+	except frappe.ValidationError:
+		# Frappe v16 on Postgres re-validates a standard field whose JSON `link_filters` the driver
+		# returns already decoded, and rejects it. Remove when Frappe fixes it. Retry per doctype
+		# without the re-validation, then rebuild the tables (covered by the Postgres CI legs).
+		frappe.db.rollback()
+		for doctype, fields in CUSTOM_FIELDS.items():
+			for f in fields:
+				name = frappe.db.get_value("Custom Field", {"dt": doctype, "fieldname": f["fieldname"]})
+				doc = frappe.get_doc({"doctype": "Custom Field", "dt": doctype, **f})
+				if name:
+					doc.name = name
+					doc.flags.in_import = True
+					doc.db_update()
+				else:
+					doc.flags.in_import = True
+					doc.set_new_name()
+					doc.db_insert()
+			frappe.clear_cache(doctype=doctype)
+			frappe.db.updatedb(doctype)
