@@ -197,3 +197,17 @@ def make_asset_repair(asset: str, company: str, description: str, failure_date) 
 	repair.flags.ignore_mandatory = True  # the user completes costs before submitting
 	repair.insert()
 	return repair.name
+
+
+def make_payment_request(dt: str, dn: str) -> str:
+	"""Create and submit a Payment Request for ``dt``/``dn`` without emailing it; returns its name.
+
+	Versions: ERPNext v15 and v16 both expose the whitelisted
+	``erpnext.accounts.doctype.payment_request.payment_request.make_payment_request`` with
+	``submit_doc``, ``mute_email`` and ``return_doc``. Kept here because its arguments have grown
+	(v16 payment schedules) and may change again. Remove when v15 support ends and the call is stable.
+	"""
+	from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request as make
+
+	pr = make(dt=dt, dn=dn, submit_doc=1, mute_email=1, return_doc=1)
+	return pr.name
