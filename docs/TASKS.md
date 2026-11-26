@@ -83,7 +83,7 @@ Work top to bottom. One task = one PR. Each task lists what to build (**Build**)
 
 ## Phase 6: Hardening and release
 
-- [ ] **T55 Performance.** Build: indexes, query review, caching, load test 100k bookings on both versions. Done when: targets in `docs/DEV.md` met. Progress: composite indexes (`services/indexes.py`), load script `frappe_rental.perf.load.run`, proposed targets in DEV.md; the 100k run on both benches is still to do.
+- [x] **T55 Performance.** Build: indexes, query review, caching, load test 100k bookings on both versions. Done when: targets in `docs/DEV.md` met. Progress: composite indexes (`services/indexes.py`), load script `frappe_rental.perf.load.run`, proposed targets in DEV.md; measured 2026-11-26 with 100k bookings over 500 units: is_available p95 0.8 ms (v15) and 0.6 ms (v16), search p95 251 ms (v15) and 215 ms (v16).
 - [ ] **T56 Security review.** Build: permission audit, input fuzz tests on public endpoints, secrets and PII review, dependency scan in CI; re-check that v16-specific permission or API changes are covered by tests.
 - [ ] **T57 Accessibility and i18n.** Build: WCAG pass on website, Arabic translation file and RTL check, translation extraction in CI.
 - [ ] **T58 Documentation.** Build: user guide per role, admin setup guide, API reference, accounting guide (D5), upgrade notes, supported-versions page.

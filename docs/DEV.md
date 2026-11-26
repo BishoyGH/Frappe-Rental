@@ -66,10 +66,10 @@ This installs the type presets and creates a demo location, rate cards, a Device
 
 They run in the normal test suite on both versions.
 
-## Performance targets (T55, proposed)
+## Performance targets (T55)
 
 Measured with `frappe_rental.perf.load.run` (see its docstring) on a site with 100,000 bookings over
-500 units, on each supported major. Proposed until confirmed in `docs/DECISIONS.md`:
+500 units, on each supported major:
 
 | Path | Target |
 | --- | --- |
@@ -78,3 +78,6 @@ Measured with `frappe_rental.perf.load.run` (see its docstring) on a site with 1
 | Daily invoicing job, 1,000 due rows | under 5 minutes |
 
 Composite indexes for these paths live in `frappe_rental/services/indexes.py` and are applied on migrate.
+
+Measured 2026-11-26 (100k bookings, 500 units): `is_available` p50/p95 0.7/0.8 ms on v15 and 0.4/0.6 ms on
+v16; `search` p50/p95 221/251 ms on v15 and 184/215 ms on v16. The invoicing target is not measured yet.
