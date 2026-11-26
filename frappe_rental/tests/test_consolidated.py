@@ -9,13 +9,13 @@ from frappe_rental.tests import test_erpnext_sync as t16
 from frappe_rental.tests import test_invoicing as t23
 from frappe_rental.tests.utils import make_customer
 
-I = t23.TestInvoicing.__dict__
+T23 = t23.TestInvoicing.__dict__
 
 
 class TestConsolidated(FrappeTestCase):
 	_tax_template = t16.TestErpnextSync.__dict__["_tax_template"]
 	make_fixtures = t16.TestErpnextSync.__dict__["make_fixtures"]
-	monthly_booking = I["monthly_booking"]
+	monthly_booking = T23["monthly_booking"]
 
 	@classmethod
 	def setUpClass(cls):
