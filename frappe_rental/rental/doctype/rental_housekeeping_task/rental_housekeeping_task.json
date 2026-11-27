@@ -1,0 +1,156 @@
+{
+ "actions": [],
+ "creation": "2026-11-26 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "links": [],
+ "modified": "2026-11-26 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "owner": "Administrator",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "name": "Rental Housekeeping Task",
+ "field_order": [
+  "rental_unit",
+  "task_type",
+  "status",
+  "assigned_to",
+  "column_break_1",
+  "due_by",
+  "completed_on",
+  "rental_booking",
+  "rental_handover",
+  "rental_block",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "rental_unit",
+   "fieldtype": "Link",
+   "label": "Unit",
+   "options": "Rental Unit",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "task_type",
+   "fieldtype": "Select",
+   "label": "Type",
+   "options": "Cleaning\nInspection\nRestock",
+   "default": "Cleaning",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Open\nIn Progress\nDone\nCancelled",
+   "default": "Open",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "assigned_to",
+   "fieldtype": "Link",
+   "label": "Assigned To",
+   "options": "User",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "due_by",
+   "fieldtype": "Datetime",
+   "label": "Due By",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "completed_on",
+   "fieldtype": "Datetime",
+   "label": "Completed On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "rental_booking",
+   "fieldtype": "Link",
+   "label": "Booking",
+   "options": "Rental Booking",
+   "read_only": 1
+  },
+  {
+   "fieldname": "rental_handover",
+   "fieldtype": "Link",
+   "label": "Return",
+   "options": "Rental Handover",
+   "read_only": 1
+  },
+  {
+   "fieldname": "rental_block",
+   "fieldtype": "Link",
+   "label": "Overdue Block",
+   "options": "Rental Block",
+   "read_only": 1
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "naming_rule": "Expression",
+ "autoname": "format:RHK-{#####}",
+ "title_field": "rental_unit",
+ "track_changes": 1,
+ "permissions": [
+  {
+   "role": "Rental Admin",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Rental Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Rental Agent",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Rental Provider",
+   "read": 1,
+   "write": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  }
+ ]
+}

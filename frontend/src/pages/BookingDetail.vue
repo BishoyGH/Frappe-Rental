@@ -39,19 +39,18 @@
           <LinesTable :lines="b.lines" :charges="b.charges" />
         </template>
         <LinesTable v-else-if="tab === 'Items'" :lines="b.lines" :charges="b.charges" />
-        <template v-else-if="tab === 'Payments'">
-          <Kv :label="__('Deposit required')" :value="money(b.deposit_required)" />
-          <Kv :label="__('Deposit paid')" :value="money(b.deposit_paid)" />
-          <Kv :label="__('Balance')" :value="money(b.balance)" />
-          <p class="mt-3 text-sm text-ink-gray-5">{{ __('Deposit collection and refunds arrive with deposits.') }}</p>
-        </template>
+        <BillingTab v-else-if="tab === 'Billing'" :name="name" />
+        <DepositDamageTab v-else-if="tab === 'Deposit & damage'" :name="name" @changed="load" />
         <template v-else-if="tab === 'Documents'">
           <LinkList :links="b.links" />
         </template>
-        <p v-else class="text-ink-gray-5">{{ __('Handover and return arrive in a later release.') }}</p>
+        <div v-else data-testid="handover-tab">
+          <p class="mb-3 text-ink-gray-6">{{ __('Hand units out and take them back on the Handovers screen.') }}</p>
+          <Button variant="solid" :label="__('Open handover')" data-testid="open-handover" @click="router.push({ name: 'Handovers', query: { booking: name } })" />
+        </div>
       </section>
 
-      <aside class="border-t bg-surface-gray-1 p-4 lg:border-l lg:border-t-0" data-testid="side-panel">
+      <aside class="border-t bg-surface-gray-1 p-4 lg:border-s lg:border-t-0" data-testid="side-panel">
         <h3 class="mb-2 font-semibold">{{ __('Summary') }}</h3>
         <Kv :label="__('Net')" :value="money(b.net_total)" />
         <Kv :label="b.taxes_and_charges || __('Taxes')" :value="money(b.total_taxes)" />
@@ -82,6 +81,9 @@
 <script setup>
 import { Badge, Button } from 'frappe-ui'
 import { defineComponent, h, onMounted, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import BillingTab from '../components/BillingTab.vue'
+import DepositDamageTab from '../components/DepositDamageTab.vue'
 import PageHeader from '../components/PageHeader.vue'
 import StatusBadge from '../components/StatusBadge.vue'
 import { api } from '../lib/api'
@@ -89,7 +91,8 @@ import { fmtDate, fmtMoney, fromNow } from '../lib/format'
 import { __ } from '../lib/translate'
 
 const props = defineProps({ name: { type: String, required: true } })
-const TABS = ['Overview', 'Items', 'Payments', 'Documents', 'Handover']
+const TABS = ['Overview', 'Items', 'Billing', 'Deposit & damage', 'Documents', 'Handover']
+const router = useRouter()
 const tab = ref('Overview')
 const b = ref(null)
 const error = ref('')
@@ -168,9 +171,9 @@ const LinkList = defineComponent({
 const LinesTable = defineComponent({
   props: { lines: Array, charges: Array },
   setup: (p) => {
-    const th = 'bg-surface-gray-1 px-2.5 py-1.5 text-left text-sm font-medium text-ink-gray-5 whitespace-nowrap'
+    const th = 'bg-surface-gray-1 px-2.5 py-1.5 text-start text-sm font-medium text-ink-gray-5 whitespace-nowrap'
     const td = 'border-b px-2.5 py-2 text-ink-gray-7 whitespace-nowrap'
-    const num = ' text-right tabular-nums'
+    const num = ' text-end tabular-nums'
     return () =>
       h('div', { class: 'overflow-x-auto' }, [
         h('h3', { class: 'mb-2 font-semibold' }, __('Items')),

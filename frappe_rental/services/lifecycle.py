@@ -12,7 +12,16 @@ import frappe
 from frappe import _
 from frappe.utils import add_to_date, flt, get_datetime, now_datetime
 
-from frappe_rental.services import availability, erpnext_sync
+from frappe_rental.services import (
+	availability,
+	calloff,
+	cancellation,
+	deposits,
+	erpnext_sync,
+	events,
+	invoicing,
+	waitlist,
+)
 
 SOURCE = "Rental Booking"
 
@@ -28,6 +37,8 @@ def place_hold(doc) -> None:
 	doc.status = "Hold"
 	doc.hold_expires_on = add_to_date(now_datetime(), minutes=hold_minutes())
 	doc.save()  # on_update reserves
+	events.emit("booking_held", doc, key=str(doc.hold_expires_on))
+	deposits.request(doc)
 
 
 def on_update(doc) -> None:
@@ -53,6 +64,7 @@ def before_submit(doc) -> None:
 			frappe.throw(_("{0} bookings need a contract before they are confirmed").format(doc.rental_type))
 		if not frappe.db.get_value("Contract", doc.contract, "is_signed"):
 			frappe.throw(_("Contract {0} is not signed").format(doc.contract))
+	calloff.before_submit(doc)
 	availability.reserve_booking(doc)
 	doc.status = "Confirmed"
 	doc.hold_expires_on = None
@@ -61,14 +73,22 @@ def before_submit(doc) -> None:
 def on_submit(doc) -> None:
 	"""Mirror the confirmed booking in ERPNext; invoice now when Rental Settings auto-invoices."""
 	erpnext_sync.make_sales_order(doc)
-	if frappe.db.get_single_value("Rental Settings", "auto_invoice"):
-		erpnext_sync.make_sales_invoice(doc)
+	events.emit("booking_confirmed", doc)
+	calloff.on_submit(doc)
+	deposits.request(doc)
+	invoicing.on_confirm(doc)
 
 
 def on_cancel(doc) -> None:
 	availability.release(SOURCE, doc.name)
-	erpnext_sync.reverse(doc)
+	calloff.on_cancel(doc)
+	if doc.flags.get("cancellation"):
+		cancellation.settle(doc, doc.flags.cancellation)
+	else:
+		erpnext_sync.reverse(doc)
 	doc.db_set("status", "Cancelled")
+	events.emit("booking_cancelled", doc)
+	waitlist.on_release(doc)
 
 
 def on_trash(doc) -> None:
@@ -82,6 +102,8 @@ def cancel(doc) -> None:
 	elif doc.docstatus == 0 and doc.status == "Hold":
 		availability.release(SOURCE, doc.name)
 		doc.db_set({"status": "Cancelled", "hold_expires_on": None})
+		events.emit("booking_cancelled", doc)
+		waitlist.on_release(doc)
 	else:
 		frappe.throw(_("Only a held or confirmed booking can be cancelled"))
 
@@ -93,8 +115,13 @@ def expire_holds(now=None) -> list[str]:
 		filters={"docstatus": 0, "status": "Hold", "hold_expires_on": ["<", now or now_datetime()]},
 		pluck="name",
 	)
+	items = []
 	for name in names:
 		availability.release(SOURCE, name)
 		frappe.db.set_value(SOURCE, name, {"status": "Draft", "hold_expires_on": None})
-		frappe.get_doc(SOURCE, name).add_comment("Info", _("Hold expired; units released"))
+		doc = frappe.get_doc(SOURCE, name)
+		doc.add_comment("Info", _("Hold expired; units released"))
+		items += [ln.rental_item for ln in doc.lines if ln.rental_item]
+	if items:
+		waitlist.check(items)
 	return names

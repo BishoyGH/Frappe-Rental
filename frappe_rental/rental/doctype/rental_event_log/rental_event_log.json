@@ -1,0 +1,123 @@
+{
+ "actions": [],
+ "creation": "2026-11-26 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "event",
+  "reference_doctype",
+  "reference_name",
+  "column_break_1",
+  "customer",
+  "email",
+  "event_key",
+  "section_payload",
+  "payload"
+ ],
+ "fields": [
+  {
+   "fieldname": "event",
+   "fieldtype": "Select",
+   "label": "Event",
+   "options": "booking_held\nbooking_confirmed\nbooking_cancelled\nhold_expiring\ninvoice_created\ndeposit_requested\ndeposit_received\nhandover_done\nreturned\noverdue\nwaitlist_available\ncontract_signature_requested\ncontract_signature_reminder\ncontract_signed\ncontract_notice\ncontract_renewed\ncontract_ended\ndamage_reported\nsla_breached\nhousekeeping_overdue",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "reference_doctype",
+   "fieldtype": "Link",
+   "label": "Reference DocType",
+   "options": "DocType",
+   "reqd": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "reference_name",
+   "fieldtype": "Data",
+   "label": "Reference",
+   "reqd": 1,
+   "in_list_view": 1,
+   "read_only": 1,
+   "description": "Kept as text so the log survives when a draft is deleted"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer",
+   "in_list_view": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email",
+   "options": "Email",
+   "read_only": 1
+  },
+  {
+   "fieldname": "event_key",
+   "fieldtype": "Data",
+   "label": "Event Key",
+   "unique": 1,
+   "read_only": 1,
+   "description": "Makes every event fire once"
+  },
+  {
+   "fieldname": "section_payload",
+   "fieldtype": "Section Break",
+   "label": "Payload"
+  },
+  {
+   "fieldname": "payload",
+   "fieldtype": "Code",
+   "label": "Payload",
+   "options": "JSON",
+   "read_only": 1
+  }
+ ],
+ "in_create": 1,
+ "links": [],
+ "modified": "2026-11-26 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "name": "Rental Event Log",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "report": 1,
+   "export": 1,
+   "delete": 1
+  },
+  {
+   "role": "Rental Admin",
+   "read": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Rental Manager",
+   "read": 1,
+   "report": 1
+  },
+  {
+   "role": "Rental Accountant",
+   "read": 1,
+   "report": 1
+  }
+ ],
+ "autoname": "REV-.#####",
+ "naming_rule": "Expression (old style)",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "event"
+}

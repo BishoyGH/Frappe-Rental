@@ -18,7 +18,16 @@
   "late_fee_income_account",
   "damage_recovery_account",
   "deposit_forfeiture_income_account",
-  "rented_out_warehouse"
+  "rented_out_warehouse",
+  "submit_scheduled_invoices",
+  "payments_section",
+  "payment_provider",
+  "payment_account",
+  "column_break_payments",
+  "stripe_secret_key",
+  "stripe_webhook_secret",
+  "alerts_section",
+  "alert_rules"
  ],
  "fields": [
   {
@@ -107,11 +116,66 @@
    "fieldtype": "Link",
    "label": "Rented Out Warehouse",
    "options": "Warehouse"
+  },
+  {
+   "fieldname": "submit_scheduled_invoices",
+   "fieldtype": "Check",
+   "label": "Submit scheduled invoices",
+   "default": "1",
+   "description": "Off: the daily billing job leaves invoices in draft for review"
+  },
+  {
+   "fieldname": "payments_section",
+   "fieldtype": "Section Break",
+   "label": "Online payments"
+  },
+  {
+   "fieldname": "payment_provider",
+   "fieldtype": "Select",
+   "label": "Payment provider",
+   "options": "\nStripe",
+   "description": "Customers pay deposits and balances online through this provider."
+  },
+  {
+   "fieldname": "payment_account",
+   "fieldtype": "Link",
+   "label": "Payment clearing account",
+   "options": "Account",
+   "description": "Bank or clearing account the provider settles into."
+  },
+  {
+   "fieldname": "column_break_payments",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "stripe_secret_key",
+   "fieldtype": "Password",
+   "label": "Stripe secret key",
+   "depends_on": "eval:doc.payment_provider=='Stripe'"
+  },
+  {
+   "fieldname": "stripe_webhook_secret",
+   "fieldtype": "Password",
+   "label": "Stripe webhook signing secret",
+   "depends_on": "eval:doc.payment_provider=='Stripe'",
+   "description": "Point a Stripe webhook at /api/method/frappe_rental.api.payment.stripe_webhook for checkout.session.completed, checkout.session.expired and checkout.session.async_payment_failed."
+  },
+  {
+   "fieldname": "alerts_section",
+   "fieldtype": "Section Break",
+   "label": "Staff alerts"
+  },
+  {
+   "fieldname": "alert_rules",
+   "fieldtype": "Table",
+   "label": "Alert rules",
+   "options": "Rental Alert Rule",
+   "description": "Who is alerted for each event. Empty means the defaults."
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2026-11-25 00:00:00.000000",
+ "modified": "2026-11-26 00:00:01.000000",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Rental Settings",

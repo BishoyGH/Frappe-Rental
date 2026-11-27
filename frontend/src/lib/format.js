@@ -7,7 +7,22 @@ const STATUS_THEME = {
   Closed: 'green',
   Cancelled: 'red',
   'No Show': 'red',
+  // contracts
+  'In Review': 'orange',
+  'Awaiting Signature': 'orange',
+  Active: 'green',
+  Suspended: 'orange',
+  Ending: 'orange',
+  Ended: 'gray',
+  Terminated: 'red',
+  Renewed: 'blue',
+  // visits
+  Planned: 'blue',
+  Done: 'green',
 }
+// The page language (set by the server from the user's language), so dates and numbers follow it
+const lang = () => document.documentElement.lang || undefined
+
 export const statusTheme = (s) => STATUS_THEME[s] || 'gray'
 
 export function fmtDate(value, withTime = false) {
@@ -16,19 +31,19 @@ export function fmtDate(value, withTime = false) {
   if (Number.isNaN(d.getTime())) return value
   const opts = { day: 'numeric', month: 'short' }
   if (withTime) Object.assign(opts, { year: 'numeric', hour: '2-digit', minute: '2-digit' })
-  return d.toLocaleString(undefined, opts)
+  return d.toLocaleString(lang(), opts)
 }
 
 export function fmtMoney(value) {
   const n = Number(value || 0)
-  return n.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })
+  return n.toLocaleString(lang(), { minimumFractionDigits: 0, maximumFractionDigits: 2 })
 }
 
 export function fromNow(value, now) {
   if (!value) return ''
   const parse = (v) => new Date(String(v).replace(' ', 'T')).getTime()
   const sec = ((now ? parse(now) : Date.now()) - parse(value)) / 1000
-  const rtf = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' })
+  const rtf = new Intl.RelativeTimeFormat(lang(), { numeric: 'auto' })
   for (const [unit, s] of [['day', 86400], ['hour', 3600], ['minute', 60]]) {
     if (Math.abs(sec) >= s) return rtf.format(-Math.round(sec / s), unit)
   }
@@ -50,4 +65,22 @@ export function store(key, value) {
   } catch {
     /* storage unavailable */
   }
+}
+
+// Server datetimes are naive "YYYY-MM-DD HH:MM:SS"; treat them as wall-clock times on both sides.
+export const parseDt = (v) => new Date(String(v).replace(' ', 'T'))
+const pad = (n) => String(n).padStart(2, '0')
+export const toDt = (d) =>
+  `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:00`
+export const toInput = (d) => toDt(d).slice(0, 16).replace(' ', 'T')
+export const fromInput = (v) => (v ? v.replace('T', ' ') + (v.length === 16 ? ':00' : '') : '')
+export const addDays = (d, n) => {
+  const x = new Date(d)
+  x.setDate(x.getDate() + n)
+  return x
+}
+export const startOfDay = (d) => {
+  const x = new Date(d)
+  x.setHours(0, 0, 0, 0)
+  return x
 }

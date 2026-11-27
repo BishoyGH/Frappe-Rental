@@ -1,0 +1,132 @@
+{
+ "actions": [],
+ "creation": "2026-11-26 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "istable": 1,
+ "field_order": [
+  "allocation_type",
+  "rental_item",
+  "rental_unit",
+  "from_date",
+  "to_date",
+  "qty",
+  "capacity",
+  "capacity_used",
+  "exclusive",
+  "rate_override",
+  "site",
+  "status",
+  "substitution_allowed",
+  "swapped_from",
+  "change_reason"
+ ],
+ "fields": [
+  {
+   "fieldname": "allocation_type",
+   "fieldtype": "Select",
+   "label": "Type",
+   "options": "Specific unit\nCategory\nQuantity\nCapacity\nProvider time",
+   "default": "Specific unit",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "rental_item",
+   "fieldtype": "Link",
+   "label": "Item",
+   "options": "Rental Item",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "rental_unit",
+   "fieldtype": "Link",
+   "label": "Unit",
+   "options": "Rental Unit",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "label": "From",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "label": "To",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "label": "Qty",
+   "default": "1"
+  },
+  {
+   "fieldname": "capacity",
+   "fieldtype": "Float",
+   "label": "Capacity",
+   "description": "Hours, visits, seats or sqm for Capacity and Provider time"
+  },
+  {
+   "fieldname": "capacity_used",
+   "fieldtype": "Float",
+   "label": "Used",
+   "read_only": 1
+  },
+  {
+   "fieldname": "exclusive",
+   "fieldtype": "Check",
+   "label": "Exclusive",
+   "default": "1",
+   "description": "Blocks the unit for everyone else"
+  },
+  {
+   "fieldname": "rate_override",
+   "fieldtype": "Currency",
+   "label": "Contract rate",
+   "options": "currency"
+  },
+  {
+   "fieldname": "site",
+   "fieldtype": "Data",
+   "label": "Site"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Reserved\nActive\nSwapped\nReturned\nReleased",
+   "default": "Reserved",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "substitution_allowed",
+   "fieldtype": "Check",
+   "label": "Substitution allowed"
+  },
+  {
+   "fieldname": "swapped_from",
+   "fieldtype": "Data",
+   "label": "Replaces row",
+   "read_only": 1
+  },
+  {
+   "fieldname": "change_reason",
+   "fieldtype": "Data",
+   "label": "Reason",
+   "read_only": 1
+  }
+ ],
+ "links": [],
+ "modified": "2026-11-26 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "name": "Rental Contract Allocation",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

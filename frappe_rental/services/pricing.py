@@ -23,6 +23,7 @@ import math
 from datetime import UTC, datetime, timedelta
 from zoneinfo import ZoneInfo
 
+import frappe
 from dateutil.relativedelta import relativedelta
 from frappe.utils import flt, get_datetime, getdate
 
@@ -136,7 +137,7 @@ def _choose_rate(request, card, start, end):
 def _matches(row, request, start) -> bool:
 	if row.get("rental_unit") and row["rental_unit"] != request.get("rental_unit"):
 		return False
-	if row.get("customer_group") and row["customer_group"] != request.get("customer_group"):
+	if row.get("customer_group") and not _in_group(request.get("customer_group"), row["customer_group"]):
 		return False
 	day = start.date()
 	if row.get("valid_from") and day < getdate(row["valid_from"]):
@@ -151,6 +152,23 @@ def _matches(row, request, start) -> bool:
 		if not span or not getdate(span[0]) <= day <= getdate(span[1]):
 			return False
 	return True
+
+
+def _in_group(group: str | None, parent: str) -> bool:
+	"""True when ``group`` is ``parent`` or sits under it in the Customer Group tree.
+
+	A rate for "All Customer Groups" (the tree root, which ERPNext also sets as the default on new
+	rows) therefore applies to every customer.
+	"""
+	if group == parent:
+		return True
+	bounds = frappe.db.get_value("Customer Group", parent, ["lft", "rgt", "is_group"], as_dict=True)
+	if not bounds or not bounds.is_group:
+		return False
+	if not group:
+		return not frappe.db.get_value("Customer Group", parent, "parent_customer_group")
+	lft = frappe.db.get_value("Customer Group", group, "lft")
+	return bool(lft) and bounds.lft < lft < bounds.rgt
 
 
 def _specificity(row) -> int:

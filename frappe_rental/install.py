@@ -2,10 +2,11 @@ from frappe_rental.services.setup import create_defaults
 
 
 def after_install():
-	from frappe_rental.services import custom_fields
+	from frappe_rental.services import custom_fields, events
 
 	custom_fields.install()
 	create_defaults()
+	events.install_notifications()
 
 
 def company_after_insert(doc, method=None):

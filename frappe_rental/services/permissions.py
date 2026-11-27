@@ -7,6 +7,78 @@ rights on master data yet; their portal access arrives with the portal tasks.
 PERMS = {"r": "read", "w": "write", "c": "create", "d": "delete", "s": "submit", "x": "cancel"}
 
 MATRIX = {
+	"Rental Contract": {
+		"Rental Admin": "rwcd",
+		"Rental Manager": "rwc",
+		"Rental Agent": "rwc",
+		"Rental Accountant": "r",
+	},
+	"Rental Clause": {
+		"Rental Admin": "rwcd",
+		"Rental Manager": "rwc",
+		"Rental Agent": "r",
+		"Rental Accountant": "r",
+	},
+	"Rental Terms Template": {
+		"Rental Admin": "rwcd",
+		"Rental Manager": "rwc",
+		"Rental Agent": "r",
+		"Rental Accountant": "r",
+	},
+	"Rental Waitlist Entry": {
+		"Rental Admin": "rwcd",
+		"Rental Manager": "rwcd",
+		"Rental Agent": "rwc",
+		"Rental Accountant": "r",
+	},
+	"Rental Payment": {
+		"Rental Admin": "rwc",
+		"Rental Manager": "rwc",
+		"Rental Agent": "r",
+		"Rental Accountant": "r",
+	},
+	"Rental Housekeeping Task": {
+		"Rental Admin": "rwcd",
+		"Rental Manager": "rwc",
+		"Rental Agent": "rwc",
+		"Rental Provider": "rw",
+	},
+	"Rental Meter Reading": {
+		"Rental Admin": "rwcd",
+		"Rental Manager": "rwc",
+		"Rental Agent": "rwc",
+		"Rental Accountant": "r",
+	},
+	"Rental Damage Report": {
+		"Rental Admin": "rwcd",
+		"Rental Manager": "rwc",
+		"Rental Agent": "rwc",
+		"Rental Accountant": "rw",
+	},
+	"Rental Handover": {
+		"Rental Admin": "rwcdsx",
+		"Rental Manager": "rwcsx",
+		"Rental Agent": "rwcs",
+		"Rental Accountant": "r",
+	},
+	"Rental Deposit": {
+		"Rental Admin": "rwcd",
+		"Rental Manager": "rwc",
+		"Rental Agent": "rwc",
+		"Rental Accountant": "rwc",
+	},
+	"Rental Billable Event": {
+		"Rental Admin": "rwcd",
+		"Rental Manager": "rwcd",
+		"Rental Agent": "rwc",
+		"Rental Accountant": "rwc",
+	},
+	"Rental Event Log": {
+		"Rental Admin": "r",
+		"Rental Manager": "r",
+		"Rental Accountant": "r",
+		"System Manager": "rd",
+	},
 	"Rental Block": {
 		"Rental Admin": "rwcd",
 		"Rental Manager": "rwcd",
@@ -79,6 +151,13 @@ MATRIX = {
 		"Rental Admin": "rwcd",
 		"Rental Manager": "rwc",
 		"Rental Agent": "rw",
+		"Rental Accountant": "r",
+		"Rental Provider": "r",
+	},
+	"Rental Schedule": {
+		"Rental Admin": "rwcd",
+		"Rental Manager": "rwc",
+		"Rental Agent": "r",
 		"Rental Accountant": "r",
 		"Rental Provider": "r",
 	},

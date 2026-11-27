@@ -53,3 +53,31 @@ cd ../e2e && yarn install && BASE_URL=http://127.0.0.1:8000 yarn test   # Playwr
 
 `bench build` runs the root `package.json` build script, so a normal bench build also builds the app.
 The built files are not committed. Guests are redirected to `/login`; users need a Rental role (or System Manager).
+
+## Demo data and acceptance scenarios
+
+```
+bench --site <site> rental-demo [--with-bookings] [--basic]   # every preset; --basic = Device and Apartment only
+```
+
+This installs the type presets and creates a demo location, rate cards, a Device item with three serialised units, an Apartment item with two units and two customers. Running it again creates nothing new. The Phase 1 acceptance scenarios live in `frappe_rental/tests/test_scenarios.py`:
+- a 3-day Device rental, booked, confirmed, Sales Order and invoice;
+- a 1-month Apartment that needs a signed contract, then is invoiced and cancelled.
+
+They run in the normal test suite on both versions.
+
+## Performance targets (T55)
+
+Measured with `frappe_rental.perf.load.run` (see its docstring) on a site with 100,000 bookings over
+500 units, on each supported major:
+
+| Path | Target |
+| --- | --- |
+| `availability.is_available` for one unit | p95 under 50 ms |
+| `search.search` over one type, 3-day window, 50 results | p95 under 500 ms |
+| Daily invoicing job, 1,000 due rows | under 5 minutes |
+
+Composite indexes for these paths live in `frappe_rental/services/indexes.py` and are applied on migrate.
+
+Measured 2026-11-26 (100k bookings, 500 units): `is_available` p50/p95 0.7/0.8 ms on v15 and 0.4/0.6 ms on
+v16; `search` p50/p95 221/251 ms on v15 and 184/215 ms on v16. The invoicing target is not measured yet.

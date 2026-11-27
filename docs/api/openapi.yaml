@@ -1,0 +1,286 @@
+openapi: 3.0.3
+info:
+  title: Frappe Rental REST API
+  version: "1.0"
+  description: |
+    Whitelisted methods under /api/method/frappe_rental.api.<module>.<fn>. Authenticate with a
+    Frappe API key (`Authorization: token <api_key>:<api_secret>`) or a session cookie.
+    Responses wrap the result in `{"message": ...}`. Errors use Frappe's standard error body:
+    403 for permission failures, 417 for validation errors, 409 for an idempotency key reused with
+    different arguments, 429 for rate limits.
+    Create calls accept an `Idempotency-Key` header (or `idempotency_key` argument): a retry with the
+    same key returns the first answer for 24 hours.
+servers:
+  - url: /api/method
+components:
+  securitySchemes:
+    token:
+      type: apiKey
+      in: header
+      name: Authorization
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: false
+      schema: {type: string, maxLength: 200}
+  schemas:
+    Line:
+      type: object
+      required: [rental_item]
+      properties:
+        rental_item: {type: string}
+        rental_unit: {type: string}
+        qty: {type: number, default: 1}
+    BookingInput:
+      type: object
+      required: [customer, rental_type, from_datetime, to_datetime, lines]
+      properties:
+        customer: {type: string}
+        rental_type: {type: string}
+        location: {type: string}
+        from_datetime: {type: string, example: "2030-01-03 10:00"}
+        to_datetime: {type: string}
+        coupon_code: {type: string}
+        source: {type: string}
+        lines: {type: array, items: {$ref: "#/components/schemas/Line"}}
+    BookingState:
+      type: object
+      properties:
+        name: {type: string}
+        status: {type: string, enum: [Draft, Hold, Confirmed, Active, Completed, Cancelled]}
+        hold_expires_on: {type: string, nullable: true}
+    Quote:
+      type: object
+      properties:
+        lines: {type: array, items: {type: object}}
+        charges: {type: array, items: {type: object, properties: {charge: {type: string}, amount: {type: number}}}}
+        currency: {type: string}
+        net_total: {type: number}
+        total_taxes: {type: number}
+        grand_total: {type: number}
+        deposit_required: {type: number}
+    Handover:
+      type: object
+      properties:
+        name: {type: string}
+        booking: {type: string}
+        handover_type: {type: string, enum: [Check-out, Return]}
+        is_late: {type: integer}
+security:
+  - token: []
+paths:
+  /frappe_rental.api.availability.search:
+    get:
+      summary: Free units for a period, cheapest first, with prices
+      parameters:
+        - {name: from_datetime, in: query, required: true, schema: {type: string}}
+        - {name: to_datetime, in: query, required: true, schema: {type: string}}
+        - {name: rental_type, in: query, schema: {type: string}}
+        - {name: rental_item, in: query, schema: {type: string}}
+        - {name: qty, in: query, schema: {type: number}}
+        - {name: location, in: query, schema: {type: string}}
+        - {name: filters, in: query, schema: {type: string, description: JSON object}}
+      responses: {"200": {description: List of free units}, "403": {description: Not permitted}}
+  /frappe_rental.api.availability.calendar:
+    get:
+      summary: Day map of one unit or item for a month
+      parameters:
+        - {name: month, in: query, required: true, schema: {type: string, example: "2030-01"}}
+        - {name: rental_unit, in: query, schema: {type: string}}
+        - {name: rental_item, in: query, schema: {type: string}}
+      responses: {"200": {description: Day map}, "403": {description: Not permitted}}
+  /frappe_rental.api.pricing.quote:
+    post:
+      summary: Price items for a period without saving
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [items, from_datetime, to_datetime]
+              properties:
+                items: {type: array, items: {$ref: "#/components/schemas/Line"}}
+                from_datetime: {type: string}
+                to_datetime: {type: string}
+                rental_type: {type: string}
+                customer: {type: string}
+                location: {type: string}
+                coupon: {type: string}
+      responses:
+        "200": {description: Price breakdown, content: {application/json: {schema: {$ref: "#/components/schemas/Quote"}}}}
+        "403": {description: Not permitted}
+  /frappe_rental.api.booking.create:
+    post:
+      summary: Create a draft booking, optionally held straight away
+      parameters: [{$ref: "#/components/parameters/IdempotencyKey"}]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [booking]
+              properties:
+                booking: {$ref: "#/components/schemas/BookingInput"}
+                hold: {type: integer, enum: [0, 1]}
+      responses:
+        "200": {description: Created, content: {application/json: {schema: {$ref: "#/components/schemas/BookingState"}}}}
+        "403": {description: Not permitted}
+        "409": {description: Idempotency key reused with different arguments}
+        "429": {description: Rate limited (60 per minute per IP)}
+  /frappe_rental.api.booking.create_hold:
+    post:
+      summary: Hold a saved draft
+      requestBody: {content: {application/json: {schema: {type: object, required: [name], properties: {name: {type: string}}}}}}
+      responses: {"200": {description: State, content: {application/json: {schema: {$ref: "#/components/schemas/BookingState"}}}}, "403": {description: Not permitted}}
+  /frappe_rental.api.booking.confirm:
+    post:
+      summary: Confirm (submit) a booking after deposit, contract and availability guards
+      requestBody: {content: {application/json: {schema: {type: object, required: [name], properties: {name: {type: string}}}}}}
+      responses: {"200": {description: State}, "403": {description: Not permitted}, "417": {description: A guard failed}}
+  /frappe_rental.api.booking.modify:
+    post:
+      summary: Change the period or unit of a draft or held booking
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, from_datetime, to_datetime]
+              properties: {name: {type: string}, from_datetime: {type: string}, to_datetime: {type: string}, rental_unit: {type: string}}
+      responses: {"200": {description: New state and period}, "403": {description: Not permitted}, "417": {description: Unit or period taken}}
+  /frappe_rental.api.booking.cancel:
+    post:
+      summary: Cancel a confirmed booking or release a hold; preview=1 returns the refund calculation only
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties: {name: {type: string}, preview: {type: integer, enum: [0, 1]}, by: {type: string, enum: [customer, provider]}}
+      responses: {"200": {description: State, or the preview}, "403": {description: Not permitted}}
+  /frappe_rental.api.booking.cancel_with_policy:
+    post:
+      summary: Cancel and settle fee, credit note and refund under the cancellation policy
+      requestBody: {content: {application/json: {schema: {type: object, required: [name], properties: {name: {type: string}, by: {type: string}}}}}}
+      responses: {"200": {description: State with settlement}, "403": {description: Not permitted}}
+  /frappe_rental.api.booking.checkout:
+    post:
+      summary: Hand units to the customer (Rental Handover, Check-out)
+      parameters: [{$ref: "#/components/parameters/IdempotencyKey"}]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: {type: string}
+                scans: {type: array, items: {type: string}, description: Barcodes, serials or external IDs}
+                lines: {type: array, items: {type: object}}
+      responses: {"200": {description: Handover, content: {application/json: {schema: {$ref: "#/components/schemas/Handover"}}}}, "403": {description: Not permitted}}
+  /frappe_rental.api.booking.checkin:
+    post:
+      summary: Take units back (Rental Handover, Return); lines may carry condition and meter readings
+      parameters: [{$ref: "#/components/parameters/IdempotencyKey"}]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties: {name: {type: string}, scans: {type: array, items: {type: string}}, lines: {type: array, items: {type: object}}}
+      responses: {"200": {description: Handover}, "403": {description: Not permitted}}
+  /frappe_rental.api.booking.get:
+    get:
+      summary: One booking with lines, totals, links, activity and allowed actions
+      parameters: [{name: name, in: query, required: true, schema: {type: string}}]
+      responses: {"200": {description: Booking}, "403": {description: Not permitted}}
+  /frappe_rental.api.booking.list_mine:
+    get:
+      summary: The signed-in customer's own bookings
+      parameters:
+        - {name: start, in: query, schema: {type: integer}}
+        - {name: page_length, in: query, schema: {type: integer, maximum: 100}}
+      responses: {"200": {description: "{rows, total}"}, "403": {description: Guest}}
+  /frappe_rental.api.payment.create_request:
+    post:
+      summary: Submitted ERPNext Payment Request for the booking's open invoice (reuses an open one)
+      parameters: [{$ref: "#/components/parameters/IdempotencyKey"}]
+      requestBody: {content: {application/json: {schema: {type: object, required: [name], properties: {name: {type: string}}}}}}
+      responses: {"200": {description: "Payment Request (name, grand_total, currency, status, payment_url)"}, "403": {description: Not permitted}, "417": {description: No open invoice}}
+  /frappe_rental.api.contract.terms:
+    get:
+      summary: Contract details and rendered terms for the customer or staff
+      parameters: [{name: name, in: query, required: true, schema: {type: string}}]
+      responses: {"200": {description: "{name, status, html, require_otp, signed_on}"}, "403": {description: Not permitted}}
+  /frappe_rental.api.contract.request_otp:
+    post:
+      summary: Email a one-time code to the contract's customer before signing
+      requestBody: {content: {application/json: {schema: {type: object, required: [name], properties: {name: {type: string}}}}}}
+      responses: {"200": {description: "{sent: true}"}, "403": {description: Not permitted}}
+  /frappe_rental.api.contract.sign:
+    post:
+      summary: Customer signs the contract (typed or drawn signature, OTP when required)
+      requestBody: {content: {application/json: {schema: {type: object, required: [name, signer_name, signature], properties: {name: {type: string}, signer_name: {type: string}, signature: {type: string}, signature_type: {type: string, enum: [Typed, Drawn]}, otp: {type: string}}}}}}
+      responses: {"200": {description: "{signed_on}"}, "403": {description: Not permitted}, "417": {description: Wrong or expired code, or not awaiting signature}}
+  /frappe_rental.api.provider.slots:
+    get:
+      summary: Free start times of a Provider unit, from its working hours minus holidays and bookings
+      parameters:
+        - {name: unit, in: query, required: true, schema: {type: string}}
+        - {name: from_date, in: query, required: true, schema: {type: string, format: date}}
+        - {name: to_date, in: query, schema: {type: string, format: date}}
+        - {name: minutes, in: query, schema: {type: integer, default: 60}}
+      responses: {"200": {description: "[{from_datetime, to_datetime}]"}, "403": {description: Not permitted}, "417": {description: No working hours or range over 62 days}}
+  /frappe_rental.api.provider.my_schedule:
+    get:
+      summary: Bookings of the signed-in provider's own units (next 14 days by default)
+      parameters:
+        - {name: from_date, in: query, schema: {type: string, format: date}}
+        - {name: to_date, in: query, schema: {type: string, format: date}}
+      responses: {"200": {description: "[{name, customer, customer_name, from_datetime, to_datetime, status, rental_unit, project}]"}, "403": {description: Guest}}
+  /frappe_rental.api.contract.request_service:
+    post:
+      summary: Ask for an unplanned maintenance visit; SLA deadlines come from the contract
+      requestBody: {content: {application/json: {schema: {type: object, required: [name, notes], properties: {name: {type: string}, notes: {type: string}}}}}}
+      responses: {"200": {description: "{visit}"}, "403": {description: Not permitted}, "417": {description: Contract not running}}
+  /frappe_rental.api.contract.assign_visit:
+    post:
+      summary: Staff books a technician (Provider unit) for a visit
+      requestBody: {content: {application/json: {schema: {type: object, required: [name, visit, technician, start], properties: {name: {type: string}, visit: {type: string}, technician: {type: string}, start: {type: string, format: date-time}, hours: {type: number, default: 2}}}}}}
+      responses: {"200": {description: "{booking}"}, "403": {description: Not permitted}, "417": {description: Not a provider, outside working hours, or visit closed}}
+  /frappe_rental.api.contract.complete_visit:
+    post:
+      summary: Staff marks a visit done; a finish after the resolution deadline flags an SLA breach
+      requestBody: {content: {application/json: {schema: {type: object, required: [name, visit], properties: {name: {type: string}, visit: {type: string}, notes: {type: string}}}}}}
+      responses: {"200": {description: "{status: Done}"}, "403": {description: Not permitted}}
+  /frappe_rental.api.metering.add_reading:
+    post:
+      summary: Record a meter reading for a unit on a submitted booking (devices, staff app)
+      requestBody: {content: {application/json: {schema: {type: object, required: [booking, unit, reading], properties: {booking: {type: string}, unit: {type: string}, reading: {type: number}, read_on: {type: string, format: date-time}}}}}}
+      responses: {"200": {description: "{name, meter_unit, allowance, rate, units, total, overage, amount}"}, "403": {description: Not permitted}, "417": {description: Reading lower than the last one, or unit not on booking}}
+  /frappe_rental.api.metering.summary:
+    get:
+      summary: Usage, allowance and overage of a booking
+      parameters: [{name: booking, in: query, required: true, schema: {type: string}}]
+      responses: {"200": {description: "{meter_unit, allowance, rate, units, total, overage, amount}"}, "403": {description: Not permitted}}
+  /frappe_rental.api.housekeeping.open_tasks:
+    get:
+      summary: Open turnaround tasks, soonest due first
+      parameters: [{name: location, in: query, schema: {type: string}}]
+      responses: {"200": {description: "[{name, rental_unit, task_type, status, due_by, assigned_to, rental_booking}]"}, "403": {description: Not permitted}}
+  /frappe_rental.api.housekeeping.complete:
+    post:
+      summary: Mark a turnaround task done; the unit becomes Available and any overdue block ends
+      requestBody: {content: {application/json: {schema: {type: object, required: [name], properties: {name: {type: string}, notes: {type: string}}}}}}
+      responses: {"200": {description: "{status: Done}"}, "403": {description: Not permitted}}
+  /frappe_rental.api.waitlist.add:
+    post:
+      summary: Put a customer on the waitlist
+      responses: {"200": {description: Entry name}, "403": {description: Not permitted}}
+  /frappe_rental.api.waitlist.substitutes:
+    get:
+      summary: Free alternatives for a clashing request
+      responses: {"200": {description: "{units, items}"}, "403": {description: Not permitted}}

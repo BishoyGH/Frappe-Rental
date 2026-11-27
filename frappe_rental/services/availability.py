@@ -45,7 +45,7 @@ def overlapping_rows(
 	unit: str,
 	start: datetime,
 	end: datetime | None,
-	exclude: tuple[str, str] | None = None,
+	exclude: tuple[str, str] | list[tuple[str, str]] | None = None,
 	locking: bool = False,
 ) -> list[dict]:
 	"""Cache rows for `unit` whose window intersects [start, end).
@@ -56,9 +56,10 @@ def overlapping_rows(
 	end_value = end or FAR_FUTURE
 	conditions = ["rental_unit = %(unit)s", "busy_from < %(end)s", "(busy_to is null or busy_to > %(start)s)"]
 	values = {"unit": unit, "start": start, "end": end_value}
-	if exclude:
-		conditions.append("not (source_doctype = %(ex_dt)s and source_name = %(ex_name)s)")
-		values.update(ex_dt=exclude[0], ex_name=exclude[1])
+	excludes = [exclude] if exclude and isinstance(exclude[0], str) else list(exclude or [])
+	for i, (ex_dt, ex_name) in enumerate(excludes):
+		conditions.append(f"not (source_doctype = %(ex_dt{i})s and source_name = %(ex_name{i})s)")
+		values.update({f"ex_dt{i}": ex_dt, f"ex_name{i}": ex_name})
 	return frappe.db.sql(
 		f"select name, busy_from, busy_to, qty, source_doctype, source_name from `tab{CACHE}` where {' and '.join(conditions)}"
 		+ (" for update" if locking else ""),
@@ -152,7 +153,10 @@ def _reserve_lines(doc, source) -> None:
 			if line.name:
 				line.db_set("rental_unit", line.rental_unit, update_modified=False)
 		lock_unit(line.rental_unit)
-		if not is_available(line.rental_unit, start, end, line.qty, doc.rental_type, source, locking=True):
+		from frappe_rental.services import calloff
+
+		excludes = [source, *calloff.own_allocation_sources(doc, line)]
+		if not is_available(line.rental_unit, start, end, line.qty, doc.rental_type, excludes, locking=True):
 			raise UnavailableError(
 				_("Row {0}: unit {1} is not available for that period").format(line.idx, line.rental_unit)
 			)

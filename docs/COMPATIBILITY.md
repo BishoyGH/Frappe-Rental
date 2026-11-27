@@ -19,7 +19,7 @@ GitHub Actions matrix, all required checks:
 | Axis | Values |
 |---|---|
 | Frappe/ERPNext | v15 (`version-15`), v16 (`version-16`) |
-| Database | MariaDB (required); Postgres allowed-failure until a task enables it |
+| Database | MariaDB (required); Postgres runs in its own CI job, allowed to fail until it is green on both majors |
 | Python and Node | taken from `ci/versions.yml` per Frappe version |
 
 Jobs: lint (once), unit and integration tests (matrix), Playwright smoke (matrix), frontend build (matrix), install-and-migrate-from-previous-release (matrix, from T60 onward). Nightly: oldest supported minors, and the next major as allowed-failure. Coverage is reported per matrix leg; service-layer coverage target applies to both.

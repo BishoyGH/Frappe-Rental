@@ -27,3 +27,6 @@ class RentalItem(WebsiteGenerator):
 	def get_context(self, context):
 		context.no_cache = 1
 		context.rental_type = frappe.get_cached_doc("Rental Type", self.rental_type)
+		from frappe_rental.services.public_site import item_context
+
+		context.update(item_context(self))

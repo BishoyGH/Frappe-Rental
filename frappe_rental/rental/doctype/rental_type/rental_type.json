@@ -21,13 +21,22 @@
   "requires_hold",
   "requires_checkin",
   "requires_return_inspection",
+  "housekeeping_task",
   "accounting_section",
   "tax_template",
   "income_account",
   "deposit_rule",
   "cancellation_policy",
   "custom_fields_section",
-  "custom_fields"
+  "custom_fields",
+  "billing_section",
+  "billing_plan",
+  "enable_deferred_revenue",
+  "metering_section",
+  "meter_unit",
+  "column_break_meter",
+  "included_allowance",
+  "overage_rate"
  ],
  "fields": [
   {
@@ -133,6 +142,12 @@
    "label": "Requires Return Inspection"
   },
   {
+   "fieldname": "housekeeping_task",
+   "fieldtype": "Check",
+   "label": "Turnaround Task on Return",
+   "description": "Each returned unit gets a cleaning task and stays in Turnaround until it is done"
+  },
+  {
    "fieldname": "accounting_section",
    "fieldtype": "Section Break",
    "label": "Accounting"
@@ -172,10 +187,59 @@
    "fieldtype": "Table",
    "label": "Custom Fields",
    "options": "Rental Type Custom Field"
+  },
+  {
+   "fieldname": "billing_section",
+   "fieldtype": "Section Break",
+   "label": "Billing",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "billing_plan",
+   "fieldtype": "Table",
+   "label": "Billing plan",
+   "options": "Rental Billing Plan",
+   "description": "Default plan for bookings of this type (one row)."
+  },
+  {
+   "fieldname": "enable_deferred_revenue",
+   "fieldtype": "Check",
+   "label": "Deferred revenue",
+   "description": "Invoices billed in advance recognise income over the service period (D5.4)"
+  },
+  {
+   "fieldname": "metering_section",
+   "fieldtype": "Section Break",
+   "label": "Metered Usage",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "meter_unit",
+   "fieldtype": "Select",
+   "label": "Meter Unit",
+   "options": "\nHours\nKm\nPages\nkWh"
+  },
+  {
+   "fieldname": "column_break_meter",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "included_allowance",
+   "fieldtype": "Float",
+   "label": "Included per Booking",
+   "depends_on": "meter_unit"
+  },
+  {
+   "fieldname": "overage_rate",
+   "fieldtype": "Currency",
+   "label": "Overage Rate",
+   "depends_on": "meter_unit",
+   "description": "Per meter unit above the allowance"
   }
  ],
  "links": [],
- "modified": "2026-11-25 00:00:00.000000",
+ "modified": "2026-11-26 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "Rental",
  "name": "Rental Type",

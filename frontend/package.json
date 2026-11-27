@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "frappe-ui": "0.1.278",
-    "vue": "3.5.25",
+    "vue": "^3.5.42",
     "vue-router": "4.6.3"
   },
   "devDependencies": {

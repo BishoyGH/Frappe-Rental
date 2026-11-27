@@ -2,12 +2,18 @@ import json
 
 import frappe
 from frappe import _
+from frappe.rate_limiter import rate_limit
+from frappe.utils import cint, now_datetime
 
 from frappe_rental.services import booking as booking_service
-from frappe_rental.services import booking_views, erpnext_sync, lifecycle
+from frappe_rental.services import booking_views, cancellation, erpnext_sync, lifecycle
+from frappe_rental.services.idempotency import idempotent
+
+# Create calls: at most this many per IP per minute (frappe.rate_limiter, Redis backed).
+CREATE_LIMIT = 60
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def quote(booking: str | dict) -> dict:
 	"""Price a draft booking without saving it. Returns lines, charges and totals."""
 	if not frappe.has_permission("Rental Booking", "create"):
@@ -74,8 +80,10 @@ def confirm(name: str) -> dict:
 
 
 @frappe.whitelist(methods=["POST"])
-def cancel(name: str) -> dict:
-	"""Cancel a confirmed booking or release a hold."""
+def cancel(name: str, preview: int = 0, by: str = "customer") -> dict:
+	"""Cancel a confirmed booking or release a hold. ``preview=1`` returns the refund calculation only."""
+	if cint(preview):
+		return cancellation_preview(name, by)
 	doc = _get(name, "cancel" if frappe.db.get_value("Rental Booking", name, "docstatus") == 1 else "write")
 	lifecycle.cancel(doc)
 	return _state(doc)
@@ -103,7 +111,7 @@ def _require_read() -> None:
 		frappe.throw(_("Not permitted"), frappe.PermissionError)
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def get_list(
 	filters: str | dict | None = None,
 	order_by: str = "creation",
@@ -121,13 +129,13 @@ def get_list(
 	return out
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def get_detail(name: str) -> dict:
 	"""Everything the booking page shows: fields, lines, totals, linked documents, activity and allowed actions."""
 	return booking_views.get_detail(_get(name, "read"))
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def list_options() -> dict:
 	"""Filter and form choices for the staff app."""
 	_require_read()
@@ -135,7 +143,9 @@ def list_options() -> dict:
 
 
 @frappe.whitelist(methods=["POST"])
-def create(booking: str | dict, hold: int = 0) -> dict:
+@rate_limit(limit=CREATE_LIMIT, seconds=60)
+@idempotent
+def create(booking: str | dict, hold: int = 0, idempotency_key: str | None = None) -> dict:
 	"""Create a draft booking from the staff app, and optionally hold it straight away."""
 	if not frappe.has_permission("Rental Booking", "create"):
 		frappe.throw(_("Not permitted"), frappe.PermissionError)
@@ -153,7 +163,7 @@ LINK_SEARCH = {
 }
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["GET", "POST"])
 def search_link(doctype: str, txt: str = "", rental_item: str | None = None) -> list[dict]:
 	"""Options for the create form's pickers. Only the doctypes the form uses, through permission-aware get_list."""
 	if doctype not in LINK_SEARCH:
@@ -174,3 +184,136 @@ def search_link(doctype: str, txt: str = "", rental_item: str | None = None) -> 
 		limit_page_length=20,
 	)
 	return [{"value": r.name, "label": r.title or r.name} for r in rows]
+
+
+@frappe.whitelist(methods=["POST"])
+def move(name: str, from_datetime: str, to_datetime: str, rental_unit: str | None = None) -> dict:
+	"""Move a draft or held booking (calendar drag). Rejected when the target unit or period is taken."""
+	from frappe_rental.services import timeline
+
+	doc = _get(name, "write")
+	timeline.move_booking(doc, from_datetime, to_datetime, rental_unit or None)
+	return {**_state(doc), "from_datetime": doc.from_datetime, "to_datetime": doc.to_datetime}
+
+
+@frappe.whitelist(methods=["GET", "POST"])
+def cancellation_preview(name: str, by: str = "customer") -> dict:
+	"""What cancelling now would keep, refund or bill, under the booking's cancellation policy."""
+	if by not in ("customer", "provider"):
+		frappe.throw(_("Cancelled by must be customer or provider"))
+	return cancellation.preview(_get(name, "read"), by=by)
+
+
+@frappe.whitelist(methods=["POST"])
+def cancel_with_policy(name: str, by: str = "customer") -> dict:
+	"""Cancel a confirmed booking and settle fee, credit note and refund exactly as previewed."""
+	if by not in ("customer", "provider"):
+		frappe.throw(_("Cancelled by must be customer or provider"))
+	doc = _get(name, "cancel")
+	result = cancellation.cancel(doc, by=by)
+	return {**_state(doc), "cancellation": result}
+
+
+@frappe.whitelist(methods=["GET", "POST"])
+def get(name: str) -> dict:
+	"""REST v1 alias of ``get_detail``."""
+	return get_detail(name)
+
+
+def _my_customers(user: str) -> list[str]:
+	"""Customers the user may act for: Customer portal users, then contacts linked to a customer."""
+	names = set(
+		frappe.get_all("Portal User", filters={"parenttype": "Customer", "user": user}, pluck="parent")
+	)
+	contacts = frappe.get_all("Contact", filters={"user": user}, pluck="name")
+	if contacts:
+		names |= set(
+			frappe.get_all(
+				"Dynamic Link",
+				filters={"parenttype": "Contact", "parent": ["in", contacts], "link_doctype": "Customer"},
+				pluck="link_name",
+			)
+		)
+	return sorted(names)
+
+
+@frappe.whitelist(methods=["GET", "POST"])
+def list_mine(start: int = 0, page_length: int = 20) -> dict:
+	"""The signed-in customer's own bookings, newest first."""
+	if frappe.session.user == "Guest":
+		frappe.throw(_("Log in to see your bookings"), frappe.PermissionError)
+	customers = _my_customers(frappe.session.user)
+	if not customers:
+		return {"rows": [], "total": 0}
+	filters = {"customer": ["in", customers]}
+	fields = ["name", "status", "docstatus", "from_datetime", "to_datetime", "currency", "grand_total"]
+	# Scoped to the user's own customers above, so the row filter is the permission check here.
+	rows = frappe.get_all(
+		"Rental Booking",
+		filters=filters,
+		fields=fields,
+		order_by="from_datetime desc",
+		start=cint(start),
+		page_length=max(1, min(cint(page_length) or 20, 100)),
+	)
+	return {"rows": rows, "total": frappe.db.count("Rental Booking", filters)}
+
+
+@frappe.whitelist(methods=["POST"])
+def modify(name: str, from_datetime: str, to_datetime: str, rental_unit: str | None = None) -> dict:
+	"""REST v1: change the period or unit of a draft or held booking."""
+	return move(name, from_datetime, to_datetime, rental_unit)
+
+
+def _handover(name: str, handover_type: str, scans, lines) -> dict:
+	booking = _get(name, "read")
+	if not frappe.has_permission("Rental Handover", "create") or not frappe.has_permission(
+		"Rental Handover", "submit"
+	):
+		frappe.throw(_("Not permitted"), frappe.PermissionError)
+	scans = json.loads(scans) if isinstance(scans, str) and scans.strip().startswith("[") else scans
+	lines = json.loads(lines) if isinstance(lines, str) and lines else lines
+	if isinstance(scans, str):
+		scans = [scans] if scans else []
+	doc = frappe.get_doc(
+		{
+			"doctype": "Rental Handover",
+			"rental_booking": booking.name,
+			"handover_type": handover_type,
+			"posted_on": now_datetime(),
+		}
+	)
+	from frappe_rental.services import handover
+
+	for code in scans or []:
+		handover.add_scan(doc, str(code))
+	for row in lines or []:
+		if not isinstance(row, dict):
+			frappe.throw(_("Each line must be an object"))
+		keep = {
+			k: row.get(k) for k in ("rental_unit", "qty", "condition", "meter_reading", "notes") if row.get(k)
+		}
+		existing = next((ln for ln in doc.lines if ln.rental_unit == keep.get("rental_unit")), None)
+		if existing:
+			existing.update(keep)
+		else:
+			doc.append("lines", keep)
+	if not doc.lines:
+		doc.extend("lines", [{"rental_unit": ln.rental_unit, "qty": ln.qty} for ln in booking.lines])
+	doc.insert()
+	doc.submit()
+	return {"name": doc.name, "booking": booking.name, "handover_type": handover_type, "is_late": doc.is_late}
+
+
+@frappe.whitelist(methods=["POST"])
+@idempotent
+def checkout(name: str, scans=None, lines=None, idempotency_key: str | None = None) -> dict:
+	"""Hand the booked units to the customer. Without scans or lines, every booked unit goes out."""
+	return _handover(name, "Check-out", scans, lines)
+
+
+@frappe.whitelist(methods=["POST"])
+@idempotent
+def checkin(name: str, scans=None, lines=None, idempotency_key: str | None = None) -> dict:
+	"""Take the units back. Lines may carry ``condition`` (Good, Damaged, Missing) and meter readings."""
+	return _handover(name, "Return", scans, lines)

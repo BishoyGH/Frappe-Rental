@@ -31,6 +31,13 @@ jobs:
           args: format --check
       - name: Frontend build
         run: cd frontend && yarn install --frozen-lockfile && yarn build
+      - name: Dependency audit (fails on high findings)
+        # yarn 1 exit code is a bitmask (4 moderate, 8 high, 16 critical): fail on high or critical only
+        run: cd frontend && { yarn audit --groups dependencies || code=$?; }; exit $(( ${code:-0} & 24 ))
+      - name: Customer-facing strings have Arabic translations
+        run: python scripts/extract_messages.py --check ar
+      - name: Secrets scan
+        run: "! git grep -nE 'sk_live_|whsec_[A-Za-z0-9]{20,}|BEGIN (RSA |EC )?PRIVATE KEY|AKIA[0-9A-Z]{16}' -- . ':!docs' ':!frappe_rental/tests' ':!.github'"
       - run: pip install pyyaml
       - id: m
         run: echo "matrix=$(python scripts/ci-matrix.py)" >> "$GITHUB_OUTPUT"
@@ -99,11 +106,15 @@ jobs:
           bench --site test.localhost run-tests --app frappe_rental --coverage
       - name: Frontend build (matrix Node)
         run: cd ~/bench/apps/frappe_rental/frontend && yarn install --frozen-lockfile && yarn build
+      - name: Desk assets (for desk browser specs)
+        run: cd ~/bench && bench build --app frappe
       - name: Serve site
         run: |
           cd ~/bench
           mkdir -p sites/assets && ln -sfn ~/bench/apps/frappe_rental/frappe_rental/public sites/assets/frappe_rental
           bench --site test.localhost execute frappe_rental.tests.e2e_fixtures.setup
+          bench --site test.localhost rental-demo --with-bookings
+          bench --site test.localhost rental-demo   # second run must be a no-op
           nohup bench --site test.localhost serve --port 8000 > ~/serve.log 2>&1 &
           for i in $(seq 1 30); do curl -sf -o /dev/null http://127.0.0.1:8000/api/method/ping && break; sleep 2; done
       - id: e2e
@@ -117,6 +128,79 @@ jobs:
           yarn install --frozen-lockfile
           npx playwright install --with-deps chromium
           BASE_URL=http://127.0.0.1:8000 npx playwright test
+      - name: Playwright traces on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces-${{ matrix.major }}
+          path: e2e/test-results
+          retention-days: 7
       - name: Server log on failure
         if: failure()
         run: tail -100 ~/serve.log || true
+
+  # T54b: the same server tests on Postgres. No frontend or browser steps (the database does not
+  # change them), so it costs about half a test leg. Remove continue-on-error once it is green on both.
+  # Runs on the weekly schedule and on manual dispatch only, so pull requests stay green while ERPNext's
+  # own Sales Invoice submit fails on Postgres (see T54b in docs/TASKS.md).
+  tests-postgres:
+    name: tests on Postgres (v${{ matrix.major }})
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.lint.outputs.matrix) }}
+    services:
+      postgres:
+        image: ${{ matrix.postgres_image }}
+        env:
+          POSTGRES_PASSWORD: travis
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      redis-cache:
+        image: redis:${{ matrix.redis }}-alpine
+        ports: ["13000:6379"]
+      redis-queue:
+        image: redis:${{ matrix.redis }}-alpine
+        ports: ["11000:6379"]
+    env:
+      PYTHONWARNINGS: "error::DeprecationWarning:frappe_rental"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq libpq-dev cron
+      - run: pip install frappe-bench pyyaml
+      - name: Bench
+        run: |
+          bench init --skip-redis-config-generation --skip-assets --frappe-branch ${{ matrix.frappe_branch }} --python "$(which python)" ~/bench
+          cd ~/bench
+          bench set-config -g redis_cache redis://127.0.0.1:13000
+          bench set-config -g redis_queue redis://127.0.0.1:11000
+          bench set-config -g redis_socketio redis://127.0.0.1:11000
+          bench get-app https://github.com/frappe/erpnext --branch ${{ matrix.erpnext_branch }} --skip-assets
+          bench new-site test.localhost --db-type postgres --db-host 127.0.0.1 --db-port 5432 --db-root-username postgres --db-root-password travis --admin-password admin
+          bench --site test.localhost install-app erpnext
+          bench get-app "$GITHUB_WORKSPACE" --skip-assets
+          bench --site test.localhost install-app frappe_rental
+          bench --site test.localhost migrate
+          bench --site test.localhost set-config allow_tests true
+      - name: Tests
+        run: |
+          cd ~/bench
+          bench --site test.localhost run-tests --app frappe_rental
+      - name: Demo data (twice, the second run is a no-op)
+        run: |
+          cd ~/bench
+          bench --site test.localhost rental-demo
+          bench --site test.localhost rental-demo

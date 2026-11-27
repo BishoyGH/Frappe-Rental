@@ -23,7 +23,7 @@
       <Button :label="__('Columns')" data-testid="columns" @click="showColumns = !showColumns" />
       <div
         v-if="showColumns"
-        class="absolute right-0 z-10 mt-1 w-44 rounded-lg border bg-surface-white p-2 shadow-lg"
+        class="absolute end-0 z-10 mt-1 w-44 rounded-lg border bg-surface-white p-2 shadow-lg"
         data-testid="columns-menu"
       >
         <label v-for="c in COLUMNS" :key="c.key" class="flex items-center gap-2 rounded px-1 py-1 hover:bg-surface-gray-2">
@@ -39,14 +39,14 @@
     <table v-else class="w-full min-w-[680px] border-collapse" data-testid="bookings-table">
       <thead>
         <tr>
-          <th v-for="c in columns" :key="c.key" :class="[th, c.num && 'text-right']">{{ __(c.label) }}</th>
+          <th v-for="c in columns" :key="c.key" :class="[th, c.num && 'text-end']">{{ __(c.label) }}</th>
         </tr>
       </thead>
       <tbody>
         <template v-for="g in grouped" :key="g.key">
           <tr v-if="groupBy" data-testid="group-row">
             <td :colspan="columns.length" class="bg-surface-gray-1 px-2.5 py-1.5 text-sm font-medium text-ink-gray-7">
-              {{ g.label }} <span class="ml-1 text-ink-gray-5">{{ g.count }}</span>
+              {{ g.label }} <span class="ms-1 text-ink-gray-5">{{ g.count }}</span>
             </td>
           </tr>
           <tr
@@ -56,10 +56,10 @@
             data-testid="booking-row"
             @click="router.push({ name: 'BookingDetail', params: { name: r.name } })"
           >
-            <td v-for="c in columns" :key="c.key" :class="[td, c.num && 'text-right tabular-nums']">
+            <td v-for="c in columns" :key="c.key" :class="[td, c.num && 'text-end tabular-nums']">
               <template v-if="c.key === 'name'"><span class="font-medium text-ink-gray-9">{{ r.name }}</span></template>
               <template v-else-if="c.key === 'customer'">
-                <Avatar :label="r.customer_name" size="xs" class="mr-1.5 inline-flex align-middle" />{{ r.customer_name }}
+                <Avatar :label="r.customer_name" size="xs" class="me-1.5 inline-flex align-middle" />{{ r.customer_name }}
               </template>
               <StatusBadge v-else-if="c.key === 'status'" :status="r.status" />
               <template v-else-if="c.key === 'from_datetime' || c.key === 'to_datetime'">{{ fmtDate(r[c.key]) }}</template>
@@ -99,7 +99,7 @@ import { fmtDate, fmtMoney, store, stored } from '../lib/format'
 import { __ } from '../lib/translate'
 
 const router = useRouter()
-const th = 'whitespace-nowrap bg-surface-gray-1 px-2.5 py-1.5 text-left text-sm font-medium text-ink-gray-5 first:rounded-l last:rounded-r'
+const th = 'whitespace-nowrap bg-surface-gray-1 px-2.5 py-1.5 text-start text-sm font-medium text-ink-gray-5 first:rounded-s last:rounded-e'
 const td = 'whitespace-nowrap border-b px-2.5 py-2 text-base text-ink-gray-7'
 
 const COLUMNS = [

@@ -1,0 +1,201 @@
+{
+ "actions": [],
+ "autoname": "format:RDEP-{YYYY}-{#####}",
+ "creation": "2026-11-26 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "rental_booking",
+  "customer",
+  "company",
+  "currency",
+  "liability_account",
+  "refundable",
+  "column_break_1",
+  "status",
+  "amount_required",
+  "amount_received",
+  "amount_applied",
+  "amount_refunded",
+  "amount_forfeited",
+  "balance_held",
+  "entries_section",
+  "entries"
+ ],
+ "fields": [
+  {
+   "fieldname": "rental_booking",
+   "fieldtype": "Link",
+   "label": "Booking",
+   "options": "Rental Booking",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer",
+   "fetch_from": "rental_booking.customer",
+   "read_only": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "fetch_from": "rental_booking.company",
+   "read_only": 1
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "fetch_from": "rental_booking.currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "liability_account",
+   "fieldtype": "Link",
+   "label": "Liability account",
+   "options": "Account",
+   "read_only": 1
+  },
+  {
+   "fieldname": "refundable",
+   "fieldtype": "Check",
+   "label": "Refundable",
+   "default": "1"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Requested\nPartly Received\nHeld\nSettled",
+   "default": "Requested",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "amount_required",
+   "fieldtype": "Currency",
+   "label": "Required",
+   "options": "currency",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "amount_received",
+   "fieldtype": "Currency",
+   "label": "Received",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amount_applied",
+   "fieldtype": "Currency",
+   "label": "Applied to charges",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amount_refunded",
+   "fieldtype": "Currency",
+   "label": "Refunded",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amount_forfeited",
+   "fieldtype": "Currency",
+   "label": "Forfeited",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "balance_held",
+   "fieldtype": "Currency",
+   "label": "Held now",
+   "in_list_view": 1,
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "entries_section",
+   "fieldtype": "Section Break",
+   "label": "Entries"
+  },
+  {
+   "fieldname": "entries",
+   "fieldtype": "Table",
+   "label": "Journal Entries",
+   "options": "Rental Deposit Entry",
+   "read_only": 1
+  }
+ ],
+ "links": [],
+ "modified": "2026-11-26 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "name": "Rental Deposit",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "Rental Admin",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Rental Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Rental Agent",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Rental Accountant",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

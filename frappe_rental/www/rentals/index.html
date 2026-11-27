@@ -1,0 +1,64 @@
+{% extends "templates/web.html" %}
+
+{% block title %}{{ _("Rentals") }}{% endblock %}
+
+{% block page_content %}
+<div class="rental-catalogue">
+	<h1 class="mb-4">{{ _("Rentals") }}</h1>
+	<form method="get" class="row g-2 mb-4" data-testid="rentals-filters">
+		<div class="col-sm-3">
+			<label class="form-label" for="f-type">{{ _("Type") }}</label>
+			<select id="f-type" name="rental_type" class="form-control">
+				<option value="">{{ _("All") }}</option>
+				{% for t in options.rental_types %}<option value="{{ t }}" {% if filters.rental_type == t %}selected{% endif %}>{{ _(t) }}</option>{% endfor %}
+			</select>
+		</div>
+		<div class="col-sm-3">
+			<label class="form-label" for="f-loc">{{ _("Location") }}</label>
+			<select id="f-loc" name="location" class="form-control">
+				<option value="">{{ _("Anywhere") }}</option>
+				{% for l in options.locations %}<option value="{{ l }}" {% if filters.location == l %}selected{% endif %}>{{ l }}</option>{% endfor %}
+			</select>
+		</div>
+		<div class="col-sm-2">
+			<label class="form-label" for="f-from">{{ _("From") }}</label>
+			<input id="f-from" type="datetime-local" name="from" value="{{ filters['from'] }}" class="form-control">
+		</div>
+		<div class="col-sm-2">
+			<label class="form-label" for="f-to">{{ _("To") }}</label>
+			<input id="f-to" type="datetime-local" name="to" value="{{ filters['to'] }}" class="form-control">
+		</div>
+		<div class="col-sm-1">
+			<label class="form-label" for="f-guests">{{ _("Guests") }}</label>
+			<input id="f-guests" type="number" min="1" name="guests" value="{{ filters.guests }}" class="form-control">
+		</div>
+		<div class="col-sm-1 d-flex align-items-end">
+			<button type="submit" class="btn btn-primary w-100">{{ _("Search") }}</button>
+		</div>
+	</form>
+
+	{% if error %}<div class="alert alert-warning" role="alert">{{ error }}</div>{% endif %}
+
+	<p class="text-muted" data-testid="rentals-count">{{ _("{0} results").format(result.total) }}</p>
+	<div class="row g-3">
+		{% for item in result["items"] %}
+		<div class="col-sm-6 col-lg-4" data-testid="rentals-card">
+			<a href="/{{ item.route }}" class="card h-100 text-reset text-decoration-none">
+				{% if item.image %}<img src="{{ item.image }}" alt="{{ item.item_name }}" class="card-img-top" loading="lazy" width="400" height="250" style="object-fit: cover">{% endif %}
+				<div class="card-body">
+					<h2 class="h5 card-title">{{ item.item_name }}</h2>
+					<p class="card-text text-muted mb-1">{{ _(item.rental_type) }}{% if item.location %} · {{ item.location }}{% endif %}</p>
+					{% if item.price is not none %}<p class="card-text fw-bold">{{ frappe.format_value(item.price, {"fieldtype": "Currency", "options": item.currency}) }}</p>{% endif %}
+				</div>
+			</a>
+		</div>
+		{% else %}
+		<p class="text-muted" data-testid="rentals-empty">{{ _("Nothing matches. Try other dates or filters.") }}</p>
+		{% endfor %}
+	</div>
+
+	{% if result.total > result.start + result.page_length %}
+	<a class="btn btn-default mt-4" href="?{{ frappe.utils.urlencode(dict(filters, start=result.start + result.page_length)) }}">{{ _("More") }}</a>
+	{% endif %}
+</div>
+{% endblock %}

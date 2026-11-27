@@ -104,3 +104,159 @@ def create_dimension_fields(dimension: str) -> None:
 	accounting_dimension.make_dimension_in_accounting_doctypes(
 		doc=frappe.get_doc("Accounting Dimension", dimension)
 	)
+
+
+def enable_serial_numbers() -> None:
+	"""Allow serialised items.
+
+	ERPNext v16 adds Stock Settings `enable_serial_and_batch_no_for_item`, off by default, which blocks
+	`has_serial_no`; v15 has no such switch. Feature-detected; remove when v15 support ends and set the
+	field directly.
+	"""
+	field = "enable_serial_and_batch_no_for_item"
+	if frappe.get_meta("Stock Settings").has_field(field) and not frappe.db.get_single_value(
+		"Stock Settings", field
+	):
+		frappe.db.set_single_value("Stock Settings", field, 1)
+
+
+def make_refund_entry(credit_note: str, amount: float):
+	"""Unsaved Payment Entry (Pay) refunding `amount` of a submitted credit note to the customer.
+
+	Versions: `erpnext.accounts.doctype.payment_entry.payment_entry.get_payment_entry` on v15 and v16;
+	for a return invoice it builds a "Pay" entry with the credit note as reference. Removal: keep while
+	the function and its return-invoice behaviour are unchanged on every supported major.
+	"""
+	from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
+
+	pe = get_payment_entry("Sales Invoice", credit_note)
+	pe.paid_amount = pe.received_amount = amount
+	for ref in pe.references:
+		ref.allocated_amount = -amount if ref.allocated_amount < 0 else amount
+	if hasattr(pe, "set_amounts"):
+		pe.set_amounts()
+	return pe
+
+
+def stock_transfer(company: str, rows: list[dict], reference: dict | None = None) -> str:
+	"""Submit a Material Transfer Stock Entry. Each row: item_code, qty, s_warehouse, t_warehouse,
+	optional serial_no (newline separated) and batch_no.
+
+	Versions: v15 and v16 both move serials and batches through Serial and Batch Bundles. The
+	`use_serial_batch_fields` row flag (v15.x and v16) lets plain `serial_no` / `batch_no` values build
+	the bundle for us; on a build without the flag the plain fields are read directly.
+	Feature-detected per field. Removal: when the oldest supported major always has the flag.
+	"""
+	se = frappe.new_doc("Stock Entry")
+	se.stock_entry_type = "Material Transfer"
+	se.purpose = "Material Transfer"
+	se.company = company
+	se.update(reference or {})
+	has_flag = frappe.get_meta("Stock Entry Detail").has_field("use_serial_batch_fields")
+	for row in rows:
+		item = dict(row)
+		if has_flag and (item.get("serial_no") or item.get("batch_no")):
+			item["use_serial_batch_fields"] = 1
+		se.append("items", item)
+	se.flags.ignore_permissions = True  # stock follows a permitted handover
+	se.insert()
+	se.submit()
+	return se.name
+
+
+def move_asset(asset: str, company: str, target_location: str, reference: dict | None = None) -> str:
+	"""Submit an Asset Movement (Transfer) of one asset to an ERPNext Location.
+
+	Versions: Asset Movement with an `assets` table (asset, source_location, target_location) and
+	purpose "Transfer" on v15 and v16. Removal: keep while the shape is the same on every major.
+	"""
+	source = frappe.db.get_value("Asset", asset, "location")
+	am = frappe.new_doc("Asset Movement")
+	am.update(
+		{"company": company, "purpose": "Transfer", "transaction_date": now_datetime(), **(reference or {})}
+	)
+	am.append("assets", {"asset": asset, "source_location": source, "target_location": target_location})
+	am.flags.ignore_permissions = True  # asset follows a permitted handover
+	am.insert()
+	am.submit()
+	return am.name
+
+
+def make_asset_repair(asset: str, company: str, description: str, failure_date) -> str:
+	"""Draft Asset Repair for a damaged asset. Returns its name.
+
+	Versions: Asset Repair with asset, company, failure_date and description on v15 and v16; repair
+	cost and stock items are filled in by the user before submitting. Removal: keep while the fields
+	are unchanged on every supported major.
+	"""
+	repair = frappe.new_doc("Asset Repair")
+	repair.update(
+		{"asset": asset, "company": company, "failure_date": failure_date, "description": description}
+	)
+	repair.flags.ignore_permissions = True  # drafted from a permitted damage report
+	repair.flags.ignore_mandatory = True  # the user completes costs before submitting
+	repair.insert()
+	return repair.name
+
+
+def make_signed_contract(customer: str, start_date, end_date, terms_html: str, signee: str, signed_on) -> str:
+	"""Create the ERPNext Contract mirroring a signed Rental Contract. Returns its name.
+
+	Versions: Contract (party_type, party_name, start_date, end_date, contract_terms, is_signed, signee,
+	signed_on) on v15 and v16; it is submitted when the doctype is submittable. Feature-detected by
+	meta. Removal: keep while the fields are unchanged on every supported major.
+	"""
+	doc = frappe.new_doc("Contract")
+	doc.update(
+		{
+			"party_type": "Customer",
+			"party_name": customer,
+			"start_date": start_date,
+			"end_date": end_date,
+			"contract_terms": terms_html,
+			"is_signed": 1,
+			"signee": signee,
+			"signed_on": signed_on,
+		}
+	)
+	doc.flags.ignore_permissions = True  # mirror of a permitted Rental Contract signature
+	doc.insert()
+	if doc.meta.is_submittable:
+		doc.submit()
+	return doc.name
+
+
+def make_payment_request(dt: str, dn: str) -> str:
+	"""Create and submit a Payment Request for ``dt``/``dn`` without emailing it; returns its name.
+
+	Versions: ERPNext v15 and v16 both expose the whitelisted
+	``erpnext.accounts.doctype.payment_request.payment_request.make_payment_request`` with
+	``submit_doc``, ``mute_email`` and ``return_doc``. Kept here because its arguments have grown
+	(v16 payment schedules) and may change again. Remove when v15 support ends and the call is stable.
+	"""
+	from erpnext.accounts.doctype.payment_request.payment_request import make_payment_request as make
+
+	pr = make(dt=dt, dn=dn, submit_doc=1, mute_email=1, return_doc=1)
+	return pr.name
+
+
+def make_invoice_payment(sales_invoice: str, amount, paid_to: str, reference: str) -> str:
+	"""Submit a Payment Entry receiving ``amount`` against a Sales Invoice into ``paid_to``.
+
+	Versions: ERPNext v15 and v16 both expose
+	``erpnext.accounts.doctype.payment_entry.payment_entry.get_payment_entry(dt, dn, party_amount=,
+	bank_account=)``; the keyword set differs slightly between them, so only the stable positional
+	``dt``/``dn`` and ``party_amount`` are passed and the paid-to account is set afterwards.
+	Remove when v15 support ends.
+	"""
+	from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
+
+	pe = get_payment_entry("Sales Invoice", sales_invoice, party_amount=amount)
+	pe.paid_to = paid_to
+	pe.paid_to_account_currency = frappe.get_cached_value("Account", paid_to, "account_currency")
+	pe.reference_no = reference
+	pe.reference_date = frappe.utils.nowdate()
+	pe.flags.ignore_permissions = True  # posted by the verified payment provider webhook
+	pe.insert()
+	pe.submit()
+	return pe.name

@@ -4,6 +4,7 @@ import frappe
 from frappe import _
 
 from frappe_rental.services import search as search_service
+from frappe_rental.services import timeline as timeline_service
 
 
 def _check():
@@ -50,3 +51,14 @@ def calendar(month: str, rental_unit: str | None = None, rental_item: str | None
 	except (ValueError, AssertionError, AttributeError):
 		frappe.throw(_("Month must look like 2026-05"))
 	return search_service.calendar(year, mon, rental_unit=rental_unit, rental_item=rental_item)
+
+
+@frappe.whitelist(methods=["GET", "POST"])
+def timeline(
+	from_datetime: str, to_datetime: str, location: str | None = None, rental_type: str | None = None
+) -> dict:
+	"""Resource timeline: units with their bookings and blocks in the period (at most 62 days)."""
+	_check()
+	if not frappe.has_permission("Rental Booking", "read"):
+		frappe.throw(_("Not permitted"), frappe.PermissionError)
+	return timeline_service.timeline(from_datetime, to_datetime, location=location, rental_type=rental_type)

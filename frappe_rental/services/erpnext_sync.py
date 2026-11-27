@@ -15,6 +15,7 @@ from frappe import _
 from frappe.utils import flt, getdate, nowdate
 
 from frappe_rental.compat import erpnext as compat
+from frappe_rental.services import events
 from frappe_rental.services.rental_item import _item_group, _stock_uom, income_account
 
 
@@ -63,6 +64,8 @@ def make_sales_invoice(booking, submit: bool = True) -> str:
 	"""Create the one-off Sales Invoice from the booking's Sales Order. Returns its name."""
 	if booking.docstatus != 1:
 		frappe.throw(_("Confirm the booking before invoicing it"))
+	if len(booking.get("billing_schedule") or []) > 1:
+		frappe.throw(_("{0} is billed on a schedule; its invoices are made per row").format(booking.name))
 	name = _existing("Sales Invoice", booking.name)
 	if not name:
 		si = compat.make_sales_invoice_from_order(make_sales_order(booking))
@@ -77,6 +80,7 @@ def make_sales_invoice(booking, submit: bool = True) -> str:
 		si.insert()
 		if submit:
 			si.submit()
+			events.emit("invoice_created", si, extra={"rental_booking": booking.name})
 		name = si.name
 	if booking.sales_invoice != name:
 		booking.db_set("sales_invoice", name, update_modified=False)

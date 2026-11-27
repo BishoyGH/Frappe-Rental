@@ -14,8 +14,18 @@ from frappe_rental.services import pricing
 TYPE_UNIT_TO_PRICING = {"Night": "Day"}
 
 
+def moment(value, label: str):
+	try:
+		moment = get_datetime(value) if value else None
+	except (ValueError, TypeError, OverflowError):
+		moment = None
+	if not moment:
+		frappe.throw(_("{0} is not a valid date and time").format(label))
+	return moment
+
+
 def validate_booking(doc) -> None:
-	if get_datetime(doc.to_datetime) <= get_datetime(doc.from_datetime):
+	if moment(doc.to_datetime, _("To")) <= moment(doc.from_datetime, _("From")):
 		frappe.throw(_("To must be after From"))
 	rtype = frappe.get_cached_doc("Rental Type", doc.rental_type)
 	_set_defaults(doc, rtype)

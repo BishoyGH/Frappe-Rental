@@ -1,0 +1,148 @@
+{
+ "actions": [],
+ "creation": "2026-11-26 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "editable_grid": 1,
+ "field_order": [
+  "frequency",
+  "interval",
+  "interval_unit",
+  "milestone_percents",
+  "timing",
+  "first_invoice",
+  "first_invoice_date",
+  "column_break_1",
+  "alignment",
+  "alignment_day",
+  "proration",
+  "amount_basis",
+  "period_amount",
+  "payment_terms_template",
+  "invoice_grouping",
+  "end_behaviour"
+ ],
+ "fields": [
+  {
+   "fieldname": "frequency",
+   "fieldtype": "Select",
+   "label": "Frequency",
+   "options": "One-off\nWeekly\nMonthly\nQuarterly\nSemi-annual\nYearly\nCustom interval\nMilestones",
+   "default": "One-off",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "interval",
+   "fieldtype": "Int",
+   "label": "Every",
+   "depends_on": "eval:doc.frequency=='Custom interval'"
+  },
+  {
+   "fieldname": "interval_unit",
+   "fieldtype": "Select",
+   "label": "Interval unit",
+   "options": "Months\nDays",
+   "default": "Months",
+   "depends_on": "eval:doc.frequency=='Custom interval'"
+  },
+  {
+   "fieldname": "milestone_percents",
+   "fieldtype": "Data",
+   "label": "Milestone percents",
+   "description": "Comma separated, must add up to 100, e.g. 50, 50",
+   "depends_on": "eval:doc.frequency=='Milestones'"
+  },
+  {
+   "fieldname": "timing",
+   "fieldtype": "Select",
+   "label": "Timing",
+   "options": "In advance\nIn arrears\nAt check-in\nAt check-out\nAt confirmation",
+   "default": "In advance",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "first_invoice",
+   "fieldtype": "Select",
+   "label": "First invoice",
+   "options": "At start date\nAt confirmation\nCustom date",
+   "default": "At start date"
+  },
+  {
+   "fieldname": "first_invoice_date",
+   "fieldtype": "Date",
+   "label": "First invoice date",
+   "depends_on": "eval:doc.first_invoice=='Custom date'"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "alignment",
+   "fieldtype": "Select",
+   "label": "Alignment",
+   "options": "Rental anniversary\nCalendar period start\nSpecific day of month",
+   "default": "Rental anniversary",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "alignment_day",
+   "fieldtype": "Int",
+   "label": "Day of month",
+   "depends_on": "eval:doc.alignment=='Specific day of month'"
+  },
+  {
+   "fieldname": "proration",
+   "fieldtype": "Select",
+   "label": "Proration",
+   "options": "Daily pro-rata\nNone\nFull first period",
+   "default": "Daily pro-rata"
+  },
+  {
+   "fieldname": "amount_basis",
+   "fieldtype": "Select",
+   "label": "Amount basis",
+   "options": "Rate x elapsed units\nFixed amount per period\nPercent of total",
+   "default": "Rate x elapsed units"
+  },
+  {
+   "fieldname": "period_amount",
+   "fieldtype": "Currency",
+   "label": "Amount per period",
+   "description": "Empty: the booking total is spread over the periods"
+  },
+  {
+   "fieldname": "payment_terms_template",
+   "fieldtype": "Link",
+   "label": "Payment terms",
+   "options": "Payment Terms Template"
+  },
+  {
+   "fieldname": "invoice_grouping",
+   "fieldtype": "Select",
+   "label": "Invoice grouping",
+   "options": "Per booking\nPer contract\nPer customer per period",
+   "default": "Per booking"
+  },
+  {
+   "fieldname": "end_behaviour",
+   "fieldtype": "Select",
+   "label": "At end",
+   "options": "Stop at end date\nAuto-renew\nContinue until closed",
+   "default": "Stop at end date"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-26 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "name": "Rental Billing Plan",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

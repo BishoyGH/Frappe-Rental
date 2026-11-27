@@ -63,3 +63,44 @@ Browser tests use **Playwright**, not Cypress. Frappe core ships Cypress tests, 
 - The Sales Order is created and submitted on confirm. The one-off Sales Invoice comes from it on confirm when `auto_invoice` is on, otherwise via `api.booking.make_invoice`.
 - Cancel: an unpaid invoice is cancelled, a paid one gets a credit note (the Sales Order is then closed, not cancelled); an uninvoiced Sales Order is cancelled.
 - Custom fields are created with `create_custom_fields` on install and migrate instead of fixture files, so they stay idempotent and versioned in code.
+
+## D-phase-prs (2026-11-26)
+From T19 on, work is delivered as one pull request per phase, with one commit per task inside it. The PR opens when the phase's last task is done and CI is green on v15 and v16.
+
+## T19 calendar (2026-11-26)
+- The calendar moves only draft and held bookings. A confirmed (submitted) booking changes through amendment, which a later task adds.
+- A move to another unit is allowed only for a one-item booking and only to a unit of the same item.
+- Conflicts are checked in the browser for instant feedback and again on the server, which has the final word.
+
+## D-one-pr (2026-11-26)
+All remaining tasks go into one pull request, so Bishoy can run and debug the app from a single branch. It stays a draft while work continues, with one commit per task. This replaces D-phase-prs.
+
+## T20 setup screens (2026-11-26)
+- The SPA edits setup records through `api.setup.get_records/get_record/save_record`, which allow only the doctypes and fields each screen names. The item type's custom fields are the only extra keys an Item or Unit form may write.
+- Playwright blocks `socket.io` and `favicon.ico` requests. `bench serve` has no socket.io server and is built without website assets, and its error page for those requests leaves a database transaction open. That open transaction blocks the schema change behind a new custom field. Production serves both, so only the test harness needs this.
+
+## D-deposit-journal (2026-11-26, T25)
+Deposits move by **Journal Entry**, not Payment Entry. A Payment Entry for a Customer needs a receivable account, and its advance-account options differ between ERPNext v15 and v16. A Journal Entry posts straight to the `Customer Deposits (Rental)` liability on both versions. Each entry carries `rental_deposit` and is listed on the Rental Deposit. Applying a deposit to an invoice credits the customer's receivable against that invoice, so its outstanding amount drops as it would after a payment. VAT on applied or forfeited amounts (D5.6) is not posted automatically yet.
+
+## T33 REST API v1 (2026-11-26)
+- Endpoints stay whitelisted methods under `frappe_rental.api.*` (PLAN section 8); the OpenAPI file documents them by hand, since Frappe does not generate one.
+- Idempotency keys live in Redis for 24 hours, scoped by user, method and key; a reused key with other arguments returns 409. No new doctype: a lost key only means a retry runs again.
+- Rate limits use `frappe.rate_limiter.rate_limit` (same signature on v15 and v16), 60 create calls per minute per IP.
+- Payments go through ERPNext Payment Request (`compat.erpnext.make_payment_request`); the gateway's callback is handled by ERPNext and the gateway app, so there is no rental callback endpoint.
+
+## T35: customer booking flow runs ERPNext side effects as Administrator
+Customers (Website Users) have no desk permissions on Rental Booking, Sales Order or Contract, and ERPNext
+controllers check the session user's permissions deep inside (item details, price lists). The flow
+therefore checks ownership first (`checkout.own_booking`: the booking's customer must be one the user acts
+for) and then inserts, holds, signs and submits inside `checkout._as_system()`, which restores the session
+user afterwards. Guest sign-up refuses an email that already has an account, so nobody can book as someone
+else by typing their address. The flow lives in the staff SPA bundle as public routes rather than a second
+bundle, to keep one build.
+
+## T36: online payments through hosted checkout and signed webhooks
+Payments use the provider's hosted checkout page (Stripe Checkout first), so card data never reaches the
+site. Each attempt is a Rental Payment row with the provider session id (unique). Only a verified webhook
+marks a row Paid and posts accounting: deposits through `deposits.collect`, balances as an ERPNext Payment
+Entry against the booking's invoice. Paid is final, so replays and late duplicates post nothing. Retrying
+after a failure creates a new attempt. ERPNext's own Payment Request path (`api.payment.create_request`)
+stays for sites that already use a payment gateway app.
