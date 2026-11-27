@@ -138,7 +138,7 @@ class TestSetupUI(FrappeTestCase):
 				"currency": frappe.defaults.get_global_default("currency") or "USD",
 				"rates": [{"time_unit": "Day", "rate": 50, "priority": 0}],
 			},
-		)
+		)["name"]
 		rec = api.get_record("Rental Rate Card", name)
 		self.assertEqual(rec["rates"][0]["rate"], 50)
 		api.save_record(
