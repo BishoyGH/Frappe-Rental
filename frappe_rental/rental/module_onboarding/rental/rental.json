@@ -1,0 +1,46 @@
+{
+ "allow_roles": [
+  {
+   "role": "Rental Manager"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "creation": "2026-11-27 00:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Module Onboarding",
+ "idx": 0,
+ "is_complete": 0,
+ "modified": "2026-11-27 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Rental",
+ "name": "Rental",
+ "owner": "Administrator",
+ "steps": [
+  {
+   "step": "Create a Rental Type"
+  },
+  {
+   "step": "Create a Rate Card"
+  },
+  {
+   "step": "Create a Rental Item"
+  },
+  {
+   "step": "Add Rental Units"
+  },
+  {
+   "step": "Create your first Booking"
+  },
+  {
+   "step": "Set up a Staff Alert"
+  },
+  {
+   "step": "Create a Contract"
+  }
+ ],
+ "subtitle": "Item types, rates, items, bookings and more.",
+ "success_message": "The Rental module is all set up!",
+ "title": "Let's Set Up Rental."
+}

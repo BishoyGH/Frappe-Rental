@@ -2,6 +2,10 @@
 
 Versions follow semantic versioning. Schema changes ship as DocType JSON, so `bench migrate` is the whole upgrade.
 
+## Unreleased
+
+- Native Frappe onboarding: Module Onboarding "Rental" with seven Create Entry steps (type, rate card, item, units, booking, staff alert, contract) shown on the Rental workspace, completion kept in step with the data however records are created, and a Getting started page in the staff app.
+
 ## 1.0.0
 
 First stable release. Runs unchanged on Frappe and ERPNext v15 and v16.

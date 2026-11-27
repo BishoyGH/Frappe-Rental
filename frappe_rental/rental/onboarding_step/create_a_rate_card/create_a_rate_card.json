@@ -1,0 +1,18 @@
+{
+ "action": "Create Entry",
+ "creation": "2026-11-27 00:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Onboarding Step",
+ "idx": 0,
+ "is_complete": 0,
+ "is_single": 0,
+ "is_skipped": 0,
+ "modified": "2026-11-27 00:00:00.000000",
+ "modified_by": "Administrator",
+ "name": "Create a Rate Card",
+ "owner": "Administrator",
+ "reference_document": "Rental Rate Card",
+ "show_full_form": 0,
+ "title": "Create a Rate Card",
+ "validate_action": 1
+}

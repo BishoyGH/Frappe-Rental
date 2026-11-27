@@ -3,6 +3,7 @@ export const sections = [
   {
     items: [
       { label: 'Dashboard', route: 'Dashboard', icon: 'layout-dashboard' },
+      { label: 'Getting started', route: 'GettingStarted', icon: 'settings-2' },
       { label: 'Bookings', route: 'Bookings', icon: 'calendar' },
       { label: 'Calendar', route: 'Calendar', icon: 'calendar-range' },
       { label: 'Availability', route: 'Availability', icon: 'search' },
