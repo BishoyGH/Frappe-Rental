@@ -22,3 +22,12 @@ def revenue(
 	if not frappe.has_permission("Sales Invoice", "read"):
 		frappe.throw(_("Not permitted"), frappe.PermissionError)
 	return reports.revenue(from_date, to_date, company, group_by)
+
+
+@frappe.whitelist(methods=["GET", "POST"])
+def today(location: str | None = None) -> dict:
+	if not frappe.has_permission("Rental Booking", "read"):
+		frappe.throw(_("Not permitted"), frappe.PermissionError)
+	if location and not frappe.has_permission("Rental Location", "read", location):
+		frappe.throw(_("Not permitted"), frappe.PermissionError)
+	return reports.today_board(location=location)

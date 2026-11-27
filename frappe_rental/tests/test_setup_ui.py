@@ -129,3 +129,21 @@ class TestSetupUI(FrappeTestCase):
 		frappe.set_user(make_user())
 		with self.assertRaises(frappe.PermissionError):
 			api.get_records("Rental Type")
+
+	def test_rate_card_screen_round_trip(self):
+		name = api.save_record(
+			"Rental Rate Card",
+			{
+				"card_name": f"RC {random_string(5)}",
+				"currency": frappe.defaults.get_global_default("currency") or "USD",
+				"rates": [{"time_unit": "Day", "rate": 50, "priority": 0}],
+			},
+		)["name"]
+		rec = api.get_record("Rental Rate Card", name)
+		self.assertEqual(rec["rates"][0]["rate"], 50)
+		api.save_record(
+			"Rental Rate Card", {"rates": rec["rates"] + [{"time_unit": "Week", "rate": 300}]}, name
+		)
+		self.assertEqual(len(api.get_record("Rental Rate Card", name)["rates"]), 2)
+		with self.assertRaises(frappe.ValidationError):
+			api.save_record("Rental Rate Card", {"bogus": 1}, name)

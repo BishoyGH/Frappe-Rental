@@ -1,5 +1,45 @@
 // Setup screens: list columns and form fields per doctype. Option lists come from setup.form_options.
 export const screens = {
+  RateCards: {
+    doctype: 'Rental Rate Card',
+    title: 'Rate cards',
+    single: 'Rate card',
+    columns: [
+      { key: 'card_name', label: 'Name' },
+      { key: 'currency', label: 'Currency' },
+      { key: 'rounding_mode', label: 'Rounding' },
+      { key: 'enabled', label: 'Enabled', check: true },
+    ],
+    sections: [
+      {
+        title: 'Rate card',
+        fields: [
+          { key: 'card_name', label: 'Name', type: 'text', createOnly: true, reqd: true },
+          { key: 'currency', label: 'Currency', type: 'text' },
+          { key: 'rounding_mode', label: 'Rounding', type: 'select', options: 'rounding_modes' },
+          { key: 'minimum_charge', label: 'Minimum charge', type: 'number' },
+          { key: 'enabled', label: 'Enabled', type: 'check' },
+        ],
+      },
+    ],
+    rowsEditor: {
+      table: 'rates',
+      title: 'Rates',
+      columns: [
+        { key: 'time_unit', label: 'Unit', type: 'select', options: ['Minute', 'Hour', 'Day', 'Week', 'Month', 'Year', 'Use'] },
+        { key: 'rate', label: 'Rate', type: 'number' },
+        { key: 'min_units', label: 'From units', type: 'number' },
+        { key: 'max_units', label: 'To units', type: 'number' },
+        { key: 'priority', label: 'Priority', type: 'number' },
+        { key: 'valid_from', label: 'Valid from', type: 'date' },
+        { key: 'valid_to', label: 'Valid to', type: 'date' },
+        { key: 'weekday_mask', label: 'Weekdays', type: 'text' },
+        { key: 'season', label: 'Season', type: 'text' },
+        { key: 'customer_group', label: 'Customer group', type: 'text' },
+      ],
+    },
+    defaults: { enabled: 1, rounding_mode: 'Per started unit' },
+  },
   ItemTypes: {
     doctype: 'Rental Type',
     title: 'Item types',

@@ -69,6 +69,27 @@ SCREENS = {
 		"search": ["name", "unit_name", "barcode"],
 		"custom_for": "Rental Unit",
 	},
+	"Rental Rate Card": {
+		"title": "card_name",
+		"list": ["name", "card_name", "currency", "enabled", "rounding_mode"],
+		"fields": ["card_name", "currency", "enabled", "rounding_mode", "minimum_charge"],
+		"tables": {
+			"rates": [
+				"time_unit",
+				"rate",
+				"min_units",
+				"max_units",
+				"priority",
+				"valid_from",
+				"valid_to",
+				"weekday_mask",
+				"season",
+				"customer_group",
+				"rental_unit",
+			]
+		},
+		"search": ["name", "card_name"],
+	},
 	"Customer": {
 		"title": "customer_name",
 		"list": ["name", "customer_name", "customer_type", "customer_group", "territory"],
@@ -243,6 +264,7 @@ def options() -> dict:
 		"territories": names("Territory", is_group=0),
 		"modes": select("Rental Type", "mode"),
 		"time_units": select("Rental Type", "time_unit"),
+		"rounding_modes": select("Rental Rate Card", "rounding_mode"),
 		"identification_modes": select("Rental Type", "identification_mode"),
 		"unit_statuses": select("Rental Unit", "status"),
 		"field_types": select("Rental Type Custom Field", "fieldtype"),
