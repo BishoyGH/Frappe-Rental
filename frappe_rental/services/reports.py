@@ -12,7 +12,7 @@
 """
 
 import frappe
-from frappe.utils import flt, get_datetime, now_datetime
+from frappe.utils import add_days, flt, get_datetime, now_datetime
 
 LIVE = ("Confirmed", "Checked Out", "Returned", "Closed")
 
@@ -193,4 +193,35 @@ def kpis(company=None, now=None) -> dict:
 		"overdue_returns": len(overdue_returns(now)),
 		"revenue_this_month": flt(sum(flt(r.revenue) for r in revenue(month_start, now.date(), company))),
 		"deposits_held": flt(deposits),
+	}
+
+
+def today_board(now=None, location=None, limit=50) -> dict:
+	"""Arrivals, departures and in-house bookings for the dashboard (F089).
+
+	Day boundaries are taken from ``now`` as given (callers pass site-local time).
+	"""
+	now = get_datetime(now or now_datetime())
+	start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+	end = add_days(start, 1)
+	base = {"docstatus": 1}
+	if location:
+		base["location"] = location
+	fields = ["name", "customer", "rental_type", "location", "status", "from_datetime", "to_datetime"]
+
+	def fetch(extra, order):
+		return frappe.get_all(
+			"Rental Booking", filters={**base, **extra}, fields=fields, order_by=order, limit=limit
+		)
+
+	return {
+		"arrivals": fetch(
+			{"status": ["in", ("Confirmed", "Hold")], "from_datetime": ["between", (start, end)]},
+			"from_datetime asc",
+		),
+		"departures": fetch(
+			{"status": "Checked Out", "to_datetime": ["between", (start, end)]}, "to_datetime asc"
+		),
+		"in_house": fetch({"status": "Checked Out", "to_datetime": [">=", end]}, "to_datetime asc"),
+		"overdue": overdue_returns(now)[:limit],
 	}

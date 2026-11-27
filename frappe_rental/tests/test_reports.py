@@ -87,3 +87,15 @@ class TestReports(FrappeTestCase):
 		data = dashboard.kpis()
 		for key in ("units", "active_bookings", "overdue_returns", "revenue_this_month", "deposits_held"):
 			self.assertIn(key, data)
+
+	def test_today_board_shape_and_permission(self):
+		data = dashboard.today()
+		for key in ("arrivals", "departures", "in_house", "overdue"):
+			self.assertIsInstance(data[key], list)
+		self.assertEqual(reports.today_board(now="2026-01-01 10:00", location="__none__")["arrivals"], [])
+		frappe.set_user("Guest")
+		try:
+			with self.assertRaises(frappe.PermissionError):
+				dashboard.today()
+		finally:
+			frappe.set_user("Administrator")

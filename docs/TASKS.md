@@ -226,7 +226,7 @@ Source: the approved proposal list; numbers are stable IDs (F001 to F250). ⭐ =
 
 ### F. Staff app UX (89-108)
 
-- [ ] **F089** ⭐ Real dashboard replacing the placeholder: today arrivals, departures, overdue, revenue, occupancy. (L)
+- [x] **F089** ⭐ Real dashboard replacing the placeholder: today arrivals, departures, overdue, revenue, occupancy. (L)
 - [ ] **F090** ⭐ Global search (Ctrl+K) across bookings, customers, units. (M)
 - [ ] **F091** Saved filters and views per user. (M)
 - [ ] **F092** Keyboard shortcuts and command palette. (S)
