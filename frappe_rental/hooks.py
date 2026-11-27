@@ -10,6 +10,18 @@ after_install = "frappe_rental.install.after_install"
 after_migrate = ["frappe_rental.install.after_install"]
 
 doc_events = {
+	**{
+		dt: {"after_insert": "frappe_rental.services.onboarding.on_insert"}
+		for dt in (
+			"Rental Type",
+			"Rental Rate Card",
+			"Rental Item",
+			"Rental Unit",
+			"Rental Booking",
+			"Rental Alert Rule",
+			"Rental Contract",
+		)
+	},
 	"Company": {"after_insert": "frappe_rental.install.company_after_insert"},
 	"Item": {"on_update": "frappe_rental.services.rental_item.item_on_update"},
 	"Timesheet": {"on_submit": "frappe_rental.services.provider.on_timesheet_submit"},

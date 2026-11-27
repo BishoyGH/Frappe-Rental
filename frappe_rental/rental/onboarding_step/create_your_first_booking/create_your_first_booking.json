@@ -1,0 +1,18 @@
+{
+ "action": "Create Entry",
+ "creation": "2026-11-27 00:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Onboarding Step",
+ "idx": 0,
+ "is_complete": 0,
+ "is_single": 0,
+ "is_skipped": 0,
+ "modified": "2026-11-27 00:00:00.000000",
+ "modified_by": "Administrator",
+ "name": "Create your first Booking",
+ "owner": "Administrator",
+ "reference_document": "Rental Booking",
+ "show_full_form": 0,
+ "title": "Create your first Booking",
+ "validate_action": 1
+}

@@ -1,0 +1,18 @@
+{
+ "action": "Create Entry",
+ "creation": "2026-11-27 00:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Onboarding Step",
+ "idx": 0,
+ "is_complete": 0,
+ "is_single": 0,
+ "is_skipped": 0,
+ "modified": "2026-11-27 00:00:00.000000",
+ "modified_by": "Administrator",
+ "name": "Create a Rental Item",
+ "owner": "Administrator",
+ "reference_document": "Rental Item",
+ "show_full_form": 0,
+ "title": "Create a Rental Item",
+ "validate_action": 1
+}

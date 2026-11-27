@@ -39,3 +39,12 @@ def mark_read(name: str) -> None:
 	if frappe.db.get_value("Notification Log", name, "for_user") != frappe.session.user:
 		frappe.throw(_("Not found"), frappe.DoesNotExistError)
 	frappe.db.set_value("Notification Log", name, "read", 1)
+
+
+@frappe.whitelist(methods=["GET", "POST"])
+def onboarding() -> dict:
+	"""Setup checklist (Frappe Module Onboarding "Rental") for the staff app."""
+	from frappe_rental.services import onboarding as svc
+
+	_staff()
+	return svc.status()
