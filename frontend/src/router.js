@@ -13,7 +13,7 @@ const built = {
   Dashboard: () => import('./pages/DashboardPage.vue'),
   Settings: () => import('./pages/SettingsPage.vue'),
 }
-const SETUP = ['ItemTypes', 'Items', 'Units', 'Customers']
+const SETUP = ['RateCards', 'ItemTypes', 'Items', 'Units', 'Customers']
 
 const routes = [
   { path: '/', redirect: { name: 'Bookings' } },

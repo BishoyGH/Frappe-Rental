@@ -146,7 +146,7 @@ Source: the approved proposal list; numbers are stable IDs (F001 to F250). ⭐ =
 
 ### B. Pricing and promotions (21-38)
 
-- [ ] **F021** ⭐ Rate card editor UI replacing the placeholder, with season and weekday grid. (L)
+- [x] **F021** ⭐ Rate card editor UI replacing the placeholder, with season and weekday grid. (L)
 - [ ] **F022** ⭐ Promo codes: percent, fixed, free night, usage limits, validity dates. (M)
 - [ ] **F023** Dynamic pricing by occupancy: price rises as availability falls. (L)
 - [ ] **F024** ⭐ Last-minute and early-bird discount rules. (M)

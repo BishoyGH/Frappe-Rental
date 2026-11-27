@@ -49,6 +49,34 @@
         </div>
       </template>
 
+      <template v-if="screen.rowsEditor">
+        <h3 class="mb-2 font-semibold">{{ __(screen.rowsEditor.title) }}</h3>
+        <div class="overflow-x-auto" data-testid="rows-editor">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-start text-ink-gray-5">
+                <th v-for="c in screen.rowsEditor.columns" :key="c.key" class="px-1 py-1 text-start font-normal">{{ __(c.label) }}</th>
+                <th />
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(row, i) in form.rows" :key="row._k" class="border-b" data-testid="rows-row">
+                <td v-for="c in screen.rowsEditor.columns" :key="c.key" class="px-1 py-1">
+                  <FormControl
+                    v-model="row[c.key]"
+                    :type="c.type"
+                    :options="c.options ? c.options.map((o) => ({ label: o, value: o })) : undefined"
+                    :data-testid="`row-${c.key}`"
+                  />
+                </td>
+                <td><Button @click="form.rows.splice(i, 1)"><LucideX class="h-4 w-4" /></Button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <Button class="mt-2" :label="__('Add rate')" data-testid="rows-add" @click="addRow"><template #prefix><LucidePlus class="h-4 w-4" /></template></Button>
+      </template>
+
       <template v-if="screen.customFieldsEditor">
         <h3 class="mb-2 font-semibold">{{ __('Custom fields') }}</h3>
         <p class="mb-2 text-sm text-ink-gray-5">{{ __('Add your own fields to items, units or bookings of this type.') }}</p>
@@ -144,11 +172,13 @@ async function load() {
   if (isNew.value) {
     Object.assign(form, screen.value.defaults || {}, route.query)
     if (screen.value.customFieldsEditor) form.custom_fields = []
+    if (screen.value.rowsEditor) form.rows = []
   } else {
     const r = await api('setup.get_record', { doctype: screen.value.doctype, name: props.name })
     rec.value = r
     for (const f of fields.value) (f.type === 'check' ? checks : form)[f.key] = f.type === 'check' ? !!r[f.key] : r[f.key] ?? ''
     if (screen.value.customFieldsEditor) form.custom_fields = r.custom_fields || []
+    if (screen.value.rowsEditor) form.rows = (r[screen.value.rowsEditor.table] || []).map((x) => ({ ...x, _k: ++seq }))
     Object.assign(custom, r.custom)
     customMeta.value = r.custom_meta
     if (screen.value.showBookings) {
@@ -174,6 +204,9 @@ watch(
 )
 
 let seq = 0
+function addRow() {
+  form.rows.push({ time_unit: 'Day', rate: 0, priority: 0, _k: ++seq })
+}
 function addCustomField() {
   form.custom_fields.push({ applies_to: 'Rental Item', label: '', fieldname: '', fieldtype: 'Data', options: '', reqd: 0, _k: ++seq })
 }
@@ -191,6 +224,7 @@ async function save() {
     if (f.createOnly && !isNew.value) continue
     data[f.key] = f.type === 'check' ? (checks[f.key] ? 1 : 0) : form[f.key] === '' ? null : form[f.key]
   }
+  if (screen.value.rowsEditor) data[screen.value.rowsEditor.table] = form.rows.map(({ _k, ...r }) => r)
   if (screen.value.customFieldsEditor) data.custom_fields = form.custom_fields.map(({ _k, _touched, ...r }) => r)
   if (customMeta.value.length) data.custom = { ...custom }
   try {
